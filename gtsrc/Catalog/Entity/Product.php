@@ -31,6 +31,12 @@ class Product
     private $lastUpdate;
 
     /**
+     * @var int
+     * @ORM\Column(type="integer")
+     */
+    private $version;
+
+    /**
      * @return string
      */
     public function getSku(): string
@@ -62,4 +68,19 @@ class Product
         $this->lastUpdate = $lastUpdate;
     }
 
+    /**
+     * @return int
+     */
+    public function getVersion(): int
+    {
+        return $this->version;
+    }
+
+    /**
+     * @param int $version
+     */
+    public function setVersion(int $version): void
+    {
+        $this->version = $version;
+    }
 }

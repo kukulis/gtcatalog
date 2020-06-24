@@ -3,21 +3,21 @@
  * Created by PhpStorm.
  * User: giedrius
  * Date: 20.6.24
- * Time: 11.45
+ * Time: 11.46
  */
 
 namespace Gt\Catalog\Entity;
-
 
 use Doctrine\ORM\Mapping as ORM;
 
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="products_categories")
- */
-class ProductCategory
+ * @ORM\Table(name="products_pictures")
+  */
+class ProductPicture
 {
+
     /**
      * @var Product
      * @ORM\Id
@@ -27,12 +27,12 @@ class ProductCategory
     private $product;
 
     /**
-     * @var Category
+     * @var Picture
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="Category" )
-     * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="Picture" )
+     * @ORM\JoinColumn(name="picture_id", referencedColumnName="id")
      */
-    private $category;
+    private $picture;
 
 
     /**
@@ -59,19 +59,19 @@ class ProductCategory
     }
 
     /**
-     * @return Category
+     * @return Picture
      */
-    public function getCategory(): Category
+    public function getPicture(): Picture
     {
-        return $this->category;
+        return $this->picture;
     }
 
     /**
-     * @param Category $category
+     * @param Picture $picture
      */
-    public function setCategory(Category $category): void
+    public function setPicture(Picture $picture): void
     {
-        $this->category = $category;
+        $this->picture = $picture;
     }
 
     /**
@@ -89,4 +89,6 @@ class ProductCategory
     {
         $this->priority = $priority;
     }
+
+
 }
