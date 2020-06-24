@@ -1,0 +1,6 @@
+* Redagavimas per web naršyklę
+    - kategorijų,
+    - paveikslėlių,
+    - Prekės informacijos,
+    - prekės kalbos informacjos,
+    - prekės kategorijos.
