@@ -9,8 +9,10 @@
 namespace Gt\Catalog\Services;
 
 
+use Doctrine\ORM\ORMException;
 use Gt\Catalog\Dao\CatalogDao;
 use Gt\Catalog\Entity\Product;
+use Gt\Catalog\Exception\CatalogErrorException;
 use Psr\Log\LoggerInterface;
 
 class ProductsService
@@ -41,6 +43,21 @@ class ProductsService
     public function getProducts ( $page=0) {
         $products = $this->catalogDao->getProductsList($page*self::PAGE_SIZE, self::PAGE_SIZE );
         return $products;
+    }
+
+    /**
+     * @param string $sku
+     * @return Product
+     * @throws CatalogErrorException
+     */
+    public function getProduct( $sku ) {
+        // čia validaciją dar padarysim sku ir pan.
+        try {
+            $product = $this->catalogDao->getProduct($sku);
+        } catch ( ORMException $e ) {
+            throw new CatalogErrorException($e->getMessage());
+        }
+        return $product;
     }
 
 }

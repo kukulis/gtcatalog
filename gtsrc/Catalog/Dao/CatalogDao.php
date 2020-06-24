@@ -13,7 +13,6 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
 use Gt\Catalog\Entity\Product;
 use Psr\Log\LoggerInterface;
-use Symfony\Contracts\Service\ServiceProviderInterface;
 
 class CatalogDao
 {
@@ -56,4 +55,20 @@ class CatalogDao
         return $products;
     }
 
+    /**
+     * @param string $sku
+     * @return Product
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
+     */
+    public function getProduct( $sku ) {
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        /** @var Product $product */
+        $product = $em->find(Product::class, $sku );
+
+        return $product;
+    }
 }
