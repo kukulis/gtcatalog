@@ -1,0 +1,8 @@
+services:
+    gt.catalog.products_controller:
+        public: true
+        #tags: [controller.service_arguments]
+        class: 'Gt\Catalog\Controller\ProductsController'
+        arguments:
+            - '@logger'
+            - '@twig'

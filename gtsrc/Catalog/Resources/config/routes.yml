@@ -1,0 +1,6 @@
+gt.catalog.products_list:
+    path: "/products"
+    controller: gt.catalog.products_controller::listAction
+    methods: GET
+
+
