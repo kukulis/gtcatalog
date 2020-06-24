@@ -9,42 +9,55 @@
 namespace Gt\Catalog\Controller;
 
 
+use Gt\Catalog\Services\ProductsService;
 use Psr\Log\LoggerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Twig\Environment;
 
-class ProductsController
+class ProductsController extends AbstractController
 {
-    /** @var LoggerInterface */
-    private $logger;
-
-    /** @var Environment */
-    private $twig;
-
-    /**
-     * ProductsController constructor.
-     * @param LoggerInterface $logger
-     * @param Environment $twig
-     */
-    public function __construct(LoggerInterface $logger, Environment $twig)
-    {
-        $this->logger = $logger;
-        $this->twig = $twig;
-    }
 
     /**
      * @param Request $request
      * @return Response
-     * @throws \Twig\Error\LoaderError
-     * @throws \Twig\Error\RuntimeError
-     * @throws \Twig\Error\SyntaxError
      */
-    public function listAction(Request $request ) {
-        $content = $this->twig->render('@Catalog/products/list.html.twig', [
-            'list' => ['aaa', 'bbb', 'ccc'],
-        ]);
+    public function listAction(Request $request, LoggerInterface $logger, ProductsService $productsService ) {
+        $logger->info ( 'listAction called');
 
-        return new Response($content);
+        $page = $request->get('page', 0);
+
+        $products = $productsService->getProducts($page);
+
+        return $this->render('@Catalog/products/list.html.twig', [
+            'products' => $products,
+        ]);
     }
+
+    public function editAction(Request $request, $sku ) {
+
+
+
+        return new Response('TODO edit product' );
+    }
+
+    /**
+     * Called from edit form
+     * @param Request $request
+     * @return Response
+     */
+    public function updateAction(Request $request) {
+        // TODO redirect to list or to error page
+        return new Response('TODO update Action');
+    }
+
+    public function newAction () {
+        // TODO create new record into database and redirect to edit
+        return new Response('TODO new product' );
+    }
+
+    public function deleteAction() {
+        return new Response('TODO delete product' );
+    }
+
 }

@@ -1,6 +1,28 @@
-gt.catalog.products_list:
+gt.catalog.product_list:
     path: "/products"
-    controller: gt.catalog.products_controller::listAction
+    controller: Gt\Catalog\Controller\ProductsController::listAction
     methods: GET
+
+
+gt.catalog.product_edit:
+    path: "/product/edit/{sku}"
+    controller: Gt\Catalog\Controller\ProductsController::editAction
+    methods: GET
+
+gt.catalog.product_update:
+    path: "/product/update/{sku}"
+    controller: Gt\Catalog\Controller\ProductsController::updateAction
+    methods: POST
+
+gt.catalog.product_delete:
+    path: "/product/delete/{sku}"
+    controller: Gt\Catalog\Controller\ProductsController::deleteAction
+    methods: DELETE
+
+gt.catalog.product_new:
+    path: "/product/new/{sku}"
+    controller: Gt\Catalog\Controller\ProductsController::newAction
+    methods: GET
+
 
 

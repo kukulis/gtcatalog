@@ -1,1 +1,10 @@
-TODO list
+<table>
+{% for p in products %}
+    <tr>
+        <td>{{ p.sku }}</td>
+        <td>{{ p.lastUpdate | date('Y-m-d H:i:s') }}</td>
+        <td>{{ p.version }}</td>
+        <td><a href="{{ path('gt.catalog.product_edit', {sku: p.sku}) }}">Edit</a></td>
+    </tr>
+{% endfor %}
+</table>

@@ -1,8 +1,33 @@
 services:
-    gt.catalog.products_controller:
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+
+    Gt\Catalog\Controller\:
+        resource: '../../Controller/*'
+        tags: [ "controller.service_arguments"]
+
+    gt.catalog.catalog_dao:
+        class: 'Gt\Catalog\Dao\CatalogDao'
         public: true
-        #tags: [controller.service_arguments]
-        class: 'Gt\Catalog\Controller\ProductsController'
         arguments:
             - '@logger'
-            - '@twig'
+            - '@doctrine'
+
+
+    gt.catalog.products_service:
+        class: 'Gt\Catalog\Services\ProductsService'
+        arguments:
+            - '@logger'
+            - '@gt.catalog.catalog_dao'
+
+
+    Gt\Catalog\Controller\ProductsController:
+        tags:
+            - "controller.service_arguments"
+        bind:
+            $logger: '@logger'
+            $productsService: '@gt.catalog.products_service'
+
+
