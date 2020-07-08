@@ -5,3 +5,6 @@
 
 catalog_routes:
     resource: '@CatalogBundle/Resources/config/routes.yml'
+
+languages_routes:
+    resource: '@CatalogBundle/Resources/config/languages_routes.yml'

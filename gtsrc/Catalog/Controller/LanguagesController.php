@@ -5,12 +5,13 @@ namespace Gt\Catalog\Controller;
 
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 
 class LanguagesController extends AbstractController
 {
 
     public function newAction()
     {
-        return 'finish to code add new language action';
+        return new Response('todo: finish to code add new language action');
     }
 }

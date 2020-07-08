@@ -1,5 +1,4 @@
-gt.catalog.language_list
-    path: "/languages"
+gt.catalog.language_list:
+    path: "/languages/new"
     controller: Gt\Catalog\Controller\LanguagesController::newAction
     methods: GET
-
