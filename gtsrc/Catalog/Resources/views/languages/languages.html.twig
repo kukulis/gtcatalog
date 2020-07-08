@@ -1,1 +1,11 @@
-<h1>Kalbos</h1>
+{% extends 'base.html.twig' %}
+
+{% block content_body %}
+    <h1>Create a new language! </h1>
+
+    {{ form_start(languageForm) }}
+        {{ form_widget(languageForm) }}
+
+        <button type="submit" class="btn btn-primary">Create!</button>
+    {{ form_end(languageForm) }}
+{% endblock %}

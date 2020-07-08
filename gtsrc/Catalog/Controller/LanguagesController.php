@@ -4,15 +4,19 @@
 namespace Gt\Catalog\Controller;
 
 
+use Doctrine\ORM\EntityManagerInterface;
+use Gt\Catalog\Form\LanguageFormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
 
 class LanguagesController extends AbstractController
 {
 
-    public function newAction()
+    public function newAction(EntityManagerInterface $em)
     {
-        return new Response('todo: finish to code add new language action with Symfony forms !
-         Getting excited =) ');
+        $form = $this->createForm(LanguageFormType::class);
+
+        return $this->render('@Catalog/languages/languages.html.twig', [
+            'languageForm' => $form->createView(),
+        ]);
     }
 }
