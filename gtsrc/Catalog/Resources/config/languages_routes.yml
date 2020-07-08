@@ -1,0 +1,5 @@
+gt.catalog.language_list
+    path: "/languages"
+    controller: Gt\Catalog\Controller\LanguagesController::newAction
+    methods: GET
+
