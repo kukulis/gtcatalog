@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Create a new language! </h1>
+    <h1>{% trans %}Add a new language{% endtrans %} </h1>
 
     {{ form_start(languageForm) }}
         {{ form_widget(languageForm) }}
 
-        <button type="submit" class="btn btn-primary">Create!</button>
+        <button type="submit" class="btn btn-primary">{% trans %}Add{% endtrans %}</button>
     {{ form_end(languageForm) }}
 {% endblock %}
