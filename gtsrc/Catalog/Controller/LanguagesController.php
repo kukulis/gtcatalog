@@ -5,6 +5,7 @@ namespace Gt\Catalog\Controller;
 
 
 use Doctrine\ORM\EntityManagerInterface;
+use Gt\Catalog\Entity\Language;
 use Gt\Catalog\Form\LanguageFormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,11 +28,23 @@ class LanguagesController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            dd($form->getData());
+            $data = $form->getData();
+            $language = new Language();
+            $language->setCode($data['code']);
+            $language->setName($data['name']);
+            $language->setLocaleCode($data['localeCode']);
+
+            $em->persist($language);
+            $em->flush();
         }
 
         return $this->render('@Catalog/languages/new.html.twig', [
             'languageForm' => $form->createView(),
         ]);
+    }
+
+    public function languages()
+    {
+        
     }
 }
