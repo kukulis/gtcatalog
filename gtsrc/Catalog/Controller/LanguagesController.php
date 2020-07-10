@@ -8,11 +8,13 @@ use Doctrine\ORM\EntityManagerInterface;
 use Gt\Catalog\Form\LanguageFormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 class LanguagesController extends AbstractController
 {
 
     /**
+     * @Route("/languages/new", name="language_new")
      * @param EntityManagerInterface $em
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
