@@ -14,6 +14,8 @@ class LanguagesController extends AbstractController
 {
 
     /**
+     * @todo pakurti roles, pvz: ROLE_ADMIN_LANGUAGE
+     *
      * @Route("/languages/new", name="language_new")
      * @param EntityManagerInterface $em
      * @param Request $request
