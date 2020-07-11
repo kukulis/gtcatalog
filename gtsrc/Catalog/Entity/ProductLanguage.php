@@ -47,6 +47,32 @@ class ProductLanguage
     private $description;
 
     /**
+     * @var string
+     * @ORM\Column(type="text")
+     */
+    private $label;
+
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", name="variant_name")
+     */
+    private $variantName;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=64)
+     */
+    private $infoProvider;
+
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", name="tags")
+     */
+    private $tags;
+
+    /**
      * @return Product
      */
     public function getProduct(): Product
@@ -109,4 +135,69 @@ class ProductLanguage
     {
         $this->description = $description;
     }
+
+    /**
+     * @return string
+     */
+    public function getLabel(): string
+    {
+        return $this->label;
+    }
+
+    /**
+     * @param string $label
+     */
+    public function setLabel(string $label): void
+    {
+        $this->label = $label;
+    }
+
+    /**
+     * @return string
+     */
+    public function getInfoProvider(): string
+    {
+        return $this->infoProvider;
+    }
+
+    /**
+     * @param string $infoProvider
+     */
+    public function setInfoProvider(string $infoProvider): void
+    {
+        $this->infoProvider = $infoProvider;
+    }
+
+    /**
+     * @return string
+     */
+    public function getVariantName(): string
+    {
+        return $this->variantName;
+    }
+
+    /**
+     * @param string $variantName
+     */
+    public function setVariantName(string $variantName): void
+    {
+        $this->variantName = $variantName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTags(): string
+    {
+        return $this->tags;
+    }
+
+    /**
+     * @param string $tags
+     */
+    public function setTags(string $tags): void
+    {
+        $this->tags = $tags;
+    }
+
 }
