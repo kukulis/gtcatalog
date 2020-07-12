@@ -15,6 +15,12 @@ services:
             - '@logger'
             - '@doctrine'
 
+    gt.catalog.language_dao:
+        class: 'Gt\Catalog\Dao\LanguageDao'
+        public: true
+        arguments:
+            - '@logger'
+            - '@doctrine'
 
     gt.catalog.products_service:
         class: 'Gt\Catalog\Services\ProductsService'
@@ -22,6 +28,11 @@ services:
             - '@logger'
             - '@gt.catalog.catalog_dao'
 
+    gt.catalog.languages_service:
+        class: 'Gt\Catalog\Services\LanguagesService'
+        arguments:
+            - '@logger'
+            - '@gt.catalog.language_dao'
 
     Gt\Catalog\Controller\ProductsController:
         tags:
@@ -30,4 +41,9 @@ services:
             $logger: '@logger'
             $productsService: '@gt.catalog.products_service'
 
-
+    Gt\Catalog\Controller\LanguagesController:
+        tags:
+            - "controller.service_arguments"
+        bind:
+            $logger: '@logger'
+            $languagesService: '@gt.catalog.languages_service'
