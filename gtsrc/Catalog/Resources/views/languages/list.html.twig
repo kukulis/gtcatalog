@@ -1,5 +1,10 @@
-<h1>Kalbos</h1>
+<h1>{% trans %}Languages{% endtrans %}</h1>
 <table>
+    <tr>
+        <th>{% trans %}Code{% endtrans %}</th>
+        <th>{% trans %}Name{% endtrans %}</th>
+        <th>{% trans %}Locale code{% endtrans %}</th>
+    </tr>
 {% for l in languages %}
     <tr>
         <td>{{ l.code }}</td>
