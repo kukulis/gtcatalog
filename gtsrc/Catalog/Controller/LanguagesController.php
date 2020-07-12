@@ -7,6 +7,8 @@ namespace Gt\Catalog\Controller;
 use Doctrine\ORM\EntityManagerInterface;
 use Gt\Catalog\Entity\Language;
 use Gt\Catalog\Form\LanguageFormType;
+use Gt\Catalog\Services\LanguagesService;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -36,6 +38,8 @@ class LanguagesController extends AbstractController
 
             $em->persist($language);
             $em->flush();
+
+            return $this->redirectToRoute('gt.catalog.languages');
         }
 
         return $this->render('@Catalog/languages/new.html.twig', [
@@ -43,8 +47,22 @@ class LanguagesController extends AbstractController
         ]);
     }
 
-    public function languages()
+    /**
+     * @param Request $request
+     * @param LoggerInterface $logger
+     * @param LanguagesService $languagesService
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function listAction(Request $request, LoggerInterface $logger, LanguagesService $languagesService)
     {
-        
+        $logger->info('Languages list action called');
+
+        $page = $request->get('page', 0);
+
+        $languages = $languagesService->getLanguages($page);
+
+        return $this->render('@Catalog/languages/list.html.twig', [
+            'languages' => $languages
+        ]);
     }
 }

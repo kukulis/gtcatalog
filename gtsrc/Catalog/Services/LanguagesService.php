@@ -20,9 +20,9 @@ class LanguagesService
     /**
      * LanguagesService constructor.
      * @param LoggerInterface $logger
-     * @param $languageDao
+     * @param LanguageDao $languageDao
      */
-    public function __construct(LoggerInterface $logger, $languageDao)
+    public function __construct(LoggerInterface $logger, LanguageDao $languageDao)
     {
         $this->logger = $logger;
         $this->languageDao = $languageDao;
@@ -30,8 +30,7 @@ class LanguagesService
 
     public function getLanguages( $page=0)
     {
-        $languages = $this->languageDao->getLanguagesList($page * self::PAGE_SIZE, self::PAGE_SIZE);
-        return $languages;
+        return $this->languageDao->getLanguagesList($page * self::PAGE_SIZE, self::PAGE_SIZE);
     }
 
 }
