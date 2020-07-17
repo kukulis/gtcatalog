@@ -33,6 +33,13 @@ class Language
     private $name;
 
     /**
+     * @var string
+     * @ORM\Column(type="string", length=64 )
+     */
+    private $localeCode;
+
+
+    /**
      * @return string
      */
     public function getCode(): string
@@ -79,13 +86,6 @@ class Language
     {
         $this->localeCode = $localeCode;
     }
-
-    /**
-     * @var string
-     * @ORM\Column(type="string", length=64 )
-     */
-    private $localeCode;
-
 
 
 }
