@@ -24,21 +24,13 @@ class LanguagesController extends AbstractController
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function newAction(EntityManagerInterface $em, Request $request)
+    public function newAction( Request $request, LanguagesService $languagesService)
     {
         $form = $this->createForm(LanguageFormType::class);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-            $language = new Language();
-            $language->setCode($data['code']);
-            $language->setName($data['name']);
-            $language->setLocaleCode($data['localeCode']);
-
-            $em->persist($language);
-            $em->flush();
-
+            $languagesService->newLanguage($form);
             return $this->redirectToRoute('gt.catalog.languages');
         }
 
@@ -64,5 +56,10 @@ class LanguagesController extends AbstractController
         return $this->render('@Catalog/languages/list.html.twig', [
             'languages' => $languages
         ]);
+    }
+
+    public function editAction()
+    {
+        
     }
 }

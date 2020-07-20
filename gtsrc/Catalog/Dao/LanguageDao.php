@@ -6,12 +6,12 @@ namespace Gt\Catalog\Dao;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Gt\Catalog\Entity\Language;
 use Psr\Log\LoggerInterface;
 
 /**
- * @todo perdaryti su Doctrina ir pajungti Symfony formas
- *
  * Class LanguageDao
  * @package Gt\Catalog\Dao
  */
@@ -47,14 +47,21 @@ class LanguageDao
         return $languages;
     }
 
-    public function addLanguage($code, $name, $locale_code)
+    /**
+     * @param $data
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function addLanguage($data)
     {
-        $languageClass = Language::class;
-        $dql = /** @lang DQL */ "INSERT INTO $languageClass (code, name, locale_code) 
-                                     VALUES ($code, $name, $locale_code)";
+        $language = new Language();
+        $language->setCode($data['code']);
+        $language->setName($data['name']);
+        $language->setLocaleCode($data['localeCode']);
 
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
-        $em->createQuery($dql)->execute();
+        $em->persist($language);
+        $em->flush();
     }
 }
