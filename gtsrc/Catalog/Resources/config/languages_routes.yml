@@ -3,6 +3,11 @@ gt.catalog.language_new:
     controller: Gt\Catalog\Controller\LanguagesController::newAction
     methods: GET|POST
 
+gt.catalog.language_edit:
+    path: "/languages/{code}/edit"
+    controller: Gt\Catalog\Controller\LanguagesController::editAction
+    methods: GET|POST
+
 gt.catalog.languages:
     path: "/languages"
     controller: Gt\Catalog\Controller\LanguagesController::listAction

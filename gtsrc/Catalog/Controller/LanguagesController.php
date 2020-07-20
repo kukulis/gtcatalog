@@ -5,6 +5,7 @@ namespace Gt\Catalog\Controller;
 
 
 use Doctrine\ORM\EntityManagerInterface;
+use Gt\Catalog\Entity\Language;
 use Gt\Catalog\Form\LanguageFormType;
 use Gt\Catalog\Services\LanguagesService;
 use Psr\Log\LoggerInterface;
@@ -57,8 +58,25 @@ class LanguagesController extends AbstractController
         ]);
     }
 
-    public function editAction()
+    /**
+     * @Route("/languages/{code}/edit")
+     * @param Language $language
+     * @param Request $request
+     * @param LanguagesService $languagesService
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    public function editAction(Language $language, Request $request, LanguagesService $languagesService)
     {
-        
+        $form = $this->createForm(LanguageFormType::class, $language);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $languagesService->newLanguage($form);
+            return $this->redirectToRoute('gt.catalog.languages');
+        }
+
+        return $this->render('@Catalog/languages/new.html.twig', [
+            'languageForm' => $form->createView(),
+        ]);
     }
 }
