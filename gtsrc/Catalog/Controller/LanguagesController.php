@@ -59,7 +59,7 @@ class LanguagesController extends AbstractController
     }
 
     /**
-     * @Route("/languages/{code}/edit")
+     * @Route("/languages/{code}/edit", name="language_edit")
      * @param Language $language
      * @param Request $request
      * @param LanguagesService $languagesService
