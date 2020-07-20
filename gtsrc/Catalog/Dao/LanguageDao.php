@@ -54,14 +54,9 @@ class LanguageDao
      */
     public function addLanguage($data)
     {
-        $language = new Language();
-        $language->setCode($data['code']);
-        $language->setName($data['name']);
-        $language->setLocaleCode($data['localeCode']);
-
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
-        $em->persist($language);
+        $em->persist($data);
         $em->flush();
     }
 }

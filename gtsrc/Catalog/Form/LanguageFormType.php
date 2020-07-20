@@ -7,6 +7,7 @@ namespace Gt\Catalog\Form;
 use Gt\Catalog\Entity\Language;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class LanguageFormType extends AbstractType
 {
@@ -19,6 +20,13 @@ class LanguageFormType extends AbstractType
             ->add('code')
             ->add('name')
             ->add('localeCode');
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'data_class' => Language::class
+        ]);
     }
 
     /**

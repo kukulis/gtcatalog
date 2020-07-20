@@ -5,7 +5,6 @@ namespace Gt\Catalog\Controller;
 
 
 use Doctrine\ORM\EntityManagerInterface;
-use Gt\Catalog\Entity\Language;
 use Gt\Catalog\Form\LanguageFormType;
 use Gt\Catalog\Services\LanguagesService;
 use Psr\Log\LoggerInterface;

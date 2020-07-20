@@ -42,7 +42,7 @@ class Language
     /**
      * @return string
      */
-    public function getCode(): string
+    public function getCode(): ?string
     {
         return $this->code;
     }
@@ -58,7 +58,7 @@ class Language
     /**
      * @return string
      */
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -74,7 +74,7 @@ class Language
     /**
      * @return string
      */
-    public function getLocaleCode(): string
+    public function getLocaleCode(): ?string
     {
         return $this->localeCode;
     }
