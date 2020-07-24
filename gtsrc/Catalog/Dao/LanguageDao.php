@@ -38,7 +38,7 @@ class LanguageDao
     public function getLanguagesList($offset, $limit)
     {
         $languageClass = Language::class;
-        $dql = /** @lang DQL */ "SELECT l from $languageClass l";
+        $dql = /** @lang DQL */ "SELECT l FROM $languageClass l";
 
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
