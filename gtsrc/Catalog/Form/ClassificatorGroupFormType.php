@@ -4,6 +4,7 @@
 namespace Gt\Catalog\Form;
 
 
+use Gt\Catalog\Entity\ClassificatorGroup;
 use Gt\Catalog\Entity\Language;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -21,7 +22,7 @@ class ClassificatorGroupFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Language::class
+            'data_class' => ClassificatorGroup::class
         ]);
     }
 

@@ -47,3 +47,27 @@ services:
         bind:
             $logger: '@logger'
             $languagesService: '@gt.catalog.languages_service'
+
+# ------------------  Classificator groups start -------------------------
+
+    gt.catalog.classificator_group_dao:
+        class: 'Gt\Catalog\Dao\ClassificatorGroupDao'
+        public: true
+        arguments:
+            - '@logger'
+            - '@doctrine'
+
+    gt.catalog.classificator_groups_service:
+        class: 'Gt\Catalog\Services\ClassificatorGroupsService'
+        arguments:
+            - '@logger'
+            - '@gt.catalog.classificator_group_dao'
+
+    Gt\Catalog\Controller\ClassificatorGroupsController:
+        tags:
+            - "controller.service_arguments"
+        bind:
+            $logger: '@logger'
+            $classificatorGroupsService: '@gt.catalog.classificator_groups_service'
+
+# ------------------  Classificator groups end -------------------------
