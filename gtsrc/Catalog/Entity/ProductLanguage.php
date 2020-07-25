@@ -107,7 +107,7 @@ class ProductLanguage
     /**
      * @return string
      */
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -115,7 +115,7 @@ class ProductLanguage
     /**
      * @param string $name
      */
-    public function setName(string $name): void
+    public function setName(string $name=null): void
     {
         $this->name = $name;
     }
@@ -123,7 +123,7 @@ class ProductLanguage
     /**
      * @return string
      */
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -131,7 +131,7 @@ class ProductLanguage
     /**
      * @param string $description
      */
-    public function setDescription(string $description): void
+    public function setDescription(string $description=null): void
     {
         $this->description = $description;
     }
@@ -139,7 +139,7 @@ class ProductLanguage
     /**
      * @return string
      */
-    public function getLabel(): string
+    public function getLabel(): ?string
     {
         return $this->label;
     }
@@ -147,7 +147,7 @@ class ProductLanguage
     /**
      * @param string $label
      */
-    public function setLabel(string $label): void
+    public function setLabel(string $label=null): void
     {
         $this->label = $label;
     }
@@ -155,7 +155,7 @@ class ProductLanguage
     /**
      * @return string
      */
-    public function getInfoProvider(): string
+    public function getInfoProvider(): ?string
     {
         return $this->infoProvider;
     }
@@ -163,7 +163,7 @@ class ProductLanguage
     /**
      * @param string $infoProvider
      */
-    public function setInfoProvider(string $infoProvider): void
+    public function setInfoProvider(string $infoProvider=null): void
     {
         $this->infoProvider = $infoProvider;
     }
@@ -171,7 +171,7 @@ class ProductLanguage
     /**
      * @return string
      */
-    public function getVariantName(): string
+    public function getVariantName(): ?string
     {
         return $this->variantName;
     }
@@ -179,7 +179,7 @@ class ProductLanguage
     /**
      * @param string $variantName
      */
-    public function setVariantName(string $variantName): void
+    public function setVariantName(string $variantName=null): void
     {
         $this->variantName = $variantName;
     }
@@ -187,7 +187,7 @@ class ProductLanguage
     /**
      * @return string
      */
-    public function getTags(): string
+    public function getTags(): ?string
     {
         return $this->tags;
     }
@@ -195,7 +195,7 @@ class ProductLanguage
     /**
      * @param string $tags
      */
-    public function setTags(string $tags): void
+    public function setTags(string $tags=null): void
     {
         $this->tags = $tags;
     }

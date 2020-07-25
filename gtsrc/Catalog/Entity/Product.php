@@ -34,14 +34,14 @@ class Product
      * @var int
      * @ORM\Column(type="integer")
      */
-    private $version;
+    private $version=0;
 
     /**
      * @var Classificator
      * @ORM\ManyToOne(targetEntity="Classificator" )
      * @ORM\JoinColumn(name="brand_code", referencedColumnName="code")
      */
-    private $brandCode;
+    private $brandCode='';
 
     /**
      * @var Classificator
@@ -110,13 +110,13 @@ class Product
      * @var bool
      * @ORM\Column(type="boolean", name="for_male")
      */
-    private $forMale;
+    private $forMale=false;
 
     /**
      * @var bool
      * @ORM\Column(type="boolean", name="for_female")
      */
-    private $forFemale;
+    private $forFemale=false;
 
     /**
      * @var string
@@ -140,22 +140,22 @@ class Product
      * @var float
      * @ORM\Column(type="decimal", scale=2, precision=10 )
      */
-    private $weight;
+    private $weight=0;
     /**
      * @var float
      * @ORM\Column(type="decimal", scale=2, precision=10 )
      */
-    private $length;
+    private $length=0;
     /**
      * @var float
      * @ORM\Column(type="decimal", scale=2, precision=10 )
      */
-    private $height;
+    private $height=0;
     /**
      * @var float
      * @ORM\Column(type="decimal", scale=2, precision=10 )
      */
-    private $width;
+    private $width=0;
 
     /**
      * @var string
@@ -189,7 +189,7 @@ class Product
     /**
      * @return \DateTime
      */
-    public function getLastUpdate(): \DateTime
+    public function getLastUpdate(): ?\DateTime
     {
         return $this->lastUpdate;
     }
@@ -197,7 +197,7 @@ class Product
     /**
      * @param \DateTime $lastUpdate
      */
-    public function setLastUpdate(\DateTime $lastUpdate): void
+    public function setLastUpdate(\DateTime $lastUpdate=null): void
     {
         $this->lastUpdate = $lastUpdate;
     }
@@ -221,7 +221,7 @@ class Product
     /**
      * @return string
      */
-    public function getBrandCode(): string
+    public function getBrandCode(): ?string
     {
         return $this->brandCode;
     }
@@ -229,7 +229,7 @@ class Product
     /**
      * @param string $brandCode
      */
-    public function setBrandCode(string $brandCode): void
+    public function setBrandCode(string $brandCode=null): void
     {
         $this->brandCode = $brandCode;
     }
@@ -237,7 +237,7 @@ class Product
     /**
      * @return string
      */
-    public function getLineCode(): string
+    public function getLineCode(): ?string
     {
         return $this->lineCode;
     }
@@ -245,7 +245,7 @@ class Product
     /**
      * @param string $lineCode
      */
-    public function setLineCode(string $lineCode): void
+    public function setLineCode(string $lineCode=null): void
     {
         $this->lineCode = $lineCode;
     }
@@ -253,7 +253,7 @@ class Product
     /**
      * @return string
      */
-    public function getParentSku(): string
+    public function getParentSku(): ?string
     {
         return $this->parentSku;
     }
@@ -261,7 +261,7 @@ class Product
     /**
      * @param string $parentSku
      */
-    public function setParentSku(string $parentSku): void
+    public function setParentSku(string $parentSku=null): void
     {
         $this->parentSku = $parentSku;
     }
@@ -269,7 +269,7 @@ class Product
     /**
      * @return string
      */
-    public function getInfoProvider(): string
+    public function getInfoProvider(): ?string
     {
         return $this->infoProvider;
     }
@@ -277,7 +277,7 @@ class Product
     /**
      * @param string $infoProvider
      */
-    public function setInfoProvider(string $infoProvider): void
+    public function setInfoProvider(string $infoProvider=null): void
     {
         $this->infoProvider = $infoProvider;
     }
@@ -285,7 +285,7 @@ class Product
     /**
      * @return string
      */
-    public function getOriginCountryCode(): string
+    public function getOriginCountryCode(): ?string
     {
         return $this->originCountryCode;
     }
@@ -293,7 +293,7 @@ class Product
     /**
      * @param string $originCountryCode
      */
-    public function setOriginCountryCode(string $originCountryCode): void
+    public function setOriginCountryCode(string $originCountryCode=null): void
     {
         $this->originCountryCode = $originCountryCode;
     }
@@ -301,7 +301,7 @@ class Product
     /**
      * @return Classificator
      */
-    public function getVendor(): Classificator
+    public function getVendor(): ?Classificator
     {
         return $this->vendor;
     }
@@ -309,7 +309,7 @@ class Product
     /**
      * @param Classificator $vendor
      */
-    public function setVendor(Classificator $vendor): void
+    public function setVendor(Classificator $vendor=null): void
     {
         $this->vendor = $vendor;
     }
@@ -317,7 +317,7 @@ class Product
     /**
      * @return Classificator
      */
-    public function getManufacturer(): Classificator
+    public function getManufacturer(): ?Classificator
     {
         return $this->manufacturer;
     }
@@ -325,7 +325,7 @@ class Product
     /**
      * @param Classificator $manufacturer
      */
-    public function setManufacturer(Classificator $manufacturer): void
+    public function setManufacturer(Classificator $manufacturer=null): void
     {
         $this->manufacturer = $manufacturer;
     }
@@ -333,7 +333,7 @@ class Product
     /**
      * @return Classificator
      */
-    public function getType(): Classificator
+    public function getType(): ?Classificator
     {
         return $this->type;
     }
@@ -341,7 +341,7 @@ class Product
     /**
      * @param Classificator $type
      */
-    public function setType(Classificator $type): void
+    public function setType(Classificator $type=null): void
     {
         $this->type = $type;
     }
@@ -349,7 +349,7 @@ class Product
     /**
      * @return Classificator
      */
-    public function getPurpose(): Classificator
+    public function getPurpose(): ?Classificator
     {
         return $this->purpose;
     }
@@ -357,7 +357,7 @@ class Product
     /**
      * @param Classificator $purpose
      */
-    public function setPurpose(Classificator $purpose): void
+    public function setPurpose(Classificator $purpose=null): void
     {
         $this->purpose = $purpose;
     }
@@ -365,7 +365,7 @@ class Product
     /**
      * @return Classificator
      */
-    public function getMeasure(): Classificator
+    public function getMeasure(): ?Classificator
     {
         return $this->measure;
     }
@@ -373,7 +373,7 @@ class Product
     /**
      * @param Classificator $measure
      */
-    public function setMeasure(Classificator $measure): void
+    public function setMeasure(Classificator $measure=null): void
     {
         $this->measure = $measure;
     }
@@ -381,7 +381,7 @@ class Product
     /**
      * @return string
      */
-    public function getColor(): string
+    public function getColor(): ?string
     {
         return $this->color;
     }
@@ -389,7 +389,7 @@ class Product
     /**
      * @param string $color
      */
-    public function setColor(string $color): void
+    public function setColor(string $color=null): void
     {
         $this->color = $color;
     }
@@ -429,7 +429,7 @@ class Product
     /**
      * @return string
      */
-    public function getSize(): string
+    public function getSize(): ?string
     {
         return $this->size;
     }
@@ -437,7 +437,7 @@ class Product
     /**
      * @param string $size
      */
-    public function setSize(string $size): void
+    public function setSize(string $size=null): void
     {
         $this->size = $size;
     }
@@ -445,7 +445,7 @@ class Product
     /**
      * @return string
      */
-    public function getPackSize(): string
+    public function getPackSize(): ?string
     {
         return $this->packSize;
     }
@@ -453,7 +453,7 @@ class Product
     /**
      * @param string $packSize
      */
-    public function setPackSize(string $packSize): void
+    public function setPackSize(string $packSize=null): void
     {
         $this->packSize = $packSize;
     }
@@ -461,7 +461,7 @@ class Product
     /**
      * @return string
      */
-    public function getPackAmount(): string
+    public function getPackAmount(): ?string
     {
         return $this->packAmount;
     }
@@ -469,7 +469,7 @@ class Product
     /**
      * @param string $packAmount
      */
-    public function setPackAmount(string $packAmount): void
+    public function setPackAmount(string $packAmount=null): void
     {
         $this->packAmount = $packAmount;
     }
@@ -541,7 +541,7 @@ class Product
     /**
      * @return string
      */
-    public function getDeliveryTime(): string
+    public function getDeliveryTime(): ?string
     {
         return $this->deliveryTime;
     }
@@ -549,7 +549,7 @@ class Product
     /**
      * @param string $deliveryTime
      */
-    public function setDeliveryTime(string $deliveryTime): void
+    public function setDeliveryTime(string $deliveryTime=null): void
     {
         $this->deliveryTime = $deliveryTime;
     }

@@ -9,12 +9,11 @@
 namespace Gt\Catalog\Controller;
 
 
+use Gt\Catalog\Entity\ProductLanguage;
+use Gt\Catalog\Form\ProductFormType;
 use Gt\Catalog\Services\ProductsService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -47,19 +46,26 @@ class ProductsController extends AbstractController
     public function editAction(Request $request, $sku, ProductsService $productsService ) {
         $product = $productsService->getProduct( $sku );
 
+
         if ( $product == null ) {
             return $this->render('@Catalog/error/error.html.twig', [
                 'error' => 'Product not loaded by sku '.$sku,
             ]);
         }
 
-        $form = $this->createFormBuilder($product) // TODO man nepatinka tiesiai entity redaguoti, paskui gal padarysim su wraperiu
-            ->add( 'sku', TextType::class) // TODO readonly
-            ->add('version', IntegerType::class)
-            ->add('save', SubmitType::class, ['label' => 'Save'])
-            ->setMethod('post')
-            ->setAction($this->generateUrl( 'gt.catalog.product_update', ['sku'=>$sku]))
-            ->getForm();
+        // TODO load product language
+        $productLanguage = new ProductLanguage();
+
+        // TODO
+
+//        $language = new Language();
+
+        $productFormType = new ProductFormType();
+        $productFormType->setProduct($product);
+        $productFormType->setProductLanguage( $productLanguage);
+        $productFormType->setSelectedLanguage('lt');
+
+        $form = $this->createForm(ProductFormType::class, $productFormType );
 
         return $this->render('@Catalog/products/edit.html.twig', [
 //            'product' => $product,
