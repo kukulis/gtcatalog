@@ -32,7 +32,7 @@ class ClassificatorGroup
     /**
      * @return string
      */
-    public function getCode(): string
+    public function getCode(): ?string
     {
         return $this->code;
     }
@@ -48,7 +48,7 @@ class ClassificatorGroup
     /**
      * @return string
      */
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }

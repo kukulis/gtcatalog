@@ -8,3 +8,6 @@ catalog_routes:
 
 languages_routes:
     resource: '@CatalogBundle/Resources/config/languages_routes.yml'
+
+classificator_groups_routes:
+    resource: '@CatalogBundle/Resources/config/classificator_groups_routes.yml'
