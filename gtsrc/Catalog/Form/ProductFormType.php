@@ -14,9 +14,11 @@ use Gt\Catalog\Entity\Language;
 use Gt\Catalog\Entity\Product;
 use Gt\Catalog\Entity\ProductLanguage;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -41,71 +43,48 @@ class ProductFormType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        /** @var ProductFormType $data */
+        $data = $options['data'];
+
         $builder
-            ->add('p_sku'                   , TextType::class )
-            ->add('p_last_update'           , DateTimeType::class )
-            ->add('p_version'               , TextType::class )
+            ->add('p_sku'                   , TextType::class, ['disabled'=>true] )
+            ->add('p_last_update'           , DateTimeType::class, ['required'=>false])
+            ->add('p_version'               , TextType::class, ['required'=>false] )
             ->add('p_brand_code'            , TextType::class )
             ->add('p_line_code'             , TextType::class )
-            ->add('p_parent_sku'            , TextType::class )
-            ->add('p_info_provider'         , TextType::class )
-            ->add('p_origin_country_code'   , TextType::class )
-            ->add('p_vendor'           , TextType::class )
-            ->add('p_manufacturer'     , TextType::class )
-            ->add('p_type'             , TextType::class )
-            ->add('p_measure'          , TextType::class )
-            ->add('p_color'                 , TextType::class )
-            ->add('p_for_male'              , TextType::class )
-            ->add('p_for_female'            , TextType::class )
-            ->add('p_size'                  , TextType::class )
-            ->add('p_pack_size'             , TextType::class )
-            ->add('p_pack_amount'           , TextType::class )
-            ->add('p_weight'                , NumberType::class )
-            ->add('p_length'                , NumberType::class )
-            ->add('p_height'                , NumberType::class )
-            ->add('p_width'                 , NumberType::class )
-            ->add('p_delivery_time'         , TextType::class )
+            ->add('p_parent_sku'            , TextType::class, ['required'=>false] )
+            ->add('p_info_provider'         , TextType::class, ['disabled'=>true] )
+            ->add('p_origin_country_code'   , TextType::class, ['required'=>false] )
+            ->add('p_vendor'           , TextType::class, ['required'=>false] )
+            ->add('p_manufacturer'     , TextType::class, ['required'=>false] )
+            ->add('p_type'             , TextType::class, ['required'=>false] )
+            ->add('p_measure'          , TextType::class, ['required'=>false] )
+            ->add('p_color'                 , TextType::class, ['required'=>false] )
+            ->add('p_for_male'              , CheckboxType::class, ['required'=>false] )
+            ->add('p_for_female'            , CheckboxType::class, ['required'=>false] )
+            ->add('p_size'                  , TextType::class, ['required'=>false] )
+            ->add('p_pack_size'             , TextType::class, ['required'=>false] )
+            ->add('p_pack_amount'           , TextType::class, ['required'=>false] )
+            ->add('p_weight'                , NumberType::class, ['required'=>false] )
+            ->add('p_length'                , NumberType::class, ['required'=>false] )
+            ->add('p_height'                , NumberType::class, ['required'=>false] )
+            ->add('p_width'                 , NumberType::class, ['required'=>false] )
+            ->add('p_delivery_time'         , TextType::class, ['required'=>false] )
             ->add('selectedLanguage', ChoiceType::class, [
                 'choices' => ['a'=>'a', 'b'=>'b']
             ] ) // TODO languages from options->data
+                ->add('select_language', SubmitType::class )
+                ->add('add_language', SubmitType::class )
             ->add('pl_name'                 , TextType::class )
-            ->add('pl_description'          , TextType::class )
-            ->add('pl_label'                , TextType::class )
-            ->add('pl_variant_name'         , TextType::class )
-            ->add('pl_info_provider'        , TextType::class )
-            ->add('pl_tags'                 , TextType::class );
+            ->add('pl_description'          , TextType::class, ['required'=>false] )
+            ->add('pl_label'                , TextType::class, ['required'=>false] )
+            ->add('pl_variant_name'         , TextType::class, ['required'=>false] )
+            ->add('pl_info_provider'        , TextType::class, ['required'=>false] )
+            ->add('pl_tags'                 , TextType::class, ['required'=>false] );
 
-
-
+            $builder->add('save', SubmitType::class, ['label' => 'Išsaugoti']);
 
     }
-
-    // call netinka, nes dirba reflectiono pagrindu formos vaizdavimas
-//    public function __call($name, $arguments) {
-//        if (  strpos( $name, 'getP_') === 0 ) {
-//            $l = strlen('getP_');
-//            $namestripped = 'get'.substr( $name, $l);
-//            return $this->product->{$namestripped}();
-//        }
-//        elseif (  strpos( $name, 'getPL_') === 0 ) {
-//            $l = strlen('getPL_');
-//            $namestripped = 'get'.substr( $name, $l);
-//            return $this->productLanguage->{$namestripped}();
-//        }
-//        elseif (  strpos( $name, 'setP_') === 0 ) {
-//            $l = strlen('setP_');
-//            $namestripped = 'set'.substr( $name, $l);
-//            return $this->product->{$namestripped}($arguments[0]);
-//        }
-//        else if (  strpos( $name, 'setPL_') === 0 ) {
-//            $l = strlen('setPL_');
-//            $namestripped = 'set'.substr( $name, $l);
-//            return $this->productLanguage->{$namestripped}($arguments[0]);
-//        }
-//        else {
-//            throw new \RuntimeException('function '.$name.' not found ');
-//        }
-//    }
 
     /**
      * @return Product
@@ -230,7 +209,10 @@ class ProductFormType extends AbstractType
      */
     public function getPBrandCode(): ?string
     {
-        return $this->product->getBrandCode();
+        if ( $this->product->getBrand() == null ) {
+            return '';
+        }
+        return $this->product->getBrand()->getCode();
     }
 
     /**
@@ -238,7 +220,15 @@ class ProductFormType extends AbstractType
      */
     public function setPBrandCode(string $brandCode=null): void
     {
-        $this->product->setBrandCode($brandCode);
+        if ( empty($brandCode) ) {
+            $this->product->setBrand(null);
+            return;
+        }
+        if ( $this->product->getBrand() == null ) {
+            $this->product->setBrand(new Classificator());
+        }
+
+        $this->product->getBrand()->setCode($brandCode);
     }
 
     /**
@@ -246,7 +236,10 @@ class ProductFormType extends AbstractType
      */
     public function getPLineCode(): ?string
     {
-        return $this->product->getLineCode();
+        if ( $this->product->getLine()== null ) {
+            return '';
+        }
+        return $this->product->getLine()->getCode();
     }
 
     /**
@@ -254,7 +247,14 @@ class ProductFormType extends AbstractType
      */
     public function setPLineCode(string $lineCode=null): void
     {
-        $this->product->setLineCode($lineCode);
+        if ( empty($lineCode)) {
+            $this->product->setLine(null);
+            return ;
+        }
+        if ( $this->product->getLine()== null ) {
+            $this->product->setLine(new Classificator());
+        }
+        $this->product->getLine()->setCode($lineCode);
     }
 
     /**

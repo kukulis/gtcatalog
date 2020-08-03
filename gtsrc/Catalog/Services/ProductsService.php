@@ -12,6 +12,7 @@ namespace Gt\Catalog\Services;
 use Doctrine\ORM\ORMException;
 use Gt\Catalog\Dao\CatalogDao;
 use Gt\Catalog\Entity\Product;
+use Gt\Catalog\Exception\CatalogDetailedException;
 use Gt\Catalog\Exception\CatalogErrorException;
 use Psr\Log\LoggerInterface;
 
@@ -59,5 +60,17 @@ class ProductsService
         }
         return $product;
     }
+
+    /**
+     * @param Product $product
+     * @throws CatalogErrorException
+     * @throws CatalogDetailedException
+     */
+    public function storeProduct(Product $product) {
+        $this->catalogDao->storeProduct($product);
+        $this->catalogDao->assignAssociations($product);
+        $this->catalogDao->flush();
+    }
+
 
 }

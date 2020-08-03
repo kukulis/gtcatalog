@@ -18,13 +18,6 @@ use Doctrine\ORM\Mapping as ORM;
 class Classificator
 {
     /**
-     * @var ClassificatorGroup
-     * @ORM\ManyToOne(targetEntity="ClassificatorGroup" )
-     * @ORM\JoinColumn(name="group_code", referencedColumnName="code")
-     */
-    private $groupCode;
-
-    /**
      * @var string
      * @ORM\Column(type="string", length=64, name="code")
      * @ORM\Id
@@ -32,18 +25,50 @@ class Classificator
     private $code;
 
     /**
-     * @return string
+     * @var ClassificatorGroup
+     * @ORM\ManyToOne(targetEntity="ClassificatorGroup" )
+     * @ORM\JoinColumn(name="group_code", referencedColumnName="code")
      */
-    public function getGroupCode(): string
+    private $group;
+
+
+    /**
+     * @return ClassificatorGroup
+     */
+    public function getGroup(): ClassificatorGroup
     {
-        return $this->groupCode;
+        return $this->group;
+    }
+
+    /**
+     * @param ClassificatorGroup $group
+     */
+    public function setGroup(ClassificatorGroup $group): void
+    {
+        $this->group = $group;
     }
 
     /**
      * @return string
      */
-    public function getCode(): string
+    public function getCode(): ?string
     {
         return $this->code;
+    }
+
+    /**
+     * @param string $code
+     */
+    public function setCode(string $code=null): void
+    {
+        $this->code = $code;
+    }
+
+    /**
+     * @param Classificator $classificator
+     * @return null|string
+     */
+    public static function lambdaGetCode ( Classificator $classificator ) {
+        return $classificator->getCode();
     }
 }

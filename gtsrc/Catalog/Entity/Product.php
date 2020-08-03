@@ -9,6 +9,7 @@
 namespace Gt\Catalog\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Gt\Catalog\Exception\CatalogErrorException;
 
 /**
  * @ORM\Entity
@@ -16,6 +17,15 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Product
 {
+    const CLASSIFICATORS_GROUPS = [
+        'brand',
+        'line',
+        'manufacturer',
+        'measure',
+        'purpose',
+        'type',
+        'vendor',
+    ];
     /**
      * @var string
      * @ORM\Id
@@ -41,14 +51,14 @@ class Product
      * @ORM\ManyToOne(targetEntity="Classificator" )
      * @ORM\JoinColumn(name="brand_code", referencedColumnName="code")
      */
-    private $brandCode='';
+    private $brand='';
 
     /**
      * @var Classificator
      * @ORM\ManyToOne(targetEntity="Classificator" )
      * @ORM\JoinColumn(name="line_code", referencedColumnName="code")
      */
-    private $lineCode;
+    private $line;
 
     /**
      * @var string
@@ -218,37 +228,6 @@ class Product
         $this->version = $version;
     }
 
-    /**
-     * @return string
-     */
-    public function getBrandCode(): ?string
-    {
-        return $this->brandCode;
-    }
-
-    /**
-     * @param string $brandCode
-     */
-    public function setBrandCode(string $brandCode=null): void
-    {
-        $this->brandCode = $brandCode;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLineCode(): ?string
-    {
-        return $this->lineCode;
-    }
-
-    /**
-     * @param string $lineCode
-     */
-    public function setLineCode(string $lineCode=null): void
-    {
-        $this->lineCode = $lineCode;
-    }
 
     /**
      * @return string
@@ -552,5 +531,52 @@ class Product
     public function setDeliveryTime(string $deliveryTime=null): void
     {
         $this->deliveryTime = $deliveryTime;
+    }
+
+    /**
+     * @return Classificator
+     */
+    public function getBrand(): ?Classificator
+    {
+        return $this->brand;
+    }
+
+    /**
+     * @param Classificator $brand
+     */
+    public function setBrand(Classificator $brand=null): void
+    {
+        $this->brand = $brand;
+    }
+
+    /**
+     * @return Classificator
+     */
+    public function getLine(): ?Classificator
+    {
+        return $this->line;
+    }
+
+    /**
+     * @param Classificator $line
+     */
+    public function setLine(Classificator $line): void
+    {
+        $this->line = $line;
+    }
+
+    /**
+     * @param Classificator $classificator
+     * @throws CatalogErrorException
+     */
+    public function setClassificator ( Classificator $classificator ) {
+        $groupCode = $classificator->getGroup()->getCode();
+        if ( array_search( $groupCode, self::CLASSIFICATORS_GROUPS) !== false ) {
+            $setter = 'set'.$groupCode;
+            $this->{$setter}($classificator);
+        }
+        else {
+            throw new CatalogErrorException('Neteisingas klasifikatoriaus grupės kodas '.$groupCode);
+        }
     }
 }

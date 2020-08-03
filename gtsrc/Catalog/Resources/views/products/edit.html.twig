@@ -1,1 +1,8 @@
+
+{%if message is not empty %}
+    <h3 style="color:red">{{ message }}</h3>
+{% endif %}
+{% for m in messages %}
+    <p style="color:red">{{ m }}</p>
+{% endfor %}
 {{ form(form) }}

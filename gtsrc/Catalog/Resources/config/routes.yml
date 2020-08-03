@@ -7,7 +7,7 @@ gt.catalog.product_list:
 gt.catalog.product_edit:
     path: "/product/edit/{sku}"
     controller: Gt\Catalog\Controller\ProductsController::editAction
-    methods: GET
+    methods: [GET, POST]
 
 gt.catalog.product_update:
     path: "/product/update/{sku}"
