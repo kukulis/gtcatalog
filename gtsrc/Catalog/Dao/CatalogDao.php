@@ -207,7 +207,7 @@ class CatalogDao
         /** @var Classificator[] $found */
         $found = [];
         foreach ($subCodes as $subCode ) {
-            $part = $this->loadLikeClassificators($subCode, $groupCode, $limit );
+            $part = $this->loadLikeClassificators($subCode, null, $groupCode, $limit );
             $found = array_merge($found, $part);
             if ( count($found ) >= $limit ) {
                 break;
@@ -223,20 +223,38 @@ class CatalogDao
      * @param int $limit
      * @return Classificator[]
      */
-    public function loadLikeClassificators ( $likeCode, $groupCode, $limit ) {
-        $class = Classificator::class;
-        $dql = /** @lang DQL */ "SELECT c from $class c join c.group g where c.code like :likeCode and g.code = :groupCode";
+    public function loadLikeClassificators ( $likeCode, $likeName, $groupCode, $limit ) {
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
 
-        $query=$em->createQuery($dql);
-        $query->setParameter('likeCode', $likeCode.'%' );
-        $query->setParameter('groupCode', $groupCode );
-        $query->setMaxResults($limit);
+        $builder =  $em->createQueryBuilder();
+        $builder->select('c')
+            ->from(Classificator::class, 'c')
+            ->join( 'c.group', 'g');
+
+
+        if ( !empty($groupCode)) {
+            $builder->andWhere('g.code=:groupCode');
+            $builder->setParameter('groupCode', $groupCode );
+        }
+
+        if ( !empty($likeCode)) {
+            $builder->andWhere('c.code = :likeCode');
+            $builder->setParameter('likeCode', $likeCode );
+        }
+
+        if ( !empty($likeName) ) {
+            $builder->andWhere('c.name = :likeName');
+            $builder->setParameter('likeName', $likeName );
+        }
+
+        $builder->setMaxResults($limit);
+
         /** @var Classificator[] $classificators */
-        $classificators = $query->getResult();
+        $classificators = $builder->getQuery()->getResult();
 
         return $classificators;
     }
+
 
 }

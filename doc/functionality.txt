@@ -4,3 +4,6 @@
     - Prekės informacijos,
     - prekės kalbos informacjos,
     - prekės kategorijos.
+
+
+ TODO sudėti į klasifikatorių filtrą kalbos pasirinkimą

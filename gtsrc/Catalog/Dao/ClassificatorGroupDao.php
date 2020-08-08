@@ -35,14 +35,20 @@ class ClassificatorGroupDao
         $em->flush();
     }
 
+    /**
+     * @param int $offset
+     * @param int $limit
+     * @return ClassificatorGroup[]
+     */
     public function getClassificatorGroups($offset, $limit)
     {
         $classificatorGroupClass = ClassificatorGroup::class;
-        $dql = "SELECT cg FROM $classificatorGroupClass cg";
+        $dql =  /** @lang DQL */ "SELECT cg FROM $classificatorGroupClass cg";
 
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
 
+        /** @var ClassificatorGroup[] $classifictorGroups */
         $classifictorGroups = $em->createQuery($dql)->setMaxResults($limit)->setFirstResult($offset)->execute();
         return $classifictorGroups;
     }

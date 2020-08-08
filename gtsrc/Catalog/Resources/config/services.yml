@@ -74,6 +74,10 @@ services:
 
     gt.catalog.classificators_service:
         class: 'Gt\Catalog\Services\ClassificatorsService'
+        arguments:
+            - '@logger'
+            - '@gt.catalog.classificator_group_dao'
+            - '@gt.catalog.catalog_dao'
 
     Gt\Catalog\Controller\ClassificatorsController:
         tags:
