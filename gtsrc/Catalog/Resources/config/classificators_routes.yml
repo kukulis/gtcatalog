@@ -2,3 +2,15 @@ gt.catalog.classificators:
   path: "/classificators"
   controller: Gt\Catalog\Controller\ClassificatorsController::listAction
   methods: GET
+
+
+gt.catalog.classificators.import:
+  path: "/classificators/import"
+  controller: Gt\Catalog\Controller\ClassificatorsController::importAction
+  methods: POST
+
+
+gt.catalog.classificators.import_form:
+  path: "/classificators/import_form"
+  controller: Gt\Catalog\Controller\ClassificatorsController::importFormAction
+  methods: GET

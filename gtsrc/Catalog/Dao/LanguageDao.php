@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Gt\Catalog\Entity\Language;
+use Gt\Catalog\Exception\CatalogErrorException;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -58,5 +59,24 @@ class LanguageDao
         $em = $this->doctrine->getManager();
         $em->persist($data);
         $em->flush();
+    }
+
+    /**
+     * @param $languageCode
+     * @return Language
+     * @throws CatalogErrorException
+     */
+    public function getLanguage ( $languageCode ) {
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        try {
+            /** @var Language $language */
+            $language = $em->find(Language::class, $languageCode);
+
+            return $language;
+        } catch ( ORMException $e ) {
+            throw new CatalogErrorException( $e->getMessage());
+        }
     }
 }

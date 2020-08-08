@@ -1,0 +1,13 @@
+<div>
+    <p>Stulpeliai:</p>
+    <ul>
+        <li>Code</li>
+        <li>Name</li>
+        <li>Group</li>
+    </ul>
+</div>
+
+<form method="post" enctype="multipart/form-data" action="{{ path('gt.catalog.classificators.import') }}">
+    <input type="file" name="csvfile" />
+    <input type="submit" name="import" value="Importuoti" />
+</form>

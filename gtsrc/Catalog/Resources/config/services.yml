@@ -78,6 +78,7 @@ services:
             - '@logger'
             - '@gt.catalog.classificator_group_dao'
             - '@gt.catalog.catalog_dao'
+            - '@gt.catalog.language_dao'
 
     Gt\Catalog\Controller\ClassificatorsController:
         tags:

@@ -13,6 +13,7 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMException;
 use Gt\Catalog\Entity\Classificator;
+use Gt\Catalog\Entity\ClassificatorLanguage;
 use Gt\Catalog\Entity\Product;
 use Gt\Catalog\Exception\CatalogDetailedException;
 use Gt\Catalog\Exception\CatalogErrorException;
@@ -257,4 +258,12 @@ class CatalogDao
     }
 
 
+    /**
+     * @param ClassificatorLanguage[] $cls
+     * @throws CatalogErrorException
+     */
+    public function importClassificatorsLangs ( $cls ) {
+        // TODO
+        throw new CatalogErrorException('Unimplemented importClassificatorsLangs');
+    }
 }

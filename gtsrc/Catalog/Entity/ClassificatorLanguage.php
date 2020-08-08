@@ -87,4 +87,17 @@ class ClassificatorLanguage
         $this->value = $value;
     }
 
+    /**
+     * @param string $code
+     * @param string $groupCode
+     * @return ClassificatorLanguage
+     */
+    public static function createLangClassificator ( $code, $name, $groupCode, Language $language ) {
+        $classificator = Classificator::createClassificator($code, $groupCode);
+        $classificatorLang = new ClassificatorLanguage();
+        $classificatorLang->setLanguage($language);
+        $classificatorLang->setValue($name);
+        $classificatorLang->setClassificator($classificator);
+        return $classificatorLang;
+    }
 }

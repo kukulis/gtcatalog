@@ -9,10 +9,13 @@
 namespace Gt\Catalog\Controller;
 
 
+use Gt\Catalog\Exception\CatalogErrorException;
+use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Form\ClassificatorsListFilterType;
 use Gt\Catalog\Services\ClassificatorsService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
 class ClassificatorsController extends AbstractController
@@ -34,5 +37,47 @@ class ClassificatorsController extends AbstractController
             'classificators' => $classificators,
         ]);
 
+    }
+
+    public function importFormAction(Request $request) {
+        return $this->render('@Catalog/classificators/import_form.html.twig', [
+        ]);
+    }
+
+    /**
+     * @param Request $request
+     * @param ClassificatorsService $classificatorsService
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function importAction(Request $request, ClassificatorsService $classificatorsService) {
+        /** @var UploadedFile $file */
+        $file = $request->files->get('csvfile' );
+
+        $languageCode =  $request->get('languageCode');
+        try {
+            if ( empty($languageCode)) {
+                throw new CatalogErrorException('languageCode not given' );
+            }
+
+            if ( empty($file) ) {
+                return $this->render('@Catalog/error/error.html.twig', [
+                    'error'=> 'Nepaduotas csv failas',
+                ]);
+            }
+
+            $classificatorsService->importClassificators($file->getRealPath(), $languageCode);
+        } catch (CatalogErrorException $e ) {
+            return $this->render('@Catalog/error/error.html.twig', [
+                'error'=> $e->getMessage(),
+            ]);
+        }
+        catch ( CatalogValidateException $e ) {
+            return $this->render('@Catalog/error/error.html.twig', [
+                'error'=> 'Validavimo klaida:' . $e->getMessage(),
+            ]);
+        }
+
+        return $this->render('@Catalog/classificators/import_results.html.twig', [
+        ]);
     }
 }
