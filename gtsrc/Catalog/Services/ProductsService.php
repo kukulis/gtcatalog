@@ -72,5 +72,11 @@ class ProductsService
         $this->catalogDao->flush();
     }
 
+    public function getSuggestions($objects) {
+        // TODO load simmilar classificators
+        // TODO make messages array
+        return ['TODO'];
+    }
+
 
 }

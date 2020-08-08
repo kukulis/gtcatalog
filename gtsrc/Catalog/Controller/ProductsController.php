@@ -12,6 +12,7 @@ namespace Gt\Catalog\Controller;
 use Gt\Catalog\Entity\ProductLanguage;
 use Gt\Catalog\Exception\CatalogDetailedException;
 use Gt\Catalog\Exception\CatalogErrorException;
+use Gt\Catalog\Exception\WrongAssociationsException;
 use Gt\Catalog\Form\ProductFormType;
 use Gt\Catalog\Services\ProductsService;
 use Psr\Log\LoggerInterface;
@@ -95,9 +96,12 @@ class ProductsController extends AbstractController
 
 //            if ( $saveSubmit->)
             }
-        } catch ( CatalogDetailedException $e ) {
+        } catch ( WrongAssociationsException $e ) {
             $message = $e->getMessage();
             $messages = $e->getDetails();
+            $objects = $e->getRelatedObjects();
+
+            $suggestions = $productsService->getSuggestions ( $objects );
         }
 
         return $this->render('@Catalog/products/edit.html.twig', [
@@ -105,6 +109,7 @@ class ProductsController extends AbstractController
             'form' => $form->createView(),
             'messages' => $messages,
             'message' => $message,
+            'suggestions' => $suggestions,
         ]);
     }
 

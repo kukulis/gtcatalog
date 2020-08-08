@@ -35,7 +35,7 @@ class Classificator
     /**
      * @return ClassificatorGroup
      */
-    public function getGroup(): ClassificatorGroup
+    public function getGroup(): ?ClassificatorGroup
     {
         return $this->group;
     }
@@ -71,4 +71,28 @@ class Classificator
     public static function lambdaGetCode ( Classificator $classificator ) {
         return $classificator->getCode();
     }
+
+    public function getGroupCode() {
+        if ( $this->group == null ) {
+            return null;
+        }
+        else {
+            return $this->group->getCode();
+        }
+    }
+
+    /**
+     * @param string $code
+     * @param string $groupCode
+     * @return Classificator
+     */
+    public static function createClassificator ( $code, $groupCode ) {
+        $classificator = new Classificator();
+        $classificator->setCode($code);
+        $group = new ClassificatorGroup();
+        $group->setCode($groupCode);
+        $classificator->setGroup($group);
+        return $classificator;
+    }
+
 }

@@ -225,7 +225,7 @@ class ProductFormType extends AbstractType
             return;
         }
         if ( $this->product->getBrand() == null ) {
-            $this->product->setBrand(new Classificator());
+            $this->product->setBrand(Classificator::createClassificator('', 'brand'));
         }
 
         $this->product->getBrand()->setCode($brandCode);
@@ -252,7 +252,7 @@ class ProductFormType extends AbstractType
             return ;
         }
         if ( $this->product->getLine()== null ) {
-            $this->product->setLine(new Classificator());
+            $this->product->setLine(Classificator::createClassificator('', 'line'));
         }
         $this->product->getLine()->setCode($lineCode);
     }

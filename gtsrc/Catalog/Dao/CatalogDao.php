@@ -16,6 +16,7 @@ use Gt\Catalog\Entity\Classificator;
 use Gt\Catalog\Entity\Product;
 use Gt\Catalog\Exception\CatalogDetailedException;
 use Gt\Catalog\Exception\CatalogErrorException;
+use Gt\Catalog\Exception\WrongAssociationsException;
 use Psr\Log\LoggerInterface;
 
 class CatalogDao
@@ -126,7 +127,7 @@ class CatalogDao
 
         $codes = array_map ( [Classificator::class, 'lambdaGetCode'], $classificatorsToFind);
 
-        $loadedClassificators = $this->loadList( $codes);
+        $loadedClassificators = $this->loadClassificatorsList( $codes);
 
         /** @var Classificator[] $loadedMap */
         $loadedMap = [];
@@ -135,6 +136,7 @@ class CatalogDao
         }
 
         $messages = [];
+        $wrongObjects = [];
         foreach ($classificatorsToFind as $c ) {
             if ( $c==null || $c->getCode() == null ) {
                 continue;
@@ -142,12 +144,15 @@ class CatalogDao
 
             if ( !array_key_exists($c->getCode(), $loadedMap)) {
                 $messages[] = 'Unfound '.$c->getCode();
+
+                $wrongObjects[] = $c;
                 continue;
             }
 
             $loadedClassificator = $loadedMap[$c->getCode()];
-            if ( $loadedClassificator->getGroup()->getCode() != $c->getGroup()->getCode() ) {
-                $messages[] = 'Wrong group '.$loadedClassificator->getGroup()->getCode().' original: '.$c->getGroup()->getCode();
+            if ( $loadedClassificator->getGroupCode() != $c->getGroupCode() ) {
+                $messages[] = 'Wrong group ['.$loadedClassificator->getGroupCode().'] original: ['.$c->getGroupCode().']';
+                $wrongObjects[] = $c;
                 continue;
             }
 
@@ -158,8 +163,9 @@ class CatalogDao
         }
 
         if ( count ($messages) > 0 ) {
-            $detailedException = new CatalogDetailedException('Unattached classificators' );
+            $detailedException = new WrongAssociationsException('Unattached classificators' );
             $detailedException->setDetails($messages );
+            $detailedException->setRelatedObjects($wrongObjects);
 
             throw $detailedException;
         }
@@ -169,21 +175,68 @@ class CatalogDao
      * @param $codes
      * @return Classificator[]
      */
-    public function loadList($codes) {
+    public function loadClassificatorsList($codes) {
         $class = Classificator::class;
-        $dql =  /** @lang DQL */ "SELECT c FROM $class c where c.code in :codes";
+        $dql =  /** @lang DQL */ "SELECT c,g FROM $class c join c.group g where c.code in (:codes)";
 
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
 
         /** @var Classificator[] $classificators */
-        $classificators = $em->createQuery($dql)->setParameter('codes', $codes );
+        $classificators = $em->createQuery($dql)->setParameter('codes', $codes )->getResult();
 
         return $classificators;
     }
 
     public function lambdaNonEmpty($obj ) {
         return !empty($obj);
+    }
+
+    /**
+     * @param string $code
+     * @param string $groupCode
+     * @param int $limit
+     * @return Classificator[]
+     */
+    public function loadSimmilarClassificators ($code, $groupCode, $limit) {
+        $subCodes = [];
+        $subCodes[] = substr($code, 0, 3);
+        $subCodes[] = substr($code, 0, 2);
+        $subCodes[] = substr($code, 0, 1);
+
+        /** @var Classificator[] $found */
+        $found = [];
+        foreach ($subCodes as $subCode ) {
+            $part = $this->loadLikeClassificators($subCode, $groupCode, $limit );
+            $found = array_merge($found, $part);
+            if ( count($found ) >= $limit ) {
+                break;
+            }
+        }
+        return $found;
+    }
+
+
+    /**
+     * @param string $likeCode
+     * @param string $groupCode
+     * @param int $limit
+     * @return Classificator[]
+     */
+    public function loadLikeClassificators ( $likeCode, $groupCode, $limit ) {
+        $class = Classificator::class;
+        $dql = /** @lang DQL */ "SELECT c from $class c join c.group g where c.code like :likeCode and g.code = :groupCode";
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        $query=$em->createQuery($dql);
+        $query->setParameter('likeCode', $likeCode.'%' );
+        $query->setParameter('groupCode', $groupCode );
+        $query->setMaxResults($limit);
+        /** @var Classificator[] $classificators */
+        $classificators = $query->getResult();
+
+        return $classificators;
     }
 
 }
