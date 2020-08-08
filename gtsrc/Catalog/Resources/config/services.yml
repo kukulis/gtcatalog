@@ -71,3 +71,14 @@ services:
             $classificatorGroupsService: '@gt.catalog.classificator_groups_service'
 
 # ------------------  Classificator groups end -------------------------
+
+    gt.catalog.classificators_service:
+        class: 'Gt\Catalog\Services\ClassificatorsService'
+
+    Gt\Catalog\Controller\ClassificatorsController:
+        tags:
+            - "controller.service_arguments"
+        bind:
+            $logger: '@logger'
+            $classificatorsService: '@gt.catalog.classificators_service'
+

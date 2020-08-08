@@ -1,0 +1,4 @@
+gt.catalog.classificators:
+  path: "/classificators"
+  controller: Gt\Catalog\Controller\ClassificatorsController::listAction
+  methods: GET

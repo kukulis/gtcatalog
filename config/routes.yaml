@@ -11,3 +11,6 @@ languages_routes:
 
 classificator_groups_routes:
     resource: '@CatalogBundle/Resources/config/classificator_groups_routes.yml'
+
+classificators_routes:
+    resource: '@CatalogBundle/Resources/config/classificators_routes.yml'
