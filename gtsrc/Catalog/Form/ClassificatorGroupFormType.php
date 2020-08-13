@@ -8,6 +8,7 @@ use Gt\Catalog\Entity\ClassificatorGroup;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use function Sodium\add;
 
 class ClassificatorGroupFormType extends AbstractType
 {
@@ -15,7 +16,8 @@ class ClassificatorGroupFormType extends AbstractType
     {
         $builder
             ->add('code')
-            ->add('name');
+            ->add('name')
+            ->add('group');
     }
 
     public function configureOptions(OptionsResolver $resolver)
