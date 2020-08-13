@@ -4,24 +4,24 @@
 namespace Gt\Catalog\Form;
 
 
-use Gt\Catalog\Entity\ClassificatorGroup;
+use Gt\Catalog\Entity\Classificator;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ClassificatorGroupFormType extends AbstractType
+class ClassificatorFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('code')
-            ->add('name');
+            ->add('group');
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => ClassificatorGroup::class
+            'data_class' => Classificator::class
         ]);
     }
 

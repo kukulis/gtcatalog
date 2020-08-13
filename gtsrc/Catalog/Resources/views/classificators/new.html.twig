@@ -1,0 +1,11 @@
+{% extends 'base.html.twig ' %}
+
+{% block body %}
+    <h1>{% trans %}Add a new classificator{% endtrans %} </h1>
+
+    {{ form_start(classificatorForm) }}
+        {{ form_widget(classificatorForm) }}
+
+        <button type="submit" class="btn btn-primary">{% trans %}Save{% endtrans %}</button>
+    {{ form_end(classificatorForm) }}
+{% endblock %}

@@ -7,7 +7,11 @@
     <tr>
         <td>{{ c.code }}</td>
         <td>{{ c.group.name }}</td>
-        <td><a href="#">TODO</a></td>
+        <td>
+            <a href="{{ path('gt.catalog.classificator_edit', {code: c.code}) }}" class="btn btn-primary">
+                {% trans %}Edit{% endtrans %}
+            </a>
+        </td>
     </tr>
 {% endfor %}
 </table>

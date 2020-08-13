@@ -9,14 +9,19 @@
 namespace Gt\Catalog\Controller;
 
 
+use Gt\Catalog\Entity\Classificator;
 use Gt\Catalog\Exception\CatalogErrorException;
 use Gt\Catalog\Exception\CatalogValidateException;
+use Gt\Catalog\Form\ClassificatorFormType;
 use Gt\Catalog\Form\ClassificatorsListFilterType;
 use Gt\Catalog\Services\ClassificatorsService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 class ClassificatorsController extends AbstractController
 {
@@ -80,4 +85,51 @@ class ClassificatorsController extends AbstractController
         return $this->render('@Catalog/classificators/import_results.html.twig', [
         ]);
     }
+
+    /**
+     * @Route("/classificators/{code}/edit", name="classificators_edit")
+     * @param Classificator $classificator
+     * @param Request $request
+     * @param ClassificatorsService $classificatorsService
+     * @return RedirectResponse|Response
+     */
+    public function editAction(Classificator $classificator, Request $request, ClassificatorsService $classificatorsService)
+    {
+        $form = $this->createForm(ClassificatorFormType::class, $classificator);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $classificatorsService->newClassificator($form);
+            return $this->redirectToRoute('gt.catalog.classificators');
+        }
+
+        return $this->render('@Catalog/classificators/new.html.twig', [
+            'classificatorForm' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @todo pakurti roles, pvz: ROLE_ADMIN_CLASSIFICATOR
+     *
+     * @Route("/classificators/new", name="classificator_new")
+     *
+     * @param Request $request
+     * @param ClassificatorsService $classificatorsService
+     */
+    public function newAction( Request $request, ClassificatorsService $classificatorsService)
+    {
+        $form = $this->createForm(ClassificatorFormType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $classificatorsService->newClassificator($form);
+            return $this->redirectToRoute('gt.catalog.classificators');
+        }
+
+        return $this->render('@Catalog/classificators/new.html.twig',[
+            'classificatorForm' => $form->createView()
+        ]);
+    }
+
+
 }
