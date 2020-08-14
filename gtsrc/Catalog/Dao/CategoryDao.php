@@ -11,10 +11,8 @@ use Psr\Log\LoggerInterface;
 
 class CategoryDao
 {
-    /** @var LoggerInterface */
-    private $logger;
-    /** @var Registry */
-    private $doctrine;
+    private LoggerInterface $logger;
+    private Registry $doctrine;
 
     /**
      * CategoryDao constructor.
@@ -49,7 +47,6 @@ class CategoryDao
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
         return $em->createQuery($dql)->setMaxResults($limit)->setFirstResult($offset)->execute();
-
     }
 
 
