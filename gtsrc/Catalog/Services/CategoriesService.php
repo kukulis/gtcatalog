@@ -7,6 +7,7 @@ namespace Gt\Catalog\Services;
 use Gt\Catalog\Dao\CategoryDao;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormInterface;
 
 class CategoriesService
 {
@@ -28,7 +29,7 @@ class CategoriesService
         $this->categoryDao = $categoryDao;
     }
 
-    public function newCategory(Form $form)
+    public function newCategory(FormInterface $form)
     {
         $data = $form->getData();
         $this->categoryDao->addCategory($data);
