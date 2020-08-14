@@ -6,7 +6,7 @@ namespace Gt\Catalog\Services;
 
 use Gt\Catalog\Dao\ClassificatorGroupDao;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormInterface;
 
 class ClassificatorGroupsService
 {
@@ -29,7 +29,7 @@ class ClassificatorGroupsService
         $this->classificatorGroupDao = $classificatorGroupDao;
     }
 
-    public function newClassificatorGroup(Form $form)
+    public function newClassificatorGroup(FormInterface $form)
     {
         $data = $form->getData();
         $this->classificatorGroupDao->addClassificatorGroup($data);

@@ -14,3 +14,13 @@ gt.catalog.classificators.import_form:
   path: "/classificators/import_form"
   controller: Gt\Catalog\Controller\ClassificatorsController::importFormAction
   methods: GET
+
+gt.catalog.classificator_new:
+  path: "/classificators/new"
+  controller: Gt\Catalog\Controller\ClassificatorsController::newAction
+  methods: GET|POST
+
+gt.catalog.classificator_edit:
+  path: "/classificator/{code}/edit"
+  controller: Gt\Catalog\Controller\ClassificatorsController::editAction
+  methods: GET|POST
