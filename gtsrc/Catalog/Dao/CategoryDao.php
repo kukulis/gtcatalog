@@ -6,19 +6,18 @@ namespace Gt\Catalog\Dao;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
-use Gt\Catalog\Entity\ClassificatorGroup;
+use Gt\Catalog\Entity\Category;
 use Psr\Log\LoggerInterface;
 
-class ClassificatorGroupDao
+class CategoryDao
 {
     /** @var LoggerInterface */
     private $logger;
-
     /** @var Registry */
     private $doctrine;
 
     /**
-     * ClassificatorGroupDao constructor.
+     * CategoryDao constructor.
      * @param LoggerInterface $logger
      * @param Registry $doctrine
      */
@@ -31,7 +30,7 @@ class ClassificatorGroupDao
     /**
      * @param $data
      */
-    public function addClassificatorGroup($data)
+    public function addCategory($data)
     {
         $em = $this->doctrine->getManager();
         $em->persist($data);
@@ -41,19 +40,17 @@ class ClassificatorGroupDao
     /**
      * @param int $offset
      * @param int $limit
-     * @return ClassificatorGroup[]
+     * @return int|mixed|string
      */
-    public function getClassificatorGroups($offset, $limit)
+    public function getCategories($offset, $limit)
     {
-        $classificatorGroupClass = ClassificatorGroup::class;
-        $dql =  /** @lang DQL */ "SELECT cg FROM $classificatorGroupClass cg";
-
+        $categoryClass = Category::class;
+        $dql = "SELECT c FROM $categoryClass c";
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
+        return $em->createQuery($dql)->setMaxResults($limit)->setFirstResult($offset)->execute();
 
-        /** @var ClassificatorGroup[] $classificatorGroups */
-        $classificatorGroups = $em->createQuery($dql)->setMaxResults($limit)->setFirstResult($offset)->execute();
-        return $classificatorGroups;
     }
+
 
 }

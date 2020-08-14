@@ -6,7 +6,6 @@ namespace Gt\Catalog\Controller;
 
 use Gt\Catalog\Entity\ClassificatorGroup;
 use Gt\Catalog\Form\ClassificatorGroupFormType;
-use Gt\Catalog\Form\LanguageFormType;
 use Gt\Catalog\Services\ClassificatorGroupsService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
