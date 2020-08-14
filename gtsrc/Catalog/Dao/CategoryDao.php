@@ -11,8 +11,10 @@ use Psr\Log\LoggerInterface;
 
 class CategoryDao
 {
-    private LoggerInterface $logger;
-    private Registry $doctrine;
+    /** @var LoggerInterface  */
+    private $logger;
+    /** @var Registry  */
+    private $doctrine;
 
     /**
      * CategoryDao constructor.
