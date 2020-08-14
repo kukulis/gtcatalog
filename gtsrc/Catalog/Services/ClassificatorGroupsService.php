@@ -6,7 +6,6 @@ namespace Gt\Catalog\Services;
 
 use Gt\Catalog\Dao\ClassificatorGroupDao;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
 
 class ClassificatorGroupsService
