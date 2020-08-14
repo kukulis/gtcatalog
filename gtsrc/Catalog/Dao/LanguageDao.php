@@ -36,6 +36,11 @@ class LanguageDao
         $this->doctrine = $doctrine;
     }
 
+    /**
+     * @param int $offset
+     * @param int $limit
+     * @return Language[]
+     */
     public function getLanguagesList($offset, $limit)
     {
         $languageClass = Language::class;
@@ -44,6 +49,7 @@ class LanguageDao
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
 
+        /** @var Language[] $languages */
         $languages = $em->createQuery($dql)->setMaxResults($limit)->setFirstResult($offset)->execute();
         return $languages;
     }

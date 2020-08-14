@@ -94,9 +94,9 @@ class ClassificatorsService
             $cls = [];
 
             while ($line != null) {
-                $line = fgetcsv($f);
                 list($code, $name, $group ) = $line;
                 $cls[] = ClassificatorLanguage::createLangClassificator($code, $name, $group, $language );
+                $line = fgetcsv($f);
             }
 
             $this->catalogDao->importClassificatorsLangs ( $cls );

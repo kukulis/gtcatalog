@@ -86,4 +86,4 @@ services:
         bind:
             $logger: '@logger'
             $classificatorsService: '@gt.catalog.classificators_service'
-
+            $languagesService: '@gt.catalog.languages_service'

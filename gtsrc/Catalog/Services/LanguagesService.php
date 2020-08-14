@@ -31,6 +31,10 @@ class LanguagesService
         $this->languageDao = $languageDao;
     }
 
+    /**
+     * @param int $page
+     * @return \Gt\Catalog\Entity\Language[]
+     */
     public function getLanguages( $page=0)
     {
         return $this->languageDao->getLanguagesList($page * self::PAGE_SIZE, self::PAGE_SIZE);

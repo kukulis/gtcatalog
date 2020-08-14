@@ -10,4 +10,9 @@
 <form method="post" enctype="multipart/form-data" action="{{ path('gt.catalog.classificators.import') }}">
     <input type="file" name="csvfile" />
     <input type="submit" name="import" value="Importuoti" />
+    <select name="language">
+        {% for l in languages %}
+            <option value="{{ l.code  }}">{{  l.name }}</option>
+        {% endfor %}
+    </select>
 </form>

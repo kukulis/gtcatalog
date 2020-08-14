@@ -13,6 +13,7 @@ use Gt\Catalog\Exception\CatalogErrorException;
 use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Form\ClassificatorsListFilterType;
 use Gt\Catalog\Services\ClassificatorsService;
+use Gt\Catalog\Services\LanguagesService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -39,8 +40,11 @@ class ClassificatorsController extends AbstractController
 
     }
 
-    public function importFormAction(Request $request) {
+    public function importFormAction(Request $request, LanguagesService $languagesService) {
+
+        $languages = $languagesService->getLanguages();
         return $this->render('@Catalog/classificators/import_form.html.twig', [
+            'languages' => $languages,
         ]);
     }
 
@@ -53,7 +57,7 @@ class ClassificatorsController extends AbstractController
         /** @var UploadedFile $file */
         $file = $request->files->get('csvfile' );
 
-        $languageCode =  $request->get('languageCode');
+        $languageCode =  $request->get('language');
         try {
             if ( empty($languageCode)) {
                 throw new CatalogErrorException('languageCode not given' );
