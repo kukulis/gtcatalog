@@ -9,17 +9,18 @@
 namespace Gt\Catalog\Services;
 
 
+use Doctrine\DBAL\DBALException;
 use Gt\Catalog\Dao\CatalogDao;
 use Gt\Catalog\Dao\ClassificatorDao;
 use Gt\Catalog\Dao\ClassificatorGroupDao;
 use Gt\Catalog\Dao\LanguageDao;
 use Gt\Catalog\Data\ClassificatorsListFilter;
+use Gt\Catalog\Entity\Classificator;
 use Gt\Catalog\Entity\ClassificatorGroup;
 use Gt\Catalog\Entity\ClassificatorLanguage;
 use Gt\Catalog\Exception\CatalogErrorException;
 use Gt\Catalog\Exception\CatalogValidateException;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
 
 class ClassificatorsService
@@ -77,10 +78,9 @@ class ClassificatorsService
      * @param string $languageCode
      * @throws CatalogErrorException
      * @throws CatalogValidateException
+     * @return int
      */
     public function importClassificators ( $file, string $languageCode ) {
-//        throw new CatalogErrorException('Not implemented');
-
         $language = $this->languageDao->getLanguage ( $languageCode );
 
         if ( empty($language)) {
@@ -88,8 +88,9 @@ class ClassificatorsService
         }
 
 
+        $f = fopen($file, 'r');
         try {
-            $f = fopen($file, 'r');
+
             $header = fgetcsv($f);
 
             if (count($header) != 3) {
@@ -102,18 +103,34 @@ class ClassificatorsService
             /** @var ClassificatorLanguage[] $cls */
             $cls = [];
 
+            /** @var Classificator[] $cs */
+            $cs = [];
+
+
             while ($line != null) {
-                list($code, $name, $group ) = $line;
-                $cls[] = ClassificatorLanguage::createLangClassificator($code, $name, $group, $language );
+                list($code, $name, $group) = $line;
+                $cl = ClassificatorLanguage::createLangClassificator($code, $name, $group, $language);
+                $cls[] = $cl;
+                $cs[] = $cl->getClassificator();
                 $line = fgetcsv($f);
             }
 
-            $this->catalogDao->importClassificatorsLangs ( $cls );
+
+            // lets import classificators first
+
+
+            $this->catalogDao->importClassificators($cs);
+            return $this->catalogDao->importClassificatorsLangs($cls);
+        } catch ( DBALException $e ) {
+            throw new CatalogErrorException( $e->getMessage() );
         } finally {
             fclose($f);
         }
     }
 
+    /**
+     * @param FormInterface $form
+     */
     public function newClassificator(FormInterface $form)
     {
         $data = $form->getData();

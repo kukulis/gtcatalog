@@ -10,6 +10,7 @@ namespace Gt\Catalog\Dao;
 
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMException;
 use Gt\Catalog\Entity\Classificator;
@@ -260,10 +261,63 @@ class CatalogDao
 
     /**
      * @param ClassificatorLanguage[] $cls
-     * @throws CatalogErrorException
+     * @throws DBALException
+     * @return int
      */
     public function importClassificatorsLangs ( $cls ) {
-        // TODO
-        throw new CatalogErrorException('Unimplemented importClassificatorsLangs');
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+        $conn = $em->getConnection();
+
+        $valuesLines = [];
+        foreach ($cls as $cl ) {
+            $line = [
+                $cl->getLanguage()->getCode(),
+                $cl->getClassificator()->getCode(),
+                $cl->getValue()
+            ];
+
+            $qLine = array_map ( [$conn, 'quote'], $line );
+
+            $lineStr =  '('.join (',',$qLine).')';
+            $valuesLines[] = $lineStr;
+        }
+
+        $valuesStr = join (",\n", $valuesLines );
+
+        $sql = /** @lang MySQL */ "INSERT INTO classificator_lang (language_code, classificator_code, value )
+          values $valuesStr
+          ON DUPLICATE  KEY UPDATE value=values(value)";
+
+        return $conn->exec($sql);
+    }
+
+    /**
+     * @param Classificator[] $cs
+     * @throws DBALException
+     * @return int
+     */
+    public function importClassificators ( $cs ) {
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+        $conn = $em->getConnection();
+
+        $valuesLines = [];
+
+        foreach ($cs as $c ) {
+            $values = [$c->getCode(),
+            $c->getGroupCode() ];
+
+            $qValues = array_map ([$conn, 'quote'], $values);
+            $line = '('. join ( ',', $qValues). ')';
+
+            $valuesLines [] = $line;
+        }
+
+        $valuesStr = join ( ",\n", $valuesLines);
+
+        $sql = /** @lang MySQL*/ "insert ignore into classificators ( code, group_code )
+                values $valuesStr";
+        return $conn->exec($sql);
     }
 }

@@ -74,7 +74,13 @@ class ClassificatorsController extends AbstractController
                 ]);
             }
 
-            $classificatorsService->importClassificators($file->getRealPath(), $languageCode);
+            $count = $classificatorsService->importClassificators($file->getRealPath(), $languageCode);
+            return $this->render('@Catalog/classificators/import_results.html.twig',
+                [
+                    'count' => $count,
+                    'languageCode' => $languageCode,
+                ]
+            );
         } catch (CatalogErrorException $e ) {
             return $this->render('@Catalog/error/error.html.twig', [
                 'error'=> $e->getMessage(),
@@ -86,8 +92,6 @@ class ClassificatorsController extends AbstractController
             ]);
         }
 
-        return $this->render('@Catalog/classificators/import_results.html.twig', [
-        ]);
     }
 
     /**
@@ -119,6 +123,7 @@ class ClassificatorsController extends AbstractController
      *
      * @param Request $request
      * @param ClassificatorsService $classificatorsService
+     * @return Response
      */
     public function newAction( Request $request, ClassificatorsService $classificatorsService)
     {

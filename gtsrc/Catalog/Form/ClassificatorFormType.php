@@ -15,6 +15,7 @@ class ClassificatorFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        // TODO kalbų dropdown'as
         $builder
             ->add('code')
             ->add('group', EntityType::class, [
@@ -25,6 +26,7 @@ class ClassificatorFormType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
+        // nežinau ar šitas tiks, nes kalbų sąrašą paduosiu į ClassificatorFormType, o ne į Classificator
         $resolver->setDefaults([
             'data_class' => Classificator::class
         ]);
