@@ -9,7 +9,9 @@ use Gt\Catalog\Form\ClassificatorGroupFormType;
 use Gt\Catalog\Services\ClassificatorGroupsService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ClassificatorGroupsController extends AbstractController
@@ -41,7 +43,7 @@ class ClassificatorGroupsController extends AbstractController
      * @param Request $request
      * @param LoggerInterface $logger
      * @param ClassificatorGroupsService $classificatorGroupsService
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function listAction(Request $request, LoggerInterface $logger, ClassificatorGroupsService $classificatorGroupsService)
     {
@@ -61,7 +63,7 @@ class ClassificatorGroupsController extends AbstractController
      * @param ClassificatorGroup $classificatorGroup
      * @param Request $request
      * @param ClassificatorGroupsService $classificatorGroupsService
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @return RedirectResponse|Response
      */
     public function editAction(ClassificatorGroup $classificatorGroup, Request $request, ClassificatorGroupsService $classificatorGroupsService)
     {

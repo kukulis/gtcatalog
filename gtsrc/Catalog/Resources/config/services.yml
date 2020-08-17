@@ -57,6 +57,13 @@ services:
             - '@logger'
             - '@doctrine'
 
+    gt.catalog.classificator_dao:
+        class: 'Gt\Catalog\Dao\ClassificatorDao'
+        public: true
+        arguments:
+            - '@logger'
+            - '@doctrine'
+
     gt.catalog.classificator_groups_service:
         class: 'Gt\Catalog\Services\ClassificatorGroupsService'
         arguments:
@@ -72,11 +79,36 @@ services:
 
 # ------------------  Classificator groups end -------------------------
 
+# ------------------  Categories start ---------------------------------
+
+    gt.catalog.category_dao:
+        class: 'Gt\Catalog\Dao\CategoryDao'
+        public: true
+        arguments:
+            - '@logger'
+            - '@doctrine'
+
+    gt.catalog.categories_service:
+        class: 'Gt\Catalog\Services\CategoriesService'
+        arguments:
+            - '@logger'
+            - '@gt.catalog.category_dao'
+
+    Gt\Catalog\Controller\CategoriesController:
+        tags:
+            - "controller.service_arguments"
+        bind:
+            $logger: '@logger'
+            $categoriesService: '@gt.catalog.categories_service'
+
+# ------------------  Categories end ------------------------------------
+
     gt.catalog.classificators_service:
         class: 'Gt\Catalog\Services\ClassificatorsService'
         arguments:
             - '@logger'
             - '@gt.catalog.classificator_group_dao'
+            - '@gt.catalog.classificator_dao'
             - '@gt.catalog.catalog_dao'
             - '@gt.catalog.language_dao'
 

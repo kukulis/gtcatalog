@@ -10,6 +10,7 @@ namespace Gt\Catalog\Services;
 
 
 use Gt\Catalog\Dao\CatalogDao;
+use Gt\Catalog\Dao\ClassificatorDao;
 use Gt\Catalog\Dao\ClassificatorGroupDao;
 use Gt\Catalog\Dao\LanguageDao;
 use Gt\Catalog\Data\ClassificatorsListFilter;
@@ -18,6 +19,8 @@ use Gt\Catalog\Entity\ClassificatorLanguage;
 use Gt\Catalog\Exception\CatalogErrorException;
 use Gt\Catalog\Exception\CatalogValidateException;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormInterface;
 
 class ClassificatorsService
 {
@@ -26,6 +29,9 @@ class ClassificatorsService
 
     /** @var ClassificatorGroupDao */
     private $classificatorGroupDao;
+
+    /** @var ClassificatorDao */
+    private $classificatorDao;
 
     /** @var CatalogDao */
     private $catalogDao;
@@ -40,11 +46,13 @@ class ClassificatorsService
      */
     public function __construct(LoggerInterface $logger,
                                 ClassificatorGroupDao $classificatorGroupDao,
+                                ClassificatorDao  $classificatorDao,
                                 CatalogDao $catalogDao,
                                 LanguageDao $languageDao)
     {
         $this->logger = $logger;
         $this->classificatorGroupDao = $classificatorGroupDao;
+        $this->classificatorDao = $classificatorDao;
         $this->catalogDao = $catalogDao;
         $this->languageDao = $languageDao;
     }
@@ -66,10 +74,11 @@ class ClassificatorsService
 
     /**
      * @param string $file
+     * @param string $languageCode
      * @throws CatalogErrorException
      * @throws CatalogValidateException
      */
-    public function importClassificators ( $file, $languageCode ) {
+    public function importClassificators ( $file, string $languageCode ) {
 //        throw new CatalogErrorException('Not implemented');
 
         $language = $this->languageDao->getLanguage ( $languageCode );
@@ -103,5 +112,11 @@ class ClassificatorsService
         } finally {
             fclose($f);
         }
+    }
+
+    public function newClassificator(FormInterface $form)
+    {
+        $data = $form->getData();
+        $this->classificatorDao->addClassificator($data);
     }
 }
