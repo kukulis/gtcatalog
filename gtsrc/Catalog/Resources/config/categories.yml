@@ -1,0 +1,15 @@
+gt.catalog.categories:
+  path: "/categories"
+  controller: Gt\Catalog\Controller\CategoriesController::listAction
+  methods: GET
+
+gt.catalog.category_edit:
+  path: "/categories/{code}/edit"
+  controller: Gt\Catalog\Controller\CategoriesController::editAction
+  methods: GET|POST
+
+gt.catalog.category_new:
+  path: "/categories/new"
+  controller: Gt\Catalog\Controller\CategoriesController::newAction
+  methods: GET|POST
+

@@ -61,5 +61,4 @@ class ClassificatorGroup
         $this->name = $name;
     }
 
-
 }

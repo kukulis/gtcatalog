@@ -6,11 +6,12 @@ namespace Gt\Catalog\Controller;
 
 use Gt\Catalog\Entity\ClassificatorGroup;
 use Gt\Catalog\Form\ClassificatorGroupFormType;
-use Gt\Catalog\Form\LanguageFormType;
 use Gt\Catalog\Services\ClassificatorGroupsService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ClassificatorGroupsController extends AbstractController
@@ -42,7 +43,7 @@ class ClassificatorGroupsController extends AbstractController
      * @param Request $request
      * @param LoggerInterface $logger
      * @param ClassificatorGroupsService $classificatorGroupsService
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function listAction(Request $request, LoggerInterface $logger, ClassificatorGroupsService $classificatorGroupsService)
     {
@@ -62,7 +63,7 @@ class ClassificatorGroupsController extends AbstractController
      * @param ClassificatorGroup $classificatorGroup
      * @param Request $request
      * @param ClassificatorGroupsService $classificatorGroupsService
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @return RedirectResponse|Response
      */
     public function editAction(ClassificatorGroup $classificatorGroup, Request $request, ClassificatorGroupsService $classificatorGroupsService)
     {
@@ -74,7 +75,7 @@ class ClassificatorGroupsController extends AbstractController
             return $this->redirectToRoute('gt.catalog.classificator_groups');
         }
 
-        return $this->render('@Catalog/classificator_groups/new.html.twig', [
+        return $this->render('@Catalog/classificator_groups/edit.html.twig', [
             'classificatorGroupForm' => $form->createView(),
         ]);
     }

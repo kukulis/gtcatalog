@@ -10,7 +10,9 @@ use Gt\Catalog\Form\LanguageFormType;
 use Gt\Catalog\Services\LanguagesService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class LanguagesController extends AbstractController
@@ -22,7 +24,7 @@ class LanguagesController extends AbstractController
      * @Route("/languages/new", name="language_new")
      * @param EntityManagerInterface $em
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function newAction( Request $request, LanguagesService $languagesService)
     {
@@ -43,7 +45,7 @@ class LanguagesController extends AbstractController
      * @param Request $request
      * @param LoggerInterface $logger
      * @param LanguagesService $languagesService
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function listAction(Request $request, LoggerInterface $logger, LanguagesService $languagesService)
     {
@@ -63,7 +65,7 @@ class LanguagesController extends AbstractController
      * @param Language $language
      * @param Request $request
      * @param LanguagesService $languagesService
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @return RedirectResponse|Response
      */
     public function editAction(Language $language, Request $request, LanguagesService $languagesService)
     {
@@ -75,7 +77,7 @@ class LanguagesController extends AbstractController
             return $this->redirectToRoute('gt.catalog.languages');
         }
 
-        return $this->render('@Catalog/languages/new.html.twig', [
+        return $this->render('@Catalog/languages/edit.html.twig', [
             'languageForm' => $form->createView(),
         ]);
     }

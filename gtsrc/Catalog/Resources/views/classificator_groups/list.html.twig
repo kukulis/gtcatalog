@@ -1,22 +1,33 @@
-<h1>{% trans %}Classificator groups{% endtrans %}</h1>
-<div>
-    <a href="{{ path('gt.catalog.classificator_group_new') }}" class="btn btn-primary">{% trans %}Add new classificator group{% endtrans %}</a>
-</div>
-<table>
-<tr>
-        <th>{% trans %}Code{% endtrans %}</th>
-        <th>{% trans %}Name{% endtrans %}</th>
-        <th>Actions</th>
-    </tr>
-{% for l in classificatorGroups %}
-    <tr>
-        <td>{{ l.code }}</td>
-        <td>{{ l.name }}</td>
-        <td>
-            <a href="{{ path('gt.catalog.classificator_group_edit', {code: l.code}) }}" class="btn btn-primary">
-                {% trans %}Edit{% endtrans %}
-            </a>
-        </td>
-    </tr>
-{% endfor %}
-</table>
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>{% trans %}Classificator groups{% endtrans %}</h1>
+                <div>
+                    <a href="{{ path('gt.catalog.classificator_group_new') }}" class="btn btn-primary">{% trans %}Add new classificator group{% endtrans %}</a>
+                </div>
+                <table class="table">
+                <tr>
+                        <th>{% trans %}Code{% endtrans %}</th>
+                        <th>{% trans %}Name{% endtrans %}</th>
+                        <th>Actions</th>
+                    </tr>
+                {% for l in classificatorGroups %}
+                    <tr>
+                        <td>{{ l.code }}</td>
+                        <td>{{ l.name }}</td>
+                        <td>
+                            <a href="{{ path('gt.catalog.classificator_group_edit', {code: l.code}) }}" class="btn btn-primary">
+                                {% trans %}Edit{% endtrans %}
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

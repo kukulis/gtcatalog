@@ -1,8 +1,12 @@
+gt.catalog.home:
+    path: "/"
+    controller: Gt\Catalog\Controller\HomeController::homeAction
+    methods: GET
+
 gt.catalog.product_list:
     path: "/products"
     controller: Gt\Catalog\Controller\ProductsController::listAction
     methods: GET
-
 
 gt.catalog.product_edit:
     path: "/product/edit/{sku}"
