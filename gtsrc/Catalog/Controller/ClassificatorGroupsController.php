@@ -6,7 +6,6 @@ namespace Gt\Catalog\Controller;
 
 use Gt\Catalog\Entity\ClassificatorGroup;
 use Gt\Catalog\Form\ClassificatorGroupFormType;
-use Gt\Catalog\Form\LanguageFormType;
 use Gt\Catalog\Services\ClassificatorGroupsService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -74,7 +73,7 @@ class ClassificatorGroupsController extends AbstractController
             return $this->redirectToRoute('gt.catalog.classificator_groups');
         }
 
-        return $this->render('@Catalog/classificator_groups/new.html.twig', [
+        return $this->render('@Catalog/classificator_groups/edit.html.twig', [
             'classificatorGroupForm' => $form->createView(),
         ]);
     }

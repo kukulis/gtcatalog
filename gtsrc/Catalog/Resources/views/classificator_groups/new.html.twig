@@ -1,11 +1,16 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>{% trans %}Add a new classificator group{% endtrans %} </h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>{% trans %}Add a new classificator group{% endtrans %} </h1>
+                {{ form_start(classificatorGroupForm) }}
+                {{ form_widget(classificatorGroupForm) }}
 
-    {{ form_start(classificatorGroupForm) }}
-        {{ form_widget(classificatorGroupForm) }}
-
-        <button type="submit" class="btn btn-primary">{% trans %}Save{% endtrans %}</button>
-    {{ form_end(classificatorGroupForm) }}
+                <button type="submit" class="btn btn-primary">{% trans %}Save{% endtrans %}</button>
+                {{ form_end(classificatorGroupForm) }}
+            </div>
+        </div>
+    </div>
 {% endblock %}
