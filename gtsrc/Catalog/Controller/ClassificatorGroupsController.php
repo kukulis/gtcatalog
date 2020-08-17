@@ -75,7 +75,7 @@ class ClassificatorGroupsController extends AbstractController
             return $this->redirectToRoute('gt.catalog.classificator_groups');
         }
 
-        return $this->render('@Catalog/classificator_groups/new.html.twig', [
+        return $this->render('@Catalog/classificator_groups/edit.html.twig', [
             'classificatorGroupForm' => $form->createView(),
         ]);
     }

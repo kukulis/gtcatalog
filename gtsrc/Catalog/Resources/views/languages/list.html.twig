@@ -1,24 +1,34 @@
-<h1>{% trans %}Languages{% endtrans %}</h1>
-<div>
-    <a href="{{ path('gt.catalog.language_new') }}" class="btn btn-primary">{% trans %}Add new language{% endtrans %}</a>
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>{% trans %}Languages{% endtrans %}</h1>
+            <div>
+                <a href="{{ path('gt.catalog.language_new') }}" class="btn btn-primary">{% trans %}Add new language{% endtrans %}</a>
+            </div>
+            <table class="table">
+            <tr>
+                    <th>{% trans %}Code{% endtrans %}</th>
+                    <th>{% trans %}Name{% endtrans %}</th>
+                    <th>{% trans %}Locale code{% endtrans %}</th>
+                    <th>Actions</th>
+                </tr>
+            {% for l in languages %}
+                <tr>
+                    <td>{{ l.code }}</td>
+                    <td>{{ l.name }}</td>
+                    <td>{{ l.localeCode }}</td>
+                    <td>
+                        <a href="{{ path('gt.catalog.language_edit', {code: l.code}) }}" class="btn btn-primary">
+                            {% trans %}Edit{% endtrans %}
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </table>
+        </div>
+    </div>
 </div>
-<table>
-<tr>
-        <th>{% trans %}Code{% endtrans %}</th>
-        <th>{% trans %}Name{% endtrans %}</th>
-        <th>{% trans %}Locale code{% endtrans %}</th>
-        <th>Actions</th>
-    </tr>
-{% for l in languages %}
-    <tr>
-        <td>{{ l.code }}</td>
-        <td>{{ l.name }}</td>
-        <td>{{ l.localeCode }}</td>
-        <td>
-            <a href="{{ path('gt.catalog.language_edit', {code: l.code}) }}" class="btn btn-primary">
-                {% trans %}Edit{% endtrans %}
-            </a>
-        </td>
-    </tr>
-{% endfor %}
-</table>
+{% endblock %}

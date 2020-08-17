@@ -1,1 +1,16 @@
-{{ form(form) }}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>{% trans %}Edit classificator group{% endtrans %} </h1>
+                {{ form_start(classificatorGroupForm) }}
+                {{ form_widget(classificatorGroupForm) }}
+
+                <button type="submit" class="btn btn-primary">{% trans %}Save{% endtrans %}</button>
+                {{ form_end(classificatorGroupForm) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

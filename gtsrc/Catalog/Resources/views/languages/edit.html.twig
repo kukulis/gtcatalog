@@ -1,1 +1,17 @@
-{{ form(form) }}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>{% trans %}Edit language{% endtrans %} </h1>
+
+                {{ form_start(languageForm) }}
+                {{ form_widget(languageForm) }}
+
+                <button type="submit" class="btn btn-primary">{% trans %}Save{% endtrans %}</button>
+                {{ form_end(languageForm) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
