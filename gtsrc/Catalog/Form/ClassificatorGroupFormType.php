@@ -16,8 +16,7 @@ class ClassificatorGroupFormType extends AbstractType
     {
         $builder
             ->add('code')
-            ->add('name')
-            ->add('group');
+            ->add('name');
     }
 
     public function configureOptions(OptionsResolver $resolver)
