@@ -11,6 +11,8 @@ namespace Gt\Catalog\Form;
 
 use Gt\Catalog\Data\ClassificatorsListFilter;
 use Gt\Catalog\Entity\ClassificatorGroup;
+use Gt\Catalog\Entity\Language;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -29,6 +31,9 @@ class ClassificatorsListFilterType extends AbstractType implements Classificator
     private $likeName;
     private $limit=10;
 
+    /** @var Language */
+    private $language;
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         /** @var ClassificatorsListFilterType $data */
@@ -44,6 +49,10 @@ class ClassificatorsListFilterType extends AbstractType implements Classificator
             ->add('likeCode', TextType::class, ['required'=>false] )
             ->add('likeName', TextType::class, ['required'=>false])
             ->add('limit', IntegerType::class)
+            ->add('language', EntityType::class, [
+            'class' => Language::class,
+                'choice_label' => 'name'
+            ])
             ->add('search', SubmitType::class)
         ;
 
@@ -130,6 +139,20 @@ class ClassificatorsListFilterType extends AbstractType implements Classificator
         $this->limit = $limit;
     }
 
+    /**
+     * @return Language
+     */
+    public function getLanguage(): ?Language
+    {
+        return $this->language;
+    }
 
+    /**
+     * @param Language $language
+     */
+    public function setLanguage(Language $language=null): void
+    {
+        $this->language = $language;
+    }
 
 }

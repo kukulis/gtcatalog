@@ -31,6 +31,7 @@ class Classificator
      */
     private $group;
 
+    private $assignedValue; // not stored in db
 
     /**
      * @return ClassificatorGroup
@@ -93,6 +94,22 @@ class Classificator
         $group->setCode($groupCode);
         $classificator->setGroup($group);
         return $classificator;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAssignedValue()
+    {
+        return $this->assignedValue;
+    }
+
+    /**
+     * @param mixed $assignedValue
+     */
+    public function setAssignedValue($assignedValue): void
+    {
+        $this->assignedValue = $assignedValue;
     }
 
 }

@@ -1,1 +1,23 @@
-{{ form(form) }}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                {% for l in languages %}
+                    {% if l.code==languageCode %}
+                        <spam>{{ l.code }}</spam>
+                    {% else %}
+                        <a href="{{  path('gt.catalog.classificator_edit', {code: code, languageCode: l.code }) }}">{{ l.code }}</a>
+                    {% endif %}
+                {% endfor  %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                {{ form(classificatorForm) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

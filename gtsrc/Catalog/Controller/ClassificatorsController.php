@@ -18,6 +18,7 @@ use Gt\Catalog\Services\ClassificatorsService;
 use Gt\Catalog\Services\LanguagesService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,11 +37,18 @@ class ClassificatorsController extends AbstractController
 
         $form->handleRequest($request);
 
+        $languageCode = 'en';
+        if ( !empty( $classificatorsFilter->getLanguage() )  ) {
+            $languageCode = $classificatorsFilter->getLanguage()->getCode();
+        }
+
         $classificators = $classificatorsService->searchClassificators ( $classificatorsFilter );
+        $classificatorsService->assignValues($classificators, $languageCode);
 
         return $this->render('@Catalog/classificators/list.html.twig', [
             'form' => $form->createView(),
             'classificators' => $classificators,
+            'languageCode' => $languageCode,
         ]);
 
     }
@@ -101,43 +109,42 @@ class ClassificatorsController extends AbstractController
      * @param ClassificatorsService $classificatorsService
      * @return RedirectResponse|Response
      */
-    public function editAction(Classificator $classificator, Request $request, ClassificatorsService $classificatorsService)
+    public function editAction($code, $languageCode, Request $request, ClassificatorsService $classificatorsService)
     {
-        $form = $this->createForm(ClassificatorFormType::class, $classificator);
+        try {
+            $allLanguages = $classificatorsService->getAllLanguages();
 
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $classificatorsService->newClassificator($form);
-            return $this->redirectToRoute('gt.catalog.classificators');
+            $classificatorLanguage = $classificatorsService->loadClassificatorLanguage($code, $languageCode);
+
+            $classificatorFormType = new ClassificatorFormType();
+            $classificatorFormType->setClassificatorLanguage($classificatorLanguage);
+
+            $form = $this->createForm(ClassificatorFormType::class, $classificatorFormType);
+
+            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                /** @var SubmitButton $save */
+                $save = $form->get('save');
+
+                if ($save->isClicked()) {
+                    $classificatorsService->storeClassificatorLanguage($classificatorLanguage);
+                    return $this->redirectToRoute('gt.catalog.classificators');
+                }
+            }
+
+            return $this->render('@Catalog/classificators/edit.html.twig', [
+                'classificatorForm' => $form->createView(),
+                'languages' => $allLanguages,
+                'code' => $code,
+                'languageCode' => $languageCode,
+            ]);
+
+
+        } catch ( CatalogValidateException|CatalogErrorException $e ) {
+            return $this->render('@Catalog/error/error.html.twig', [
+                'error' => $e->getMessage(),
+            ]);
         }
-
-        return $this->render('@Catalog/classificators/new.html.twig', [
-            'classificatorForm' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @todo pakurti roles, pvz: ROLE_ADMIN_CLASSIFICATOR
-     *
-     * @Route("/classificators/new", name="classificator_new")
-     *
-     * @param Request $request
-     * @param ClassificatorsService $classificatorsService
-     * @return Response
-     */
-    public function newAction( Request $request, ClassificatorsService $classificatorsService)
-    {
-        $form = $this->createForm(ClassificatorFormType::class);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $classificatorsService->newClassificator($form);
-            return $this->redirectToRoute('gt.catalog.classificators');
-        }
-
-        return $this->render('@Catalog/classificators/new.html.twig',[
-            'classificatorForm' => $form->createView()
-        ]);
     }
 
 

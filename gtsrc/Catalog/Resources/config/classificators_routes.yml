@@ -21,6 +21,6 @@ gt.catalog.classificator_new:
   methods: GET|POST
 
 gt.catalog.classificator_edit:
-  path: "/classificator/{code}/edit"
+  path: "/classificator/{code}/l/{languageCode}/edit"
   controller: Gt\Catalog\Controller\ClassificatorsController::editAction
   methods: GET|POST

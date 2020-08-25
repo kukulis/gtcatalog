@@ -18,6 +18,7 @@ use Gt\Catalog\Data\ClassificatorsListFilter;
 use Gt\Catalog\Entity\Classificator;
 use Gt\Catalog\Entity\ClassificatorGroup;
 use Gt\Catalog\Entity\ClassificatorLanguage;
+use Gt\Catalog\Entity\Language;
 use Gt\Catalog\Exception\CatalogErrorException;
 use Gt\Catalog\Exception\CatalogValidateException;
 use Psr\Log\LoggerInterface;
@@ -71,6 +72,34 @@ class ClassificatorsService
      */
     public function searchClassificators (ClassificatorsListFilter $filter) {
         return $this->catalogDao->loadLikeClassificators($filter->getLikeCode(), $filter->getLikeName(), $filter->getGroupCode(), $filter->getLimit());
+    }
+
+    /**
+     * @param Classificator[] $classificators
+     * @param string $languageCode
+     * @return Classificator[] $classificators
+     */
+    public function assignValues ( $classificators, $languageCode ) {
+        $codes = array_map( [Classificator::class, 'lambdaGetCode'], $classificators );
+
+        /** @var ClassificatorLanguage[] $classificatorsLanguages */
+        $classificatorsLanguages = $this->classificatorDao->loadClassificatorsLanguages ( $codes, $languageCode);
+
+        /** @var ClassificatorLanguage[] $map */
+        $map = [];
+        foreach ( $classificatorsLanguages as $cl ) {
+            $map[$cl->getClassificator()->getCode()] = $cl;
+        }
+
+        foreach ($classificators as $c ) {
+            if ( !array_key_exists($c->getCode(), $map)) {
+                continue;
+            }
+            $cl =  $map[$c->getCode()];
+            $c->setAssignedValue($cl->getValue());
+        }
+
+        return $classificators;
     }
 
     /**
@@ -128,12 +157,72 @@ class ClassificatorsService
         }
     }
 
+    public function storeClassificator(Classificator $classificator) {
+        $this->classificatorDao->storeClassificator($classificator);
+    }
+
     /**
-     * @param FormInterface $form
+     * @param $code
+     * @return Classificator
      */
-    public function newClassificator(FormInterface $form)
-    {
-        $data = $form->getData();
-        $this->classificatorDao->addClassificator($data);
+    public function loadClassificator($code) {
+        if ( empty($code)) {
+            $classificator = new Classificator();
+            return $classificator;
+        }
+        else {
+            $classificator = $this->classificatorDao->loadClassificator($code);
+            return $classificator;
+        }
+    }
+
+    /**
+     * @param $code
+     * @param $languageCode
+     * @return ClassificatorLanguage|null
+     * @throws CatalogErrorException
+     */
+    public function loadClassificatorLanguage ( $code, $languageCode ) {
+        if ( empty($languageCode) ) {
+            return null;
+        }
+        $cl = $this->classificatorDao->loadClassificatorLanguage ( $code, $languageCode);
+
+        if ( !empty($cl)) {
+            return $cl;
+        }
+
+        // nepavyko užkrauti, todėl sukurkime
+        $classificator = $this->classificatorDao->loadClassificator($code);
+        if (empty($classificator)) {
+            throw new CatalogErrorException('Nepavyko užkrauti klasifikatoriaus pagal kodą '.$code );
+        }
+
+        $language = $this->languageDao->getLanguage($languageCode);
+        if ( empty($language)) {
+            throw new CatalogErrorException('Nėra kalbos pagal kodą '.$languageCode );
+        }
+
+        $classificatorLanguage = new ClassificatorLanguage();
+        $classificatorLanguage->setClassificator($classificator);
+        $classificatorLanguage->setLanguage( $language );
+
+        return $classificatorLanguage;
+    }
+
+    /**
+     * @param ClassificatorLanguage $cl
+     */
+    public function storeClassificatorLanguage(ClassificatorLanguage $cl ) {
+        $this->classificatorDao->storeClassificator($cl->getClassificator()); // ar tikrai reikia šito?
+        $this->classificatorDao->storeClassificatorLanguage($cl);
+    }
+
+    /**
+     * @return Language[]
+     */
+    public function getAllLanguages() {
+        $languages = $this->languageDao->getLanguagesList(0,10);
+        return $languages;
     }
 }

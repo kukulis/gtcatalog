@@ -1,3 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+    <div class="row">
+    <div class="col-md-12">
+
 <p><a href="{{ path('gt.catalog.classificators.import_form') }}">Import</a></p>
 
 {{ form(form) }}
@@ -7,11 +14,17 @@
     <tr>
         <td>{{ c.code }}</td>
         <td>{{ c.group.name }}</td>
+        <td>{{ c.assignedValue }}</td>
         <td>
-            <a href="{{ path('gt.catalog.classificator_edit', {code: c.code}) }}" class="btn btn-primary">
+            <a href="{{ path('gt.catalog.classificator_edit', {code: c.code, languageCode: languageCode }) }}" class="btn btn-primary">
                 {% trans %}Edit{% endtrans %}
             </a>
         </td>
     </tr>
 {% endfor %}
 </table>
+
+    </div>
+    </div>
+    </div>
+{% endblock %}
