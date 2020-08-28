@@ -11,9 +11,14 @@ namespace Gt\Catalog\Services;
 
 use Doctrine\ORM\ORMException;
 use Gt\Catalog\Dao\CatalogDao;
+use Gt\Catalog\Dao\LanguageDao;
+use Gt\Catalog\Entity\Classificator;
 use Gt\Catalog\Entity\Product;
+use Gt\Catalog\Entity\ProductLanguage;
 use Gt\Catalog\Exception\CatalogDetailedException;
 use Gt\Catalog\Exception\CatalogErrorException;
+use Gt\Catalog\Exception\RelatedObject;
+use Gt\Catalog\Exception\RelatedObjectClassificator;
 use Psr\Log\LoggerInterface;
 
 class ProductsService
@@ -26,15 +31,22 @@ class ProductsService
     /** @var CatalogDao */
     private $catalogDao;
 
+
+    /**
+     * @var LanguageDao
+     */
+    private $languageDao;
+
     /**
      * ProductsService constructor.
      * @param LoggerInterface $logger
      * @param CatalogDao $catalogDao
      */
-    public function __construct(LoggerInterface $logger, CatalogDao $catalogDao)
+    public function __construct(LoggerInterface $logger, CatalogDao $catalogDao, LanguageDao $languageDao )
     {
         $this->logger = $logger;
         $this->catalogDao = $catalogDao;
+        $this->languageDao = $languageDao;
     }
 
     /**
@@ -72,10 +84,67 @@ class ProductsService
         $this->catalogDao->flush();
     }
 
+    /**
+     * @param RelatedObject[] $objects
+     * @return
+     */
     public function getSuggestions($objects) {
-        // TODO load simmilar classificators
-        // TODO make messages array
-        return ['TODO'];
+        foreach ( $objects as $o ) {
+
+            if ( get_class($o) == RelatedObjectClassificator::class ) {
+                /** @var RelatedObjectClassificator $roc */
+                $roc = $o;
+                $simmilarClassificators = $this->catalogDao->loadSimmilarClassificators($roc->classificatorCode, $roc->correctCode, 5 );
+
+                $codes = array_map ( [Classificator::class,  'lambdaGetCode' ], $simmilarClassificators );
+                $roc->suggestions = $codes;
+            }
+        }
+        return $objects;
+    }
+
+    /**
+     * @param $sku
+     * @param $languageCode
+     * @return \Gt\Catalog\Entity\ProductLanguage
+     * @throws CatalogErrorException
+     */
+    public function getProductLanguage ( $sku, $languageCode) {
+        try {
+            $pl = $this->catalogDao->getProductLanguage($sku, $languageCode);
+
+            if (is_object($pl)) {
+                return $pl;
+            }
+
+            // kuriam naują
+            $language = $this->languageDao->getLanguage($languageCode);
+            if (empty ($language)) {
+                throw new CatalogErrorException('There is no language with code [' . $languageCode.']' );
+            }
+
+            $product = $this->catalogDao->getProduct($sku );
+            if ( empty($product)) {
+                throw new CatalogErrorException('There is no product with sku=['.$sku.']' );
+            }
+
+            $productLanguage = new ProductLanguage();
+            $productLanguage->setProduct($product);
+            $productLanguage->setLanguage($language);
+
+            return $productLanguage;
+        } catch (ORMException $e ) {
+            throw new CatalogErrorException($e->getMessage());
+        }
+    }
+
+    /**
+     * @param ProductLanguage $pl
+     * @throws CatalogErrorException
+     */
+    public function storeProductLanguage ( ProductLanguage $pl ) {
+        $this->catalogDao->storeProductLanguage($pl);
+        $this->catalogDao->flush();
     }
 
 

@@ -1,13 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
 
 {%if message is not empty %}
     <h3 style="color:red">{{ message }}</h3>
 {% endif %}
+            <ul>
 {% for m in messages %}
-    <p style="color:red">{{ m }}</p>
+    <li style="color:red">{{ m }}</li>
 {% endfor %}
+            </ul>
+
+{% if suggestions | length > 0 %}
+            Suggestions:
+            <ul>
 {% for s in suggestions %}
-    <p style="color:blue">{{ s }}</p>
+    {% if s.suggestions is defined %}
+    <li style="color:blue">
+        {{ s.correctCode }}:
+        {% for code in s.suggestions %}
+            {{ code }},
+        {% endfor %}
+    </li>
+    {% endif %}
 {% endfor %}
+            </ul>
+{% endif %}
 
 
 {{ form(form) }}
+
+        </div>
+    </div>
+</div>
+{% endblock %}

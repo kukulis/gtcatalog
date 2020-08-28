@@ -11,6 +11,9 @@ namespace Gt\Catalog\Exception;
 
 class WrongAssociationsException extends CatalogDetailedException
 {
+    /**
+     * @var RelatedObject[]
+     */
     private $relatedObjects=[];
 
     /**

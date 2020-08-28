@@ -35,53 +35,42 @@ class ProductFormType extends AbstractType
     /** @var ProductLanguage */
     private $productLanguage;
 
-    /** @var Language[] */
-    private $languages;
-
-    /** @var string */
-    private $selectedLanguage;
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         /** @var ProductFormType $data */
         $data = $options['data'];
 
         $builder
-            ->add('p_sku'                   , TextType::class, ['disabled'=>true] )
-            ->add('p_last_update'           , DateTimeType::class, ['required'=>false])
-            ->add('p_version'               , TextType::class, ['required'=>false] )
-            ->add('p_brand_code'            , TextType::class )
-            ->add('p_line_code'             , TextType::class )
-            ->add('p_parent_sku'            , TextType::class, ['required'=>false] )
-            ->add('p_info_provider'         , TextType::class, ['disabled'=>true] )
-            ->add('p_origin_country_code'   , TextType::class, ['required'=>false] )
-            ->add('p_vendor'           , TextType::class, ['required'=>false] )
-            ->add('p_manufacturer'     , TextType::class, ['required'=>false] )
-            ->add('p_type'             , TextType::class, ['required'=>false] )
-            ->add('p_measure'          , TextType::class, ['required'=>false] )
-            ->add('p_color'                 , TextType::class, ['required'=>false] )
-            ->add('p_for_male'              , CheckboxType::class, ['required'=>false] )
-            ->add('p_for_female'            , CheckboxType::class, ['required'=>false] )
-            ->add('p_size'                  , TextType::class, ['required'=>false] )
-            ->add('p_pack_size'             , TextType::class, ['required'=>false] )
-            ->add('p_pack_amount'           , TextType::class, ['required'=>false] )
-            ->add('p_weight'                , NumberType::class, ['required'=>false] )
-            ->add('p_length'                , NumberType::class, ['required'=>false] )
-            ->add('p_height'                , NumberType::class, ['required'=>false] )
-            ->add('p_width'                 , NumberType::class, ['required'=>false] )
-            ->add('p_delivery_time'         , TextType::class, ['required'=>false] )
-            ->add('selectedLanguage', ChoiceType::class, [
-                'choices' => ['a'=>'a', 'b'=>'b']
-            ] ) // TODO languages from options->data
-                ->add('select_language', SubmitType::class )
-                ->add('add_language', SubmitType::class )
-            ->add('pl_name'                 , TextType::class )
-            ->add('pl_description'          , TextType::class, ['required'=>false] )
-            ->add('pl_label'                , TextType::class, ['required'=>false] )
-            ->add('pl_variant_name'         , TextType::class, ['required'=>false] )
-            ->add('pl_info_provider'        , TextType::class, ['required'=>false] )
-            ->add('pl_tags'                 , TextType::class, ['required'=>false] );
-
+            ->add('p_sku'                   , TextType::class, ['disabled'=>true, 'label'=> 'sku' ] )
+            ->add('p_last_update'           , DateTimeType::class, ['disabled'=>true,  'label'=> 'updated' ])
+            ->add('p_version'               , TextType::class, ['required'=>false, 'label'=> 'version'] )
+            ->add('p_brand_code'            , TextType::class, ['label'=> 'Brand code'] )
+            ->add('p_line_code'             , TextType::class, ['label'=> 'Line code'] )
+            ->add('p_parent_sku'            , TextType::class, ['required'=>false, 'label'=> 'Parent'] )
+            ->add('p_info_provider'         , TextType::class, ['disabled'=>true, 'label'=> 'Info provider'] )
+            ->add('p_origin_country_code'   , TextType::class, ['required'=>false, 'label'=> 'Origin country code'] )
+            ->add('p_vendor'                , TextType::class, ['required'=>false, 'label'=> 'Vendor code'] )
+            ->add('p_manufacturer'          , TextType::class, ['required'=>false, 'label'=> 'Manufacturer code'] )
+            ->add('p_type'                  , TextType::class, ['required'=>false, 'label'=> 'Type code'] )
+            ->add('p_measure'               , TextType::class, ['required'=>false, 'label'=> 'Measure code'] )
+            ->add('p_color'                 , TextType::class, ['required'=>false, 'label'=> 'Color code'] )
+            ->add('p_for_male'              , CheckboxType::class, ['required'=>false, 'label'=> 'For male'] )
+            ->add('p_for_female'            , CheckboxType::class, ['required'=>false, 'label'=> 'For female'] )
+            ->add('p_size'                  , TextType::class, ['required'=>false, 'label'=> 'Size'] )
+            ->add('p_pack_size'             , TextType::class, ['required'=>false, 'label'=> 'Pack Size'] )
+            ->add('p_pack_amount'           , TextType::class, ['required'=>false, 'label'=> 'Pack amount'] )
+            ->add('p_weight'                , NumberType::class, ['required'=>false, 'label'=> 'Weight'] )
+            ->add('p_length'                , NumberType::class, ['required'=>false, 'label'=> 'Length'] )
+            ->add('p_height'                , NumberType::class, ['required'=>false, 'label'=> 'Height'] )
+            ->add('p_width'                 , NumberType::class, ['required'=>false, 'label'=> 'Width'] )
+            ->add('p_delivery_time'         , TextType::class, ['required'=>false, 'label'=> 'Delivery time'] )
+            ->add( 'pl_language'            , TextType::class, ['disabled'=>true, 'label'=> 'Language'])
+            ->add('pl_name'                 , TextType::class, ['label'=> 'Name'] )
+            ->add('pl_description'          , TextType::class, ['required'=>false, 'label'=> 'Description'] )
+            ->add('pl_label'                , TextType::class, ['required'=>false, 'label'=> 'Label'] )
+            ->add('pl_variant_name'         , TextType::class, ['required'=>false, 'label'=> 'Variant name'] )
+            ->add('pl_info_provider'        , TextType::class, ['required'=>false, 'label'=> 'Info provider'] )
+            ->add('pl_tags'                 , TextType::class, ['required'=>false, 'label'=> 'Tags'] );
             $builder->add('save', SubmitType::class, ['label' => 'Išsaugoti']);
 
     }
@@ -118,37 +107,6 @@ class ProductFormType extends AbstractType
         $this->productLanguage = $productLanguage;
     }
 
-    /**
-     * @return Language[]
-     */
-    public function getLanguages(): array
-    {
-        return $this->languages;
-    }
-
-    /**
-     * @param Language[] $languages
-     */
-    public function setLanguages(array $languages): void
-    {
-        $this->languages = $languages;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSelectedLanguage(): string
-    {
-        return $this->selectedLanguage;
-    }
-
-    /**
-     * @param string $selectedLanguage
-     */
-    public function setSelectedLanguage(string $selectedLanguage): void
-    {
-        $this->selectedLanguage = $selectedLanguage;
-    }
 
 
     // ========================================
@@ -658,6 +616,13 @@ class ProductFormType extends AbstractType
     public function setPLTags(string $tags=null): void
     {
         $this->productLanguage->setTags( $tags );
+    }
+
+    /**
+     * @return string
+     */
+    public function getPlLanguage() {
+        return $this->productLanguage->getLanguage()->getCode();
     }
 
 }

@@ -27,6 +27,7 @@ services:
         arguments:
             - '@logger'
             - '@gt.catalog.catalog_dao'
+            - '@gt.catalog.language_dao'
 
     gt.catalog.languages_service:
         class: 'Gt\Catalog\Services\LanguagesService'

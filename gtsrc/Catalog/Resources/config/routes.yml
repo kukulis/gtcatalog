@@ -9,7 +9,7 @@ gt.catalog.product_list:
     methods: GET
 
 gt.catalog.product_edit:
-    path: "/product/edit/{sku}"
+    path: "/product/edit/{sku}/l/{languageCode}"
     controller: Gt\Catalog\Controller\ProductsController::editAction
     methods: [GET, POST]
 

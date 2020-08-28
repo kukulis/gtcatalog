@@ -62,14 +62,14 @@ class Product
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=32, name="parent_sku")
+     * @ORM\Column(type="string", length=32, name="parent_sku", nullable=true)
      */
     private $parentSku;
 
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=3, name="origin_country_code")
+     * @ORM\Column(type="string", length=3, name="origin_country_code", nullable=true)
      */
     private $originCountryCode;
 
@@ -112,7 +112,7 @@ class Product
 
     /**
      * @var string
-     * @ORM\Column(type="string", name="color")
+     * @ORM\Column(type="string", name="color", nullable=true)
      */
     private $color;
 
@@ -130,19 +130,19 @@ class Product
 
     /**
      * @var string
-     * @ORM\Column(type="string", name="size")
+     * @ORM\Column(type="string", name="size", nullable=true)
      */
     private $size;
 
     /**
      * @var string
-     * @ORM\Column(type="string", name="pack_size")
+     * @ORM\Column(type="string", name="pack_size", nullable=true)
      */
     private $packSize;
 
     /**
      * @var string
-     * @ORM\Column(type="string", name="pack_amount")
+     * @ORM\Column(type="string", name="pack_amount", nullable=true)
      */
     private $packAmount;
 
@@ -169,13 +169,13 @@ class Product
 
     /**
      * @var string
-     * @ORM\Column(type="string", name="delivery_time")
+     * @ORM\Column(type="string", name="delivery_time", nullable=true)
      */
     private $deliveryTime;
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=64, name="info_provider")
+     * @ORM\Column(type="string", length=64, name="info_provider", nullable=true)
      */
     private $infoProvider;
 

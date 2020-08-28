@@ -16,8 +16,11 @@ use Doctrine\ORM\ORMException;
 use Gt\Catalog\Entity\Classificator;
 use Gt\Catalog\Entity\ClassificatorLanguage;
 use Gt\Catalog\Entity\Product;
+use Gt\Catalog\Entity\ProductLanguage;
 use Gt\Catalog\Exception\CatalogDetailedException;
 use Gt\Catalog\Exception\CatalogErrorException;
+use Gt\Catalog\Exception\RelatedObject;
+use Gt\Catalog\Exception\RelatedObjectClassificator;
 use Gt\Catalog\Exception\WrongAssociationsException;
 use Psr\Log\LoggerInterface;
 
@@ -138,6 +141,8 @@ class CatalogDao
         }
 
         $messages = [];
+
+        /** @var RelatedObjectClassificator[] $wrongObjects */
         $wrongObjects = [];
         foreach ($classificatorsToFind as $c ) {
             if ( $c==null || $c->getCode() == null ) {
@@ -147,14 +152,21 @@ class CatalogDao
             if ( !array_key_exists($c->getCode(), $loadedMap)) {
                 $messages[] = 'Unfound '.$c->getCode();
 
-                $wrongObjects[] = $c;
+                $relatedObjectClassificator = new RelatedObjectClassificator();
+                $relatedObjectClassificator->classificatorCode = $c->getCode();
+                $relatedObjectClassificator->correctCode = $c->getGroupCode();
+                $wrongObjects[] = $relatedObjectClassificator;
                 continue;
             }
 
             $loadedClassificator = $loadedMap[$c->getCode()];
             if ( $loadedClassificator->getGroupCode() != $c->getGroupCode() ) {
-                $messages[] = 'Wrong group ['.$loadedClassificator->getGroupCode().'] original: ['.$c->getGroupCode().']';
-                $wrongObjects[] = $c;
+                $messages[] = 'Group for ['.$loadedClassificator->getCode().'] is wrong: ['.$loadedClassificator->getGroupCode().'] should be: ['.$c->getGroupCode().']';
+                $relatedObjectClassificator = new RelatedObjectClassificator();
+                $relatedObjectClassificator->classificatorCode = $c->getCode();
+                $relatedObjectClassificator->correctCode = $c->getGroupCode();
+                $relatedObjectClassificator->wrongCode = $loadedClassificator->getGroupCode();
+                $wrongObjects[] = $relatedObjectClassificator;
                 continue;
             }
 
@@ -205,6 +217,7 @@ class CatalogDao
         $subCodes[] = substr($code, 0, 3);
         $subCodes[] = substr($code, 0, 2);
         $subCodes[] = substr($code, 0, 1);
+        $subCodes[] = '';
 
         /** @var Classificator[] $found */
         $found = [];
@@ -319,5 +332,44 @@ class CatalogDao
         $sql = /** @lang MySQL*/ "insert ignore into classificators ( code, group_code )
                 values $valuesStr";
         return $conn->exec($sql);
+    }
+
+    /**
+     * @param $sku
+     * @param $languageCode
+     * @return ProductLanguage
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function getProductLanguage ( $sku,  $languageCode ) {
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        $class = ProductLanguage::class;
+
+        $dql = /** @lang DQL */ "SELECT pl,p,l from $class pl join pl.product p join pl.language l where p.sku=:sku and l.code=:languageCode";
+        $query = $em->createQuery($dql);
+
+        $query->setParameter( 'sku', $sku);
+        $query->setParameter('languageCode', $languageCode );
+
+        /** @var ProductLanguage $productLanguage */
+        $productLanguage = $query->getOneOrNullResult();
+
+        return $productLanguage;
+    }
+
+    /**
+     * @param ProductLanguage $pl
+     * @throws CatalogErrorException
+     */
+    public function storeProductLanguage ( ProductLanguage $pl ) {
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        try {
+            $em->persist($pl);
+        } catch (ORMException $e ) {
+            throw new CatalogErrorException($e->getMessage());
+        }
     }
 }

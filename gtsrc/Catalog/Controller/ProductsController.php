@@ -35,8 +35,11 @@ class ProductsController extends AbstractController
 
         $products = $productsService->getProducts($page);
 
+        $languageCode = 'en';
+
         return $this->render('@Catalog/products/list.html.twig', [
             'products' => $products,
+            'languageCode'  => $languageCode,
         ]);
     }
 
@@ -48,31 +51,25 @@ class ProductsController extends AbstractController
      * @throws CatalogErrorException
      * @throws CatalogDetailedException
      */
-    public function editAction(Request $request, $sku, ProductsService $productsService ) {
-        $product = $productsService->getProduct( $sku );
-
-
-        if ( $product == null ) {
-            return $this->render('@Catalog/error/error.html.twig', [
-                'error' => 'Product not loaded by sku '.$sku,
-            ]);
-        }
+    public function editAction(Request $request, $sku, $languageCode, ProductsService $productsService ) {
 
         $messages = [];
         $message = '';
+        $suggestions =[];
 
         try {
-            // TODO load product language
-            $productLanguage = new ProductLanguage();
+            $product = $productsService->getProduct( $sku );
 
-            // TODO
-
-//        $language = new Language();
+            if ( $product == null ) {
+                return $this->render('@Catalog/error/error.html.twig', [
+                    'error' => 'Product not loaded by sku '.$sku,
+                ]);
+            }
+            $productLanguage = $productsService->getProductLanguage($sku, $languageCode);
 
             $productFormType = new ProductFormType();
             $productFormType->setProduct($product);
             $productFormType->setProductLanguage($productLanguage);
-            $productFormType->setSelectedLanguage('lt');
 
             $form = $this->createForm(ProductFormType::class, $productFormType);
 
@@ -81,22 +78,14 @@ class ProductsController extends AbstractController
 
                 /** @var SubmitButton $saveSubmit */
                 $saveSubmit = $form->get('save');
-                /** @var SubmitButton $selectLanguageSubmit */
-                $selectLanguageSubmit = $form->get('select_language');
-                /** @var SubmitButton $addLanguageSubmit */
-                $addLanguageSubmit = $form->get('add_language');
 
                 if ($saveSubmit->isSubmitted()) {
                     $productsService->storeProduct($product);
-                } else if ($selectLanguageSubmit->isSubmitted()) {
-                    // TODO
-                } else if ($addLanguageSubmit->isSubmitted()) {
-                    // TODO
+                    $productsService->storeProductLanguage ($productLanguage);
                 }
-
-//            if ( $saveSubmit->)
             }
         } catch ( WrongAssociationsException $e ) {
+            // vėliau šitas
             $message = $e->getMessage();
             $messages = $e->getDetails();
             $objects = $e->getRelatedObjects();

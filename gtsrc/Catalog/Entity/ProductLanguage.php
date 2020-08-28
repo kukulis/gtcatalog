@@ -42,33 +42,33 @@ class ProductLanguage
 
     /**
      * @var string
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
     private $description;
 
     /**
      * @var string
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
     private $label;
 
 
     /**
      * @var string
-     * @ORM\Column(type="string", name="variant_name")
+     * @ORM\Column(type="string", name="variant_name", nullable=true)
      */
     private $variantName;
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=64)
+     * @ORM\Column(type="string", length=64, nullable=true)
      */
     private $infoProvider;
 
 
     /**
      * @var string
-     * @ORM\Column(type="string", name="tags")
+     * @ORM\Column(type="string", name="tags", nullable=true)
      */
     private $tags;
 
