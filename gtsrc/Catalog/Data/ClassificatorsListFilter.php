@@ -50,4 +50,6 @@ interface ClassificatorsListFilter
      * @param mixed $limit
      */
     public function setLimit($limit): void;
+
+    public function getLanguageCode(): ?string;
 }

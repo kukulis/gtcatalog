@@ -222,7 +222,7 @@ class CatalogDao
         /** @var Classificator[] $found */
         $found = [];
         foreach ($subCodes as $subCode ) {
-            $part = $this->loadLikeClassificators($subCode, null, $groupCode, $limit );
+            $part = $this->loadLikeClassificators($subCode, null, $groupCode, 'en', $limit );
             $found = array_merge($found, $part);
             if ( count($found ) >= $limit ) {
                 break;
@@ -238,7 +238,16 @@ class CatalogDao
      * @param int $limit
      * @return Classificator[]
      */
-    public function loadLikeClassificators ( $likeCode, $likeName, $groupCode, $limit ) {
+    public function loadLikeClassificators ( $likeCode, $likeName, $groupCode, $language, $limit ) {
+        if ( !empty($likeName)) {
+            $classificatorsLanguages = $this->loadLikeClassificatorsLanguages ($likeCode, $likeName, $groupCode, $language, $limit );
+            $classificators = [];
+            foreach ($classificatorsLanguages as $cl ) {
+                $classificators[] =  $cl->getClassificator();
+            }
+            return $classificators;
+        }
+
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
 
@@ -254,13 +263,8 @@ class CatalogDao
         }
 
         if ( !empty($likeCode)) {
-            $builder->andWhere('c.code = :likeCode');
-            $builder->setParameter('likeCode', $likeCode );
-        }
-
-        if ( !empty($likeName) ) {
-            $builder->andWhere('c.name = :likeName');
-            $builder->setParameter('likeName', $likeName );
+            $builder->andWhere('c.code like :likeCode');
+            $builder->setParameter('likeCode', '%'.$likeCode.'%' );
         }
 
         $builder->setMaxResults($limit);
@@ -270,6 +274,47 @@ class CatalogDao
 
         return $classificators;
     }
+
+    /**
+     * @param string $likeCode
+     * @param string $likeName
+     * @param string $groupCode
+     * @param string $language
+     * @param string $limit
+     * @return ClassificatorLanguage[]
+     */
+    public function loadLikeClassificatorsLanguages ($likeCode, $likeName, $groupCode, $language, $limit ) {
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        $builder =  $em->createQueryBuilder();
+        $builder->select('cl')
+            ->from(ClassificatorLanguage::class, 'cl')
+            ->join( 'cl.classificator', 'c')
+            ->join( 'c.group', 'g');
+
+        if ( !empty($likeName) ) {
+            $builder->andWhere('cl.value like :likeName');
+            $builder->setParameter('likeName', '%'.$likeName.'%' );
+        }
+
+        if ( !empty($groupCode)) {
+            $builder->andWhere('g.code=:groupCode');
+            $builder->setParameter('groupCode', $groupCode );
+        }
+
+        if ( !empty($likeCode)) {
+            $builder->andWhere('c.code like :likeCode');
+            $builder->setParameter('likeCode', '%'.$likeCode.'%' );
+        }
+
+        $builder->setMaxResults($limit);
+
+        /** @var ClassificatorLanguage[] $cls */
+        $cls =  $builder->getQuery()->getResult();
+        return $cls;
+    }
+
 
 
     /**

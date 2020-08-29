@@ -71,7 +71,7 @@ class ClassificatorsService
      * @return \Gt\Catalog\Entity\Classificator[]
      */
     public function searchClassificators (ClassificatorsListFilter $filter) {
-        return $this->catalogDao->loadLikeClassificators($filter->getLikeCode(), $filter->getLikeName(), $filter->getGroupCode(), $filter->getLimit());
+        return $this->catalogDao->loadLikeClassificators($filter->getLikeCode(), $filter->getLikeName(), $filter->getGroupCode(), $filter->getLanguageCode(), $filter->getLimit());
     }
 
     /**

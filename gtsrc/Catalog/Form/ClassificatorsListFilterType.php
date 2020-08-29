@@ -155,4 +155,12 @@ class ClassificatorsListFilterType extends AbstractType implements Classificator
         $this->language = $language;
     }
 
+    public function getLanguageCode(): ?string
+    {
+        if ( empty($this->language)) {
+            return '';
+        }
+
+        return $this->language->getCode();
+    }
 }
