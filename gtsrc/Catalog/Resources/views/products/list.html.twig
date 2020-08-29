@@ -1,4 +1,11 @@
-<h1>Produktai</h1>
+{% extends 'base.html.twig' %}
+
+{# TODO paieškos forma ir pavadinimo rodymas #}
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
 <table>
 {% for p in products %}
     <tr>
@@ -9,3 +16,7 @@
     </tr>
 {% endfor %}
 </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

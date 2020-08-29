@@ -13,6 +13,7 @@ gt.catalog.product_edit:
     controller: Gt\Catalog\Controller\ProductsController::editAction
     methods: [GET, POST]
 
+## gal nebereikalingas
 gt.catalog.product_update:
     path: "/product/update/{sku}"
     controller: Gt\Catalog\Controller\ProductsController::updateAction
@@ -23,6 +24,7 @@ gt.catalog.product_delete:
     controller: Gt\Catalog\Controller\ProductsController::deleteAction
     methods: DELETE
 
+## gal nebereikalingas
 gt.catalog.product_new:
     path: "/product/new/{sku}"
     controller: Gt\Catalog\Controller\ProductsController::newAction

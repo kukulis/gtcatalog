@@ -8,8 +8,6 @@
 
 namespace Gt\Catalog\Controller;
 
-
-use Gt\Catalog\Entity\ProductLanguage;
 use Gt\Catalog\Exception\CatalogDetailedException;
 use Gt\Catalog\Exception\CatalogErrorException;
 use Gt\Catalog\Exception\WrongAssociationsException;
@@ -84,8 +82,10 @@ class ProductsController extends AbstractController
                     $productsService->storeProductLanguage ($productLanguage);
                 }
             }
-        } catch ( WrongAssociationsException $e ) {
-            // vėliau šitas
+
+            $allLanguages = $productsService->getAllLanguages();
+
+        } catch ( WrongAssociationsException $e ) { // paveldi iš CatalogDetailedException
             $message = $e->getMessage();
             $messages = $e->getDetails();
             $objects = $e->getRelatedObjects();
@@ -99,22 +99,10 @@ class ProductsController extends AbstractController
             'messages' => $messages,
             'message' => $message,
             'suggestions' => $suggestions,
+            'languages' => $allLanguages,
+            'sku' => $sku,
+            'languageCode' => $languageCode,
         ]);
-    }
-
-    /**
-     * Called from edit form
-     * @param Request $request
-     * @return Response
-     */
-    public function updateAction(Request $request) {
-        // TODO redirect to list or to error page
-        return new Response('TODO update Action');
-    }
-
-    public function newAction () {
-        // TODO create new record into database and redirect to edit
-        return new Response('TODO new product' );
     }
 
     public function deleteAction() {

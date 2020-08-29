@@ -13,6 +13,7 @@ use Doctrine\ORM\ORMException;
 use Gt\Catalog\Dao\CatalogDao;
 use Gt\Catalog\Dao\LanguageDao;
 use Gt\Catalog\Entity\Classificator;
+use Gt\Catalog\Entity\Language;
 use Gt\Catalog\Entity\Product;
 use Gt\Catalog\Entity\ProductLanguage;
 use Gt\Catalog\Exception\CatalogDetailedException;
@@ -147,5 +148,12 @@ class ProductsService
         $this->catalogDao->flush();
     }
 
+    /**
+     * @return Language[]
+     */
+    public function getAllLanguages() {
+        $languages = $this->languageDao->getLanguagesList(0,10);
+        return $languages;
+    }
 
 }
