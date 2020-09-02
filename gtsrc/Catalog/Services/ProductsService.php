@@ -12,6 +12,7 @@ namespace Gt\Catalog\Services;
 use Doctrine\ORM\ORMException;
 use Gt\Catalog\Dao\CatalogDao;
 use Gt\Catalog\Dao\LanguageDao;
+use Gt\Catalog\Data\ProductsFilter;
 use Gt\Catalog\Entity\Classificator;
 use Gt\Catalog\Entity\Language;
 use Gt\Catalog\Entity\Product;
@@ -54,8 +55,8 @@ class ProductsService
      * @param int $page
      * @return Product[]
      */
-    public function getProducts ( $page=0) {
-        $products = $this->catalogDao->getProductsList($page*self::PAGE_SIZE, self::PAGE_SIZE );
+    public function getProducts ( ProductsFilter $filter ) {
+        $products = $this->catalogDao->getProductsList(0,  $filter->getLimit() );
         return $products;
     }
 

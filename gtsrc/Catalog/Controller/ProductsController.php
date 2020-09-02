@@ -12,6 +12,7 @@ use Gt\Catalog\Exception\CatalogDetailedException;
 use Gt\Catalog\Exception\CatalogErrorException;
 use Gt\Catalog\Exception\WrongAssociationsException;
 use Gt\Catalog\Form\ProductFormType;
+use Gt\Catalog\Form\ProductsFilterType;
 use Gt\Catalog\Services\ProductsService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -29,15 +30,20 @@ class ProductsController extends AbstractController
     public function listAction(Request $request, LoggerInterface $logger, ProductsService $productsService ) {
         $logger->info ( 'listAction called');
 
+        $productsFilterType = new ProductsFilterType();
+        $filterForm = $this->createForm( ProductsFilterType::class, $productsFilterType);
+        $filterForm->handleRequest($request);
+
         $page = $request->get('page', 0);
 
-        $products = $productsService->getProducts($page);
+        $products = $productsService->getProducts($productsFilterType);
 
-        $languageCode = 'en';
+        $languageCode = $productsFilterType->getLanguageCode();
 
         return $this->render('@Catalog/products/list.html.twig', [
             'products' => $products,
             'languageCode'  => $languageCode,
+            'filterForm' => $filterForm->createView(),
         ]);
     }
 
