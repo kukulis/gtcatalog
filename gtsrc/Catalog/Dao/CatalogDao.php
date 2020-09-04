@@ -13,6 +13,7 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMException;
+use Gt\Catalog\Data\ProductsFilter;
 use Gt\Catalog\Entity\Classificator;
 use Gt\Catalog\Entity\ClassificatorLanguage;
 use Gt\Catalog\Entity\Product;
@@ -63,6 +64,55 @@ class CatalogDao
         $products = $em->createQuery($dql)->setMaxResults($limit)->setFirstResult($offset)->execute();
 
         return $products;
+    }
+
+    public function getProductsListByFilter ( ProductsFilter $filter ) {
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        $builder =  $em->createQueryBuilder();
+        $builder->select('p')
+            ->from(Product::class, 'p');
+
+        if ( !empty($filter->getLikeName() )) {
+            $builder->andWhere( 'p.name like :likeName' );
+            $builder->setParameter( 'likeName', '%'. $filter->getLikeName().'%' );
+        }
+
+        if ( !empty($filter->getLikeSku() ) ) {
+            $builder->andWhere('p.sku like :likeSku');
+            $builder->setParameter('likeSku', '%'.$filter->getLikeSku().'%' );
+        }
+
+        $builder->setMaxResults( $filter->getLimit() );
+
+        /** @var Product[] $products */
+        $products = $builder->getQuery()->getResult();
+
+        return $products;
+    }
+
+    /**
+     * @param string[] $skus
+     * @param string $languageCode
+     * @return ProductLanguage[]
+     */
+    public function getProductsLangs ( $skus, $languageCode ) {
+        $class = ProductLanguage::class;
+        $dql = /** @lang DQL */  "SELECT pl from $class pl join pl.product p join pl.language l 
+        where p.sku in (:skus) and l.code = :languageCode";
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        $query = $em->createQuery($dql);
+
+        $query->setParameter('skus', $skus );
+        $query->setParameter('languageCode', $languageCode );
+
+        /** @var ProductLanguage[] $productLanguages */
+        $productLanguages = $query->getResult();
+
+        return $productLanguages;
     }
 
     /**

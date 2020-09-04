@@ -15,6 +15,7 @@
         <td>{{ p.sku }}</td>
         <td>{{ p.lastUpdate | date('Y-m-d H:i:s') }}</td>
         <td>{{ p.version }}</td>
+        <td>{{ p.extractedName }}</td>
         <td><a href="{{ path('gt.catalog.product_edit', {sku: p.sku, languageCode: languageCode }) }}">Edit</a></td>
     </tr>
 {% endfor %}

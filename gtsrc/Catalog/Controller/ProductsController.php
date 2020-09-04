@@ -60,6 +60,7 @@ class ProductsController extends AbstractController
         $messages = [];
         $message = '';
         $suggestions =[];
+        $allLanguages = [];
 
         try {
             $product = $productsService->getProduct( $sku );
@@ -75,6 +76,9 @@ class ProductsController extends AbstractController
             $productFormType->setProduct($product);
             $productFormType->setProductLanguage($productLanguage);
 
+
+            $allLanguages = $productsService->getAllLanguages();
+
             $form = $this->createForm(ProductFormType::class, $productFormType);
 
             $form->handleRequest($request);
@@ -89,14 +93,17 @@ class ProductsController extends AbstractController
                 }
             }
 
-            $allLanguages = $productsService->getAllLanguages();
-
         } catch ( WrongAssociationsException $e ) { // paveldi iš CatalogDetailedException
             $message = $e->getMessage();
             $messages = $e->getDetails();
             $objects = $e->getRelatedObjects();
 
             $suggestions = $productsService->getSuggestions ( $objects );
+        }
+        catch ( CatalogErrorException $e ) {
+            return $this->render('@Catalog/error/error.html.twig', [
+                'error' => $e->getMessage(),
+            ]);
         }
 
         return $this->render('@Catalog/products/edit.html.twig', [

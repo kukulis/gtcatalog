@@ -29,24 +29,26 @@ class ProductsFilterType extends AbstractType implements ProductsFilter
     /** @var Language */
     private $language;
 
-    private $limit;
+    private $limit=100;
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('likeSku', TextType::class )
-            ->add('likeName', TextType::class)
+        $builder->add('likeSku', TextType::class, ['required'=>false] )
+            ->add('likeName', TextType::class, ['required' => false])
             ->add('limit', IntegerType::class)
             ->add('language', EntityType::class, [
                 'class' => Language::class,
                 'choice_label' => 'name'
             ])
             ->add('search', SubmitType::class );
+
+        $builder->setMethod('get' );
     }
 
     /**
      * @return string
      */
-    public function getLikeSku(): string
+    public function getLikeSku(): ? string
     {
         return $this->likeSku;
     }
@@ -54,7 +56,7 @@ class ProductsFilterType extends AbstractType implements ProductsFilter
     /**
      * @param string $likeSku
      */
-    public function setLikeSku(string $likeSku): void
+    public function setLikeSku(string $likeSku=null): void
     {
         $this->likeSku = $likeSku;
     }
@@ -62,7 +64,7 @@ class ProductsFilterType extends AbstractType implements ProductsFilter
     /**
      * @return string
      */
-    public function getLikeName(): string
+    public function getLikeName(): ?string
     {
         return $this->likeName;
     }
@@ -70,7 +72,7 @@ class ProductsFilterType extends AbstractType implements ProductsFilter
     /**
      * @param string $likeName
      */
-    public function setLikeName(string $likeName): void
+    public function setLikeName(string $likeName=null): void
     {
         $this->likeName = $likeName;
     }

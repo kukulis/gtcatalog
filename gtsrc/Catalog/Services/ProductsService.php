@@ -56,7 +56,26 @@ class ProductsService
      * @return Product[]
      */
     public function getProducts ( ProductsFilter $filter ) {
-        $products = $this->catalogDao->getProductsList(0,  $filter->getLimit() );
+        $products = $this->catalogDao->getProductsListByFilter($filter);
+
+        $skus = array_map ([Product::class, 'lambdaGetSku'], $products);
+        $productsLanguages = $this->catalogDao->getProductsLangs($skus, $filter->getLanguageCode());
+
+        /** @var ProductLanguage[] $plMap */
+        $plMap = [];
+        foreach ($productsLanguages as $pl ) {
+            $plMap[$pl->getProduct()->getSku()] = $pl;
+        }
+
+        foreach ($products as $p ) {
+            if ( array_key_exists( $p->getSku(), $plMap )) {
+                $p->setExtractedName ( $plMap[$p->getSku()]->getName() );
+            }
+            else {
+                $p->setExtractedName('-');
+            }
+        }
+
         return $products;
     }
 

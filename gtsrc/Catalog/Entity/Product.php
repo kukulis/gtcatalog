@@ -180,6 +180,9 @@ class Product
     private $infoProvider;
 
 
+    /** @var string */
+    private $extractedName; // not stored in database
+
     /**
      * @return string
      */
@@ -578,5 +581,25 @@ class Product
         else {
             throw new CatalogErrorException('Neteisingas klasifikatoriaus grupės kodas '.$groupCode);
         }
+    }
+
+    public static function lambdaGetSku ( Product $p ) {
+        return $p->getSku();
+    }
+
+    /**
+     * @return string
+     */
+    public function getExtractedName(): string
+    {
+        return $this->extractedName;
+    }
+
+    /**
+     * @param string $extractedName
+     */
+    public function setExtractedName(string $extractedName): void
+    {
+        $this->extractedName = $extractedName;
     }
 }

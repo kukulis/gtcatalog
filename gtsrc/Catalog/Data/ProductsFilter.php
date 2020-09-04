@@ -16,22 +16,22 @@ interface ProductsFilter
     /**
      * @return string
      */
-    public function getLikeSku(): string;
+    public function getLikeSku(): ?string;
 
     /**
      * @param string $likeSku
      */
-    public function setLikeSku(string $likeSku): void;
+    public function setLikeSku(string $likeSku=null): void;
 
     /**
      * @return string
      */
-    public function getLikeName(): string;
+    public function getLikeName(): ?string;
 
     /**
      * @param string $likeName
      */
-    public function setLikeName(string $likeName): void;
+    public function setLikeName(string $likeName=null): void;
 
     /**
      * @return Language
