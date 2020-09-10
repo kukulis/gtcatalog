@@ -31,4 +31,8 @@ gt.catalog.product_new:
     methods: GET
 
 
+gt.catalog.product_pictures:
+    path: "/product/pictures/{sku}"
+    controller: Gt\Catalog\Controller\ProductsController::picturesList
+    methods: GET
 

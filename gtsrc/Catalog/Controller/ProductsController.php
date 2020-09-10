@@ -34,8 +34,6 @@ class ProductsController extends AbstractController
         $filterForm = $this->createForm( ProductsFilterType::class, $productsFilterType);
         $filterForm->handleRequest($request);
 
-        $page = $request->get('page', 0);
-
         $products = $productsService->getProducts($productsFilterType);
 
         $languageCode = $productsFilterType->getLanguageCode();
@@ -107,7 +105,6 @@ class ProductsController extends AbstractController
         }
 
         return $this->render('@Catalog/products/edit.html.twig', [
-//            'product' => $product,
             'form' => $form->createView(),
             'messages' => $messages,
             'message' => $message,
@@ -120,6 +117,20 @@ class ProductsController extends AbstractController
 
     public function deleteAction() {
         return new Response('TODO delete product' );
+    }
+
+    public function picturesList(Request $request, $sku, ProductsService $productsService) {
+        // show assigned pictures list and picture form
+        $product = $productsService->getProduct($sku);
+        // TODO load
+
+        return $this->render('@Catalog/products/pictures.html.twig', [
+        ] );
+
+    }
+
+    public function uploadPicture() {
+
     }
 
 }
