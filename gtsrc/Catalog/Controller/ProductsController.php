@@ -133,4 +133,9 @@ class ProductsController extends AbstractController
 
     }
 
+    public function importProductsFormAction(Request $r) {
+    // TODO
+        return $this->render('@Catalog/products/import_form.html.twig', []);
+    }
+
 }
