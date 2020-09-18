@@ -1,6 +1,5 @@
 {% extends 'base.html.twig' %}
 
-{# TODO paieškos forma ir pavadinimo rodymas #}
 {% block body %}
 
 <div class="container">
@@ -17,6 +16,7 @@
         <td>{{ p.version }}</td>
         <td>{{ p.extractedName }}</td>
         <td><a href="{{ path('gt.catalog.product_edit', {sku: p.sku, languageCode: languageCode }) }}">Edit</a></td>
+        <td><a href="{{ path('gt.catalog.product_pictures', {sku: p.sku }) }}">Pictures</a></td>
     </tr>
 {% endfor %}
 </table>

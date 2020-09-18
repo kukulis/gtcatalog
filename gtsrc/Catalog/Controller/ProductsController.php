@@ -124,9 +124,21 @@ class ProductsController extends AbstractController
         $product = $productsService->getProduct($sku);
         // TODO load
 
-        return $this->render('@Catalog/products/pictures.html.twig', [
+        return $this->render('@Catalog/products/pictures.html.twig',
+            [
+                'product' => $product
         ] );
 
+    }
+
+    public function addPictureForm(Request $request, $sku, ProductsService $productsService) {
+        $product = $productsService->getProduct($sku);
+        // TODO load
+
+        return $this->render('@Catalog/pictures/add.html.twig',
+            [
+                'product' => $product
+            ] );
     }
 
     public function uploadPicture() {

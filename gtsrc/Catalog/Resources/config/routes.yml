@@ -32,7 +32,14 @@ gt.catalog.product_new:
 
 
 gt.catalog.product_pictures:
-    path: "/product/pictures/{sku}"
+    path: "/product/{sku}/pictures/"
     controller: Gt\Catalog\Controller\ProductsController::picturesList
+    methods: GET
+
+
+
+gt.catalog.product_pictures_add:
+    path: "/product/{sku}/pictures/add"
+    controller: Gt\Catalog\Controller\ProductsController::addPictureForm
     methods: GET
 

@@ -1,1 +1,15 @@
-todo pictures
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            {{ product.sku }}
+
+            <a href="{{ path( 'gt.catalog.product_pictures_add', {sku: product.sku} ) }}">add</a>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
