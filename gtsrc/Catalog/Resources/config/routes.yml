@@ -40,3 +40,9 @@ gt.catalog.import_products_form:
     path: "/products/import_form"
     controller: Gt\Catalog\Controller\ProductsController::importProductsFormAction
     methods: GET
+
+gt.catalog.import_products:
+    path: "/products/import"
+    controller: Gt\Catalog\Controller\ProductsController::importProductsAction
+    methods: POST
+
