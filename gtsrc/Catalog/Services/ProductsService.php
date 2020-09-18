@@ -10,6 +10,7 @@ namespace Gt\Catalog\Services;
 
 
 use Doctrine\ORM\ORMException;
+use Gt\Catalog\CsvUtils;
 use Gt\Catalog\Dao\CatalogDao;
 use Gt\Catalog\Dao\LanguageDao;
 use Gt\Catalog\Data\ProductsFilter;
@@ -176,4 +177,89 @@ class ProductsService
         return $languages;
     }
 
+    public function importProducts(  $csvFile ) {
+        $f = fopen ( $csvFile, 'r' );
+
+        // read head
+        $head  = fgetcsv($f);
+        $headMap = array_flip ( $head );
+
+        // read all data to memory
+
+        $lines = [];
+        while ( ($line = fgetcsv($f)) != null ) {
+            $lines[] = $line;
+        }
+        fclose($f);
+
+        $partSize = 100;
+
+        for ( $i = 0; $i < count($lines); $i+= $partSize) {
+
+            $part = array_slice($lines, $i, $partSize);
+
+            /** @var Product[] $products */
+            $products = [];
+
+            /** @var ProductLanguage[] $productsLangs */
+            $productsLangs = [];
+
+            // make array for importing product
+
+            foreach ($part as $l) {
+                // convert array line to assoc line
+                $line = CsvUtils::arrayToAssoc($headMap, $l);
+
+                $product = new Product();
+                $product->setSku($line['sku']);
+                $product->setBrand($line['brand']);
+                $product->setLine($line['line']);
+                $product->setParentSku($line['parentSku']);
+                $product->setOriginCountryCode($line['originCountryCode']);
+                $product->setVendor($line['vendor']);
+                $product->setManufacturer($line['manufacturer']);
+                $product->setType($line['type']);
+                $product->setPurpose($line['purpose']);
+                $product->setMeasure($line['measure']);
+                $product->setColor($line['color']);
+                $product->setForMale($line['forMale']);
+                $product->setForFemale($line['forFemale']);
+                $product->setSize($line['size']);
+                $product->setPackSize($line['packSize']);
+                $product->setPackAmount($line['packAmount']);
+                $product->setWeight($line['weight']);
+                $product->setLength($line['length']);
+                $product->setHeight($line['height']);
+                $product->setWidth($line['width']);
+                $product->setDeliveryTime($line['deliveryTime']);
+
+                $products[] = $product;
+                // TODO validate each value classificator ?
+
+                // make array for importing productLanguages
+                $productLang = new ProductLanguage();
+                $productLang->setProduct($product);
+                $language = new Language();
+                $language->setCode($line['language']);
+                $productLang->setLanguage($language);
+                $productLang->setName($line['name']);
+                $productLang->setDescription($line['description']);
+                $productLang->setLabel($line['label']);
+                $productLang->setVariantName($line['variantName']);
+                $productLang->setInfoProvider($line['infoProvider']);
+                $productLang->setTags($line['tags']);
+
+                $productsLangs [] = $productLang;
+            }
+
+            // TODO validate for a whole part of products
+
+            // TODO collect classificators for each group
+            // TODO validate each group of classificators
+
+            $this->catalogDao->importProducts ( $products, $headMap);
+            $this->catalogDao->importProductsLangs( $productsLangs, $headMap );
+        }
+        return 0;
+    }
 }

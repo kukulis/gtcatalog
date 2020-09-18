@@ -17,6 +17,7 @@ use Gt\Catalog\Services\ProductsService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -138,9 +139,16 @@ class ProductsController extends AbstractController
         return $this->render('@Catalog/products/import_form.html.twig', []);
     }
 
-    public function importProductsAction(Request $r) {
-        // TODO
-        return $this->render('@Catalog/products/import_products_results.html.twig', []);
+    public function importProductsAction(Request $r, ProductsService $productsService) {
+        /** @var File $csvFileObj */
+        $csvFileObj  = $r->files->get('csvfile');
+        $file = $csvFileObj->getPathname();
+
+        $count = $productsService->importProducts(  $file );
+        return $this->render('@Catalog/products/import_products_results.html.twig',
+            [ 'count' => $count,
+                ]
+        );
     }
 
 }
