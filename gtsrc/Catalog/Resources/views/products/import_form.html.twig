@@ -1,0 +1,14 @@
+<div>
+    <p>Stulpeliai:</p>
+    <ul>
+        {#  TODO daugiau stulpelių  #}
+        <li>Code</li>
+        <li>Name</li>
+        <li>Group</li>
+    </ul>
+</div>
+
+<form method="post" enctype="multipart/form-data" action="{{ path('gt.catalog.import_products') }}">
+    <input type="file" name="csvfile" />
+    <input type="submit" name="import" value="Importuoti" />
+</form>

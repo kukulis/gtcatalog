@@ -467,4 +467,30 @@ class CatalogDao
             throw new CatalogErrorException($e->getMessage());
         }
     }
+
+
+    /**
+     * @param Product[] $products
+     */
+    public function importProducts ( $products, $allowedFieldsSet ) {
+        // TODO
+        // build insert sql script by intersecting possible fields with a given allowedFieldsSet
+
+        // then on duplicate key do updates by a given intersection
+
+        // build values arrays also using this intersection
+
+    }
+
+    /**
+     * @param ProductLanguage[] $productsLangs
+     */
+    public function importProductsLangs( $productsLangs, $allowedFieldsSet ) {
+        // build insert sql script by intersecting possible fields with a given allowedFieldsSet
+
+        // then on duplicate key do updates by a given intersection
+
+        // build values arrays also using this intersection
+    }
+
 }
