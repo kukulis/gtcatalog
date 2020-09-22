@@ -17,6 +17,15 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class ProductLanguage
 {
+    const ALLOWED_FIELDS=[
+        'name',
+        'description',
+        'label',
+        'variant_name',
+        'info_provider',
+        'tags'
+    ];
+
     /**
      * @var Product
      * @ORM\Id

@@ -23,10 +23,12 @@ use Gt\Catalog\Exception\CatalogErrorException;
 use Gt\Catalog\Exception\RelatedObject;
 use Gt\Catalog\Exception\RelatedObjectClassificator;
 use Gt\Catalog\Exception\WrongAssociationsException;
+use Gt\Catalog\Utils\PropertiesHelper;
 use Psr\Log\LoggerInterface;
 
 class CatalogDao
 {
+
 
     /**
      * @var LoggerInterface
@@ -471,26 +473,113 @@ class CatalogDao
 
     /**
      * @param Product[] $products
+     * @return int
+     * @throws DBALException
      */
-    public function importProducts ( $products, $allowedFieldsSet ) {
-        // TODO
+    public function importProducts ( $products, $givenFieldsSet ) {
         // build insert sql script by intersecting possible fields with a given allowedFieldsSet
+        $givenFields = array_keys($givenFieldsSet);
+        $importingFields = array_intersect($givenFields, Product::ALLOWED_FIELDS );
+        $importingFieldsAndSku = array_merge (['sku'], $importingFields );
 
-        // then on duplicate key do updates by a given intersection
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
 
-        // build values arrays also using this intersection
+        $conn = $em->getConnection();
 
+        $rows = [];
+        foreach ( $products as $p  ) {
+            $values = PropertiesHelper::getValuesArray($p, $importingFieldsAndSku, 'code');
+            $qValues = array_map([$conn, 'quote'], $values);
+            $row = '('. join ( ',', $qValues ) . ')';
+            $rows[] = $row;
+        }
+
+        $valuesStr = join ( ",\n", $rows );
+        $fieldsStr = join ( ',', $importingFieldsAndSku);
+
+        $updates=[];
+        foreach ($importingFields as $f) {
+            $updateStr = "$f=VALUES($f)";
+            $updates[] = $updateStr;
+        }
+
+        $updatesStr = join ( ",\n", $updates );
+
+
+        $sql = /** @lang MySQL */
+        "INSERT INTO products ($fieldsStr)
+                VALUES $valuesStr
+                ON DUPLICATE KEY UPDATE
+                $updatesStr";
+
+        $this->logger->debug('importProducts: sql='.$sql);
+        return $conn->exec($sql);
     }
 
     /**
      * @param ProductLanguage[] $productsLangs
+     * @return int
+     * @throws DBALException
      */
-    public function importProductsLangs( $productsLangs, $allowedFieldsSet ) {
+    public function importProductsLangs( $productsLangs, $givenFieldsSet ) {
+        $givenFields = array_keys($givenFieldsSet);
+        $importingFields = array_intersect($givenFields, ProductLanguage::ALLOWED_FIELDS );
+        $importingFieldsAndSkuLang = array_merge (['sku', 'language_code'], $importingFields );
         // build insert sql script by intersecting possible fields with a given allowedFieldsSet
 
-        // then on duplicate key do updates by a given intersection
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
 
-        // build values arrays also using this intersection
+        $conn = $em->getConnection();
+
+        $rows = [];
+        foreach ( $productsLangs as $p  ) {
+            $values = PropertiesHelper::getValuesArray($p, $importingFieldsAndSkuLang);
+            $qValues = array_map([$conn, 'quote'], $values);
+            $row = '('. join ( ',', $qValues ) . ')';
+            $rows[] = $row;
+        }
+
+        $valuesStr = join ( ",\n", $rows );
+        $fieldsStr = join ( ',', $importingFieldsAndSkuLang);
+
+        $updates=[];
+        foreach ($importingFields as $f) {
+            $updateStr = "$f=VALUES($f)";
+            $updates[] = $updateStr;
+        }
+
+        $updatesStr = join ( ",\n", $updates );
+
+
+        $sql = /** @lang MySQL */
+            "INSERT INTO products_languages ($fieldsStr)
+                VALUES $valuesStr
+                ON DUPLICATE KEY UPDATE
+                $updatesStr";
+
+        $this->logger->debug('importProducts: sql='.$sql);
+        return $conn->exec($sql);
+    }
+
+
+    public function findClassificators ( $group, $codes ) {
+        $class = Classificator::class;
+        $dql = /** @lang DQL */ "SELECT c from  $class c join c.group g where g.code=:groupCode and c.code in (:codes)";
+
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        $query = $em->createQuery($dql);
+
+        $query->setParameter('groupCode', $group );
+        $query->setParameter('codes', $codes );
+
+        /** @var Classificator[] $classificators */
+        $classificators = $query->getResult();
+
+        return $classificators;
     }
 
 }

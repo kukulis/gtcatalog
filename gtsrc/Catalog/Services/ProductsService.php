@@ -9,8 +9,9 @@
 namespace Gt\Catalog\Services;
 
 
+use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\ORMException;
-use Gt\Catalog\CsvUtils;
+use Gt\Catalog\Utils\CsvUtils;
 use Gt\Catalog\Dao\CatalogDao;
 use Gt\Catalog\Dao\LanguageDao;
 use Gt\Catalog\Data\ProductsFilter;
@@ -20,8 +21,10 @@ use Gt\Catalog\Entity\Product;
 use Gt\Catalog\Entity\ProductLanguage;
 use Gt\Catalog\Exception\CatalogDetailedException;
 use Gt\Catalog\Exception\CatalogErrorException;
+use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Exception\RelatedObject;
 use Gt\Catalog\Exception\RelatedObjectClassificator;
+use Gt\Catalog\Utils\PropertiesHelper;
 use Psr\Log\LoggerInterface;
 
 class ProductsService
@@ -177,6 +180,12 @@ class ProductsService
         return $languages;
     }
 
+    /**
+     * @param $csvFile
+     * @return int
+     * @throws CatalogValidateException
+     * @throws CatalogErrorException
+     */
     public function importProducts(  $csvFile ) {
         $f = fopen ( $csvFile, 'r' );
 
@@ -192,74 +201,102 @@ class ProductsService
         }
         fclose($f);
 
-        $partSize = 100;
+        $givenFields = $head;
+        $importingFieldsProducts = array_diff(array_intersect($givenFields, Product::ALLOWED_FIELDS ), Product::CLASSIFICATORS_GROUPS);
+        $importingFieldsProductsLangs = array_intersect($givenFields, ProductLanguage::ALLOWED_FIELDS );
+        $importingFieldsProductsClassificators = array_intersect($givenFields, Product::CLASSIFICATORS_GROUPS );
 
-        for ( $i = 0; $i < count($lines); $i+= $partSize) {
+        try {
+            $partSize = 100;
 
-            $part = array_slice($lines, $i, $partSize);
+            for ($i = 0; $i < count($lines); $i += $partSize) {
 
-            /** @var Product[] $products */
-            $products = [];
+                $part = array_slice($lines, $i, $partSize);
 
-            /** @var ProductLanguage[] $productsLangs */
-            $productsLangs = [];
+                /** @var Product[] $products */
+                $products = [];
 
-            // make array for importing product
+                /** @var ProductLanguage[] $productsLangs */
+                $productsLangs = [];
 
-            foreach ($part as $l) {
-                // convert array line to assoc line
-                $line = CsvUtils::arrayToAssoc($headMap, $l);
+                // make array for importing product
 
-                $product = new Product();
-                $product->setSku($line['sku']);
-                $product->setBrand($line['brand']);
-                $product->setLine($line['line']);
-                $product->setParentSku($line['parentSku']);
-                $product->setOriginCountryCode($line['originCountryCode']);
-                $product->setVendor($line['vendor']);
-                $product->setManufacturer($line['manufacturer']);
-                $product->setType($line['type']);
-                $product->setPurpose($line['purpose']);
-                $product->setMeasure($line['measure']);
-                $product->setColor($line['color']);
-                $product->setForMale($line['forMale']);
-                $product->setForFemale($line['forFemale']);
-                $product->setSize($line['size']);
-                $product->setPackSize($line['packSize']);
-                $product->setPackAmount($line['packAmount']);
-                $product->setWeight($line['weight']);
-                $product->setLength($line['length']);
-                $product->setHeight($line['height']);
-                $product->setWidth($line['width']);
-                $product->setDeliveryTime($line['deliveryTime']);
+                // we transform to Product and ProductLanguage arrays, because
+                // the functions importProducts and importProductsLangs will be universal for importing data
+                // from other sources than csv
+                foreach ($part as $l) {
 
-                $products[] = $product;
-                // TODO validate each value classificator ?
+                    // convert array line to assoc line
+                    $line = CsvUtils::arrayToAssoc($headMap, $l);
 
-                // make array for importing productLanguages
-                $productLang = new ProductLanguage();
-                $productLang->setProduct($product);
-                $language = new Language();
-                $language->setCode($line['language']);
-                $productLang->setLanguage($language);
-                $productLang->setName($line['name']);
-                $productLang->setDescription($line['description']);
-                $productLang->setLabel($line['label']);
-                $productLang->setVariantName($line['variantName']);
-                $productLang->setInfoProvider($line['infoProvider']);
-                $productLang->setTags($line['tags']);
+                    $product = new Product();
+                    $product->setSku($line['sku']);
 
-                $productsLangs [] = $productLang;
+                    foreach ($importingFieldsProductsClassificators as $f ) {
+                        $setter = 'set'.$f;
+                        $product->$setter(Classificator::createClassificator( $line[$f], $f));
+                    }
+
+
+                    foreach ($importingFieldsProducts as $f ) {
+                        $setter = 'set'.$f;
+                        $product->$setter($line[$f]);
+                    }
+
+                    $products[] = $product;
+
+                    if ( isset($line['language']) ) {
+
+                        // make array for importing productLanguages
+                        $productLang = new ProductLanguage();
+                        $productLang->setProduct($product);
+                        $language = new Language();
+                        $language->setCode($line['language']);
+                        $productLang->setLanguage($language);
+                        foreach ($importingFieldsProductsLangs as $f ) {
+                            $setter = 'set'.$f;
+                            $productLang->$setter($line[$f]);
+                        }
+                        $productsLangs [] = $productLang;
+                    }
+                }
+                $this->validateClassificators($products);
+                $this->catalogDao->importProducts($products, $headMap);
+                $this->catalogDao->importProductsLangs($productsLangs, $headMap);
             }
-
-            // TODO validate for a whole part of products
-
-            // TODO collect classificators for each group
-            // TODO validate each group of classificators
-
-            $this->catalogDao->importProducts ( $products, $headMap);
-            $this->catalogDao->importProductsLangs( $productsLangs, $headMap );
+        } catch ( DBALException $e ) {
+            throw new CatalogErrorException($e->getMessage());
         }
         return 0;
+    }
+
+    /**
+     * @param Product[] $products
+     * @return array
+     * @throws CatalogValidateException
+     */
+    private function validateClassificators($products) {
+
+        $missingMap = [];
+        foreach (Product::CLASSIFICATORS_GROUPS as $cg ) {
+            $propeties = PropertiesHelper::getProperties($cg, $products, 'code');
+            $classificators = $this->catalogDao->findClassificators($cg, $propeties );
+            $dbProperties = PropertiesHelper::getProperties( 'code', $classificators, null);
+            $missingProperties = array_diff($propeties, $dbProperties);
+
+            if ( count($missingProperties) > 0  ) {
+                $missingMap[$cg] = $missingProperties;
+            }
+        }
+
+        // -- may be separate to two functions
+
+        $messages = [];
+        foreach ( $missingMap as $group => $missingCodes ) {
+            $msg = 'Missing classificators for group ['.$group.']  : ['.join(',', $missingCodes).']';
+            $messages[] = $msg;
+        }
+
+        throw new CatalogValidateException(join (";\n", $messages ));
     }
 }

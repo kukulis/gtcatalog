@@ -6,7 +6,7 @@
  * Time: 16:22
  */
 
-namespace Gt\Catalog;
+namespace Gt\Catalog\Utils;
 
 
 class CsvUtils

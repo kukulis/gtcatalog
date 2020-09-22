@@ -26,6 +26,34 @@ class Product
         'type',
         'vendor',
     ];
+
+    const ALLOWED_FIELDS = [
+        'last_update',
+        'version',
+        'brand',
+        'line',
+        'parent_sku',
+        'origin_country',
+        'vendor',
+        'manufacturer',
+        'type',
+        'measure',
+        'color',
+        'for_male',
+        'for_female',
+        'size',
+        'pack_size',
+        'pack_amount',
+        'weight',
+        'length',
+        'height',
+        'width',
+        'delivery_time'
+    ];
+
+
+
+
     /**
      * @var string
      * @ORM\Id

@@ -10,6 +10,7 @@ namespace Gt\Catalog\Controller;
 
 use Gt\Catalog\Exception\CatalogDetailedException;
 use Gt\Catalog\Exception\CatalogErrorException;
+use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Exception\WrongAssociationsException;
 use Gt\Catalog\Form\ProductFormType;
 use Gt\Catalog\Form\ProductsFilterType;
@@ -146,8 +147,8 @@ class ProductsController extends AbstractController
 
     }
 
-    public function importProductsFormAction(Request $r) {
-    // TODO
+
+    public function importProductsFormAction() {
         return $this->render('@Catalog/products/import_form.html.twig', []);
     }
 
@@ -156,11 +157,17 @@ class ProductsController extends AbstractController
         $csvFileObj  = $r->files->get('csvfile');
         $file = $csvFileObj->getPathname();
 
-        $count = $productsService->importProducts(  $file );
-        return $this->render('@Catalog/products/import_products_results.html.twig',
-            [ 'count' => $count,
+        try {
+            $count = $productsService->importProducts(  $file );
+            return $this->render('@Catalog/products/import_products_results.html.twig',
+                [ 'count' => $count,
                 ]
-        );
+            );
+        } catch ( CatalogValidateException | CatalogErrorException $e ) {
+            return $this->render('@Catalog/error/error.html.twig', [
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
 }
