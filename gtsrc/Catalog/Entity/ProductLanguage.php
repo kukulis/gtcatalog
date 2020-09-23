@@ -38,7 +38,7 @@ class ProductLanguage
      * @var Language
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Language" )
-     * @ORM\JoinColumn(name="language_code", referencedColumnName="code")
+     * @ORM\JoinColumn(name="language", referencedColumnName="code")
      */
     private $language;
 
@@ -80,6 +80,13 @@ class ProductLanguage
      * @ORM\Column(type="string", name="tags", nullable=true)
      */
     private $tags;
+
+    /**
+     * @return string
+     */
+    public function getSku () {
+        return $this->product->getSku();
+    }
 
     /**
      * @return Product

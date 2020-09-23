@@ -155,14 +155,33 @@ class ProductsController extends AbstractController
     public function importProductsAction(Request $r, ProductsService $productsService) {
         /** @var File $csvFileObj */
         $csvFileObj  = $r->files->get('csvfile');
-        $file = $csvFileObj->getPathname();
+
+        $import = $r->get('import');
+        $import_classificators = $r->get('import_classificators' );
 
         try {
-            $count = $productsService->importProducts(  $file );
-            return $this->render('@Catalog/products/import_products_results.html.twig',
-                [ 'count' => $count,
-                ]
-            );
+            if ( empty($csvFileObj) ) {
+                throw new CatalogValidateException('Import file is not given' );
+            }
+            $file = $csvFileObj->getPathname();
+
+            if ( !empty($import)) {
+                $count = $productsService->importProducts($file);
+                return $this->render('@Catalog/products/import_products_results.html.twig',
+                    ['count' => $count,
+                    ]
+                );
+            }
+            else if ( !empty($import_classificators) ) {
+                $count =  $productsService->importClassificatorsFromProductsCsv($file);
+                return $this->render('@Catalog/products/import_classificators_from_productscsv_result.html.twig',
+                    ['count' => $count,
+                    ]
+                );
+            }
+            else {
+                throw new CatalogValidateException('ungiven action' );
+            }
         } catch ( CatalogValidateException | CatalogErrorException $e ) {
             return $this->render('@Catalog/error/error.html.twig', [
                 'error' => $e->getMessage(),

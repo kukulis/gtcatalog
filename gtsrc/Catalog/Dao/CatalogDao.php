@@ -20,9 +20,9 @@ use Gt\Catalog\Entity\Product;
 use Gt\Catalog\Entity\ProductLanguage;
 use Gt\Catalog\Exception\CatalogDetailedException;
 use Gt\Catalog\Exception\CatalogErrorException;
-use Gt\Catalog\Exception\RelatedObject;
 use Gt\Catalog\Exception\RelatedObjectClassificator;
 use Gt\Catalog\Exception\WrongAssociationsException;
+use Gt\Catalog\Utils\DbHelper;
 use Gt\Catalog\Utils\PropertiesHelper;
 use Psr\Log\LoggerInterface;
 
@@ -343,7 +343,11 @@ class CatalogDao
         $builder->select('cl')
             ->from(ClassificatorLanguage::class, 'cl')
             ->join( 'cl.classificator', 'c')
-            ->join( 'c.group', 'g');
+            ->join( 'c.group', 'g')
+            ->join( 'c.language', 'l');
+
+        $builder->andWhere('l.code=:languageCode' );
+        $builder->setParameter('languageCode', $language );
 
         if ( !empty($likeName) ) {
             $builder->andWhere('cl.value like :likeName');
@@ -490,7 +494,8 @@ class CatalogDao
         $rows = [];
         foreach ( $products as $p  ) {
             $values = PropertiesHelper::getValuesArray($p, $importingFieldsAndSku, 'code');
-            $qValues = array_map([$conn, 'quote'], $values);
+            $dbValues = array_map ( [DbHelper::class, 'boolToInt'],  $values );
+            $qValues = array_map([$conn, 'quote'], $dbValues);
             $row = '('. join ( ',', $qValues ) . ')';
             $rows[] = $row;
         }
@@ -525,7 +530,7 @@ class CatalogDao
     public function importProductsLangs( $productsLangs, $givenFieldsSet ) {
         $givenFields = array_keys($givenFieldsSet);
         $importingFields = array_intersect($givenFields, ProductLanguage::ALLOWED_FIELDS );
-        $importingFieldsAndSkuLang = array_merge (['sku', 'language_code'], $importingFields );
+        $importingFieldsAndSkuLang = array_merge (['sku', 'language'], $importingFields );
         // build insert sql script by intersecting possible fields with a given allowedFieldsSet
 
         /** @var EntityManager $em */
@@ -535,7 +540,7 @@ class CatalogDao
 
         $rows = [];
         foreach ( $productsLangs as $p  ) {
-            $values = PropertiesHelper::getValuesArray($p, $importingFieldsAndSkuLang);
+            $values = PropertiesHelper::getValuesArray($p, $importingFieldsAndSkuLang, 'code');
             $qValues = array_map([$conn, 'quote'], $values);
             $row = '('. join ( ',', $qValues ) . ')';
             $rows[] = $row;

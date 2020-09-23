@@ -26,6 +26,7 @@ use Gt\Catalog\Exception\RelatedObject;
 use Gt\Catalog\Exception\RelatedObjectClassificator;
 use Gt\Catalog\Utils\PropertiesHelper;
 use Psr\Log\LoggerInterface;
+use \DateTime;
 
 class ProductsService
 {
@@ -36,7 +37,6 @@ class ProductsService
 
     /** @var CatalogDao */
     private $catalogDao;
-
 
     /**
      * @var LanguageDao
@@ -191,7 +191,12 @@ class ProductsService
 
         // read head
         $head  = fgetcsv($f);
+        $this->validateHead ( $head );
+
         $headMap = array_flip ( $head );
+
+        $headMapWithLastUpdate = $headMap;
+        $headMapWithLastUpdate['last_update'] = -1;
 
         // read all data to memory
 
@@ -233,15 +238,16 @@ class ProductsService
                     $product->setSku($line['sku']);
 
                     foreach ($importingFieldsProductsClassificators as $f ) {
-                        $setter = 'set'.$f;
+                        $setter = 'set'. PropertiesHelper::removeUnderScores($f);
                         $product->$setter(Classificator::createClassificator( $line[$f], $f));
                     }
 
-
                     foreach ($importingFieldsProducts as $f ) {
-                        $setter = 'set'.$f;
+                        $setter = 'set'.PropertiesHelper::removeUnderScores($f);
                         $product->$setter($line[$f]);
                     }
+
+                    $product->setLastUpdate( new DateTime() );
 
                     $products[] = $product;
 
@@ -254,14 +260,14 @@ class ProductsService
                         $language->setCode($line['language']);
                         $productLang->setLanguage($language);
                         foreach ($importingFieldsProductsLangs as $f ) {
-                            $setter = 'set'.$f;
+                            $setter = 'set'.PropertiesHelper::removeUnderScores($f);
                             $productLang->$setter($line[$f]);
                         }
                         $productsLangs [] = $productLang;
                     }
                 }
                 $this->validateClassificators($products);
-                $this->catalogDao->importProducts($products, $headMap);
+                $this->catalogDao->importProducts($products, $headMapWithLastUpdate);
                 $this->catalogDao->importProductsLangs($productsLangs, $headMap);
             }
         } catch ( DBALException $e ) {
@@ -272,7 +278,6 @@ class ProductsService
 
     /**
      * @param Product[] $products
-     * @return array
      * @throws CatalogValidateException
      */
     private function validateClassificators($products) {
@@ -291,12 +296,80 @@ class ProductsService
 
         // -- may be separate to two functions
 
-        $messages = [];
-        foreach ( $missingMap as $group => $missingCodes ) {
-            $msg = 'Missing classificators for group ['.$group.']  : ['.join(',', $missingCodes).']';
-            $messages[] = $msg;
-        }
+        if ( count($missingMap) > 0 ) {
+            $messages = [];
+            foreach ($missingMap as $group => $missingCodes) {
+                $msg = 'Missing classificators for group [' . $group . ']  : [' . join(',', $missingCodes) . ']';
+                $messages[] = $msg;
+            }
 
-        throw new CatalogValidateException(join (";\n", $messages ));
+            throw new CatalogValidateException(join(";\n", $messages));
+        }
+    }
+
+
+    /**
+     * @param string $csvFile
+     * @throws CatalogErrorException
+     * @return int
+     */
+    public function importClassificatorsFromProductsCsv ($csvFile) {
+        $f = fopen ( $csvFile, 'r' );
+
+        // read head
+        $head  = fgetcsv($f);
+        $headMap = array_flip ( $head );
+
+        // read all data to memory
+
+        $lines = [];
+        while ( ($line = fgetcsv($f)) != null ) {
+            $lines[] = $line;
+        }
+        fclose($f);
+
+
+        $count = 0;
+        $importingFieldsProductsClassificators = array_intersect($head, Product::CLASSIFICATORS_GROUPS );
+        try {
+            $partSize = 100;
+
+            for ($i = 0; $i < count($lines); $i += $partSize) {
+
+                $part = array_slice($lines, $i, $partSize);
+
+                /** @var Classificator[] $classificators */
+                $classificators = [];
+                foreach ($part as $l) {
+                    $line = CsvUtils::arrayToAssoc($headMap, $l);
+                    foreach ($importingFieldsProductsClassificators as $cg ) {
+                        $c = Classificator::createClassificator($line[$cg], $cg );
+                        $classificators[] = $c;
+
+                        $count++;
+                    }
+                }
+
+                $this->catalogDao->importClassificators($classificators);
+                // langs too without update ?
+            }
+
+            return $count;
+        } catch ( DBALException $e ) {
+            throw new CatalogErrorException($e->getMessage());
+        }
+    }
+
+    /**
+     * @param $head
+     * @throws CatalogValidateException
+     */
+    public function validateHead ( $head ) {
+        $productAndLanguageFields = array_merge ( ['sku', 'language'], Product::ALLOWED_FIELDS, ProductLanguage::ALLOWED_FIELDS );
+        $nonValidFields = array_diff ( $head, $productAndLanguageFields );
+
+        if ( count($nonValidFields) > 0 ) {
+            throw new CatalogValidateException('Non valid fields:'.join(',', $nonValidFields));
+        }
     }
 }

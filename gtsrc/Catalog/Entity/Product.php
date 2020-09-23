@@ -33,9 +33,10 @@ class Product
         'brand',
         'line',
         'parent_sku',
-        'origin_country',
+        'origin_country_code',
         'vendor',
         'manufacturer',
+        'purpose',
         'type',
         'measure',
         'color',
@@ -70,21 +71,21 @@ class Product
 
     /**
      * @var int
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", options={ "default":0})
      */
     private $version=0;
 
     /**
      * @var Classificator
      * @ORM\ManyToOne(targetEntity="Classificator" )
-     * @ORM\JoinColumn(name="brand_code", referencedColumnName="code")
+     * @ORM\JoinColumn(name="brand", referencedColumnName="code")
      */
     private $brand='';
 
     /**
      * @var Classificator
      * @ORM\ManyToOne(targetEntity="Classificator" )
-     * @ORM\JoinColumn(name="line_code", referencedColumnName="code")
+     * @ORM\JoinColumn(name="line", referencedColumnName="code")
      */
     private $line;
 
@@ -94,46 +95,44 @@ class Product
      */
     private $parentSku;
 
-
     /**
      * @var string
      * @ORM\Column(type="string", length=3, name="origin_country_code", nullable=true)
      */
     private $originCountryCode;
 
-
     /**
      * @var Classificator
      * @ORM\ManyToOne(targetEntity="Classificator" )
-     * @ORM\JoinColumn(name="vendor_code", referencedColumnName="code")
+     * @ORM\JoinColumn(name="vendor", referencedColumnName="code")
      */
     private $vendor;
 
     /**
      * @var Classificator
      * @ORM\ManyToOne(targetEntity="Classificator" )
-     * @ORM\JoinColumn(name="manufacturer_code", referencedColumnName="code")
+     * @ORM\JoinColumn(name="manufacturer", referencedColumnName="code")
      */
     private $manufacturer;
 
     /**
      * @var Classificator
      * @ORM\ManyToOne(targetEntity="Classificator" )
-     * @ORM\JoinColumn(name="type_code", referencedColumnName="code")
+     * @ORM\JoinColumn(name="type", referencedColumnName="code")
      */
     private $type;
 
     /**
      * @var Classificator
      * @ORM\ManyToOne(targetEntity="Classificator" )
-     * @ORM\JoinColumn(name="type_code", referencedColumnName="code")
+     * @ORM\JoinColumn(name="purpose", referencedColumnName="code")
      */
     private $purpose;
 
     /**
      * @var Classificator
      * @ORM\ManyToOne(targetEntity="Classificator" )
-     * @ORM\JoinColumn(name="measure_code", referencedColumnName="code")
+     * @ORM\JoinColumn(name="measure", referencedColumnName="code")
      */
     private $measure;
 
@@ -413,6 +412,14 @@ class Product
     }
 
     /**
+     * @return bool
+     */
+    public function getForMale(): bool
+    {
+        return $this->forMale;
+    }
+
+    /**
      * @param bool $forMale
      */
     public function setForMale(bool $forMale): void
@@ -424,6 +431,14 @@ class Product
      * @return bool
      */
     public function isForFemale(): bool
+    {
+        return $this->forFemale;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getForFemale(): bool
     {
         return $this->forFemale;
     }
