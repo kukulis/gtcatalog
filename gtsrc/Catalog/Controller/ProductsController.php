@@ -143,10 +143,6 @@ class ProductsController extends AbstractController
             ] );
     }
 
-    public function uploadPicture() {
-
-    }
-
 
     public function importProductsFormAction() {
         return $this->render('@Catalog/products/import_form.html.twig', []);

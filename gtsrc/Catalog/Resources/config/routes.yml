@@ -48,8 +48,12 @@ gt.catalog.import_products:
 
 
 
-gt.catalog.product_pictures_add:
-    path: "/product/{sku}/pictures/add"
+gt.catalog.product_pictures_add_form:
+    path: "/product/{sku}/pictures/add_form"
     controller: Gt\Catalog\Controller\ProductsController::addPictureForm
     methods: GET
 
+gt.catalog.upload_picture:
+    path: "/product/{sku}/pictures/upload"
+    controller: Gt\Catalog\Controller\PicturesController::uploadPicture
+    methods: POST

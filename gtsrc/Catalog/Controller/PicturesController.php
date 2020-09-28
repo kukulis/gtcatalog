@@ -9,7 +9,22 @@
 namespace Gt\Catalog\Controller;
 
 
-class PicturesController
+use Gt\Catalog\Services\PicturesService;
+use Psr\Log\LoggerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class PicturesController  extends AbstractController
 {
+
+    public function uploadPicture(Request $r, LoggerInterface $logger, PicturesService $picturesService) {
+        // TODO
+
+        $sku=$r->get('sku', 0 );
+
+        return new Response('TODO upload picture for '.$sku );
+    }
+
 
 }

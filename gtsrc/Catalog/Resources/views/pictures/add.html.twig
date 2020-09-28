@@ -1,1 +1,11 @@
-TODO add picture
+<form enctype="multipart/form-data" method="post" action="{{ path('gt.catalog.upload_picture', {sku: product.sku}) }}">
+    <dl>
+        <dt>
+            <label for="picture">picture</label>
+        </dt>
+        <dd>
+            <input id="picture" type="file" name="picture" />
+        </dd>
+        <dt><input type="submit" name="upload" value="upload" /></dt>
+    </dl>
+</form>

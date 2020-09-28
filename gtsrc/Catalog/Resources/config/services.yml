@@ -120,3 +120,15 @@ services:
             $logger: '@logger'
             $classificatorsService: '@gt.catalog.classificators_service'
             $languagesService: '@gt.catalog.languages_service'
+
+
+# -- pictures --
+    gt.catalog.pictures_service:
+        class: 'Gt\Catalog\Services\PicturesService'
+
+    Gt\Catalog\Controller\PicturesController:
+        tags:
+            - "controller.service_arguments"
+        bind:
+            $logger: '@logger'
+            $picturesService: '@gt.catalog.pictures_service'
