@@ -132,3 +132,10 @@ services:
         bind:
             $logger: '@logger'
             $picturesService: '@gt.catalog.pictures_service'
+
+    gt.catalog.pictures_dao:
+        class: 'Gt\Catalog\Dao\PicturesDao'
+        public: true
+        arguments:
+            - '@logger'
+            - '@doctrine'
