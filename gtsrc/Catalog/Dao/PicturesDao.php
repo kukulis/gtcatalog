@@ -10,7 +10,10 @@ namespace Gt\Catalog\Dao;
 
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\ORM\EntityManager;
 use Gt\Catalog\Entity\Picture;
+use Gt\Catalog\Entity\Product;
+use Gt\Catalog\Entity\ProductPicture;
 use Psr\Log\LoggerInterface;
 
 class PicturesDao
@@ -32,6 +35,10 @@ class PicturesDao
         $this->doctrine = $doctrine;
     }
 
+    /**
+     * @param Picture $p
+     * @return Picture
+     */
     public function insertPicture (Picture $p) {
         $em = $this->doctrine->getManager();
         $em->persist($p);
@@ -39,5 +46,32 @@ class PicturesDao
         return $p;
     }
 
+    /**
+     * @param ProductPicture $productPicture
+     */
+    public function assignProductPicture ( ProductPicture $productPicture ) {
+        $em = $this->doctrine->getManager();
+        $em->persist($productPicture);
+        $em->flush();
+    }
 
+    /**
+     * @param string $sku
+     * @return ProductPicture[]
+     */
+    public function getProductPictures($sku) {
+        $class = ProductPicture::class;
+        $dql = /** @lang DQL */ "SELECT pp, pi from $class join pp.product pr join pp.picture pi where pr.sku = :sku";
+
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        $query = $em->createQuery($dql);
+        $query->setParameter('sku', $sku );
+
+        /** @var ProductPicture[] $productPictures */
+        $productPictures = $query->getResult();
+
+        return $productPictures;
+    }
 }

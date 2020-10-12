@@ -11,6 +11,8 @@ namespace Gt\Catalog\Services;
 
 use Gt\Catalog\Dao\PicturesDao;
 use Gt\Catalog\Entity\Picture;
+use Gt\Catalog\Entity\Product;
+use Gt\Catalog\Entity\ProductPicture;
 use Gt\Catalog\Utils\PicturesHelper;
 
 class PicturesService
@@ -66,8 +68,16 @@ class PicturesService
         return $picture;
     }
 
-    public function assignPictureToProduct ( $sku, $picture ) {
-        // TODO
+    /**
+     * @param Product $product
+     * @param Picture $picture
+     */
+    public function assignPictureToProduct ( Product $product, Picture $picture ) {
+        $productPicture = new ProductPicture();
+        $productPicture->setProduct($product);
+        $productPicture->setPicture($picture);
+
+        $this->picturesDao->assignProductPicture($productPicture);
     }
 
     /**

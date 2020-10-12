@@ -37,7 +37,11 @@ class PicturesController  extends AbstractController
                 throw new CatalogErrorException('Picture file is not given');
             }
             $picture = $picturesService->createPicture($pictureFile->getRealPath(), $pictureFile->getClientOriginalName());
+
+            $picturesService->assignPictureToProduct($product, $picture);
             return new Response('Uploaded picture with id=' . $picture->getId() . ' and name '.$picture->getName() );
+
+            // TODO redirect ?
         } catch ( CatalogErrorException $e ) {
             return $this->render('@Catalog/error/error.html.twig', [
                 'error' => $e->getMessage(),
