@@ -10,17 +10,16 @@ namespace Gt\Catalog\Form;
 
 
 use Gt\Catalog\Entity\Classificator;
-use Gt\Catalog\Entity\Language;
 use Gt\Catalog\Entity\Product;
 use Gt\Catalog\Entity\ProductLanguage;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use \DateTime;
 
 
 /**
@@ -37,8 +36,8 @@ class ProductFormType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        /** @var ProductFormType $data */
-        $data = $options['data'];
+//        /** @var ProductFormType $data */
+//        $data = $options['data'];
 
         $builder
             ->add('p_sku'                   , TextType::class, ['disabled'=>true, 'label'=> 'sku' ] )
@@ -49,7 +48,7 @@ class ProductFormType extends AbstractType
             ->add('p_parent_sku'            , TextType::class, ['required'=>false, 'label'=> 'Parent'] )
             ->add('p_info_provider'         , TextType::class, ['disabled'=>true, 'label'=> 'Info provider'] )
             ->add('p_origin_country_code'   , TextType::class, ['required'=>false, 'label'=> 'Origin country code'] )
-            ->add('p_vendor'                , TextType::class, ['required'=>false, 'label'=> 'Vendor code'] )
+            ->add('p_vendor_code'                , TextType::class, ['required'=>false, 'label'=> 'Vendor code'] )
             ->add('p_manufacturer'          , TextType::class, ['required'=>false, 'label'=> 'Manufacturer code'] )
             ->add('p_type'                  , TextType::class, ['required'=>false, 'label'=> 'Type code'] )
             ->add('p_measure'               , TextType::class, ['required'=>false, 'label'=> 'Measure code'] )
@@ -131,17 +130,17 @@ class ProductFormType extends AbstractType
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getPLastUpdate(): \DateTime
+    public function getPLastUpdate(): DateTime
     {
         return $this->product->getLastUpdate();
     }
 
     /**
-     * @param \DateTime $lastUpdate
+     * @param DateTime $lastUpdate
      */
-    public function setPLastUpdate(\DateTime $lastUpdate): void
+    public function setPLastUpdate(DateTime $lastUpdate): void
     {
         $this->product->setLastUpdate( $lastUpdate );
     }
@@ -168,7 +167,7 @@ class ProductFormType extends AbstractType
     public function getPBrandCode(): ?string
     {
         if ( $this->product->getBrand() == null ) {
-            return '';
+            return null;
         }
         return $this->product->getBrand()->getCode();
     }
@@ -182,11 +181,7 @@ class ProductFormType extends AbstractType
             $this->product->setBrand(null);
             return;
         }
-        if ( $this->product->getBrand() == null ) {
-            $this->product->setBrand(Classificator::createClassificator('', 'brand'));
-        }
-
-        $this->product->getBrand()->setCode($brandCode);
+        $this->product->setBrand(Classificator::createClassificator($brandCode, 'brand'));
     }
 
     /**
@@ -195,7 +190,7 @@ class ProductFormType extends AbstractType
     public function getPLineCode(): ?string
     {
         if ( $this->product->getLine()== null ) {
-            return '';
+            return null;
         }
         return $this->product->getLine()->getCode();
     }
@@ -209,10 +204,7 @@ class ProductFormType extends AbstractType
             $this->product->setLine(null);
             return ;
         }
-        if ( $this->product->getLine()== null ) {
-            $this->product->setLine(Classificator::createClassificator('', 'line'));
-        }
-        $this->product->getLine()->setCode($lineCode);
+        $this->product->setLine(Classificator::createClassificator($lineCode, 'line'));
     }
 
     /**
@@ -263,84 +255,101 @@ class ProductFormType extends AbstractType
         $this->product->setOriginCountryCode( $originCountryCode );
     }
 
-    /**
-     * @return Classificator
-     */
-    public function getPVendor(): ?Classificator
-    {
-        return $this->product->getVendor();
+    public function getPVendorCode() : ?string {
+        $vendor = $this->product->getVendor();
+        if ( $vendor != null ) {
+            return $this->product->getVendor()->getCode();
+        }
+        return null;
+    }
+
+    public function setPVendorCode($code) {
+        if ( empty($code)) {
+            $this->product->setVendor(null);
+            return ;
+        }
+
+        $this->product->setVendor(Classificator::createClassificator($code, 'vendor'));
     }
 
     /**
-     * @param Classificator $vendor
+     * @return string
      */
-    public function setPVendor(Classificator $vendor=null): void
+    public function getPManufacturer(): ?string
     {
-        $this->product->setVendor( $vendor );
+        if ( $this->product->getManufacturer() == null ) {
+            return null;
+        }
+
+        return $this->product->getManufacturer()->getCode();
+    }
+
+    public function setPManufacturer(string $code=null): void
+    {
+        if ( $code == null ) {
+            $this->product->setManufacturer(null);
+            return;
+        }
+        $this->product->setManufacturer(Classificator::createClassificator('code', 'manufacturer'));
+    }
+
+    public function getPType(): ?string
+    {
+        if ( $this->product->getType() == null ) {
+            return null;
+        }
+
+        return $this->product->getType()->getCode();
+    }
+
+    public function setPType(string $type=null): void
+    {
+        if ( empty($type) ) {
+            $this->product->setType(null);
+            return;
+        }
+        $this->product->setType(Classificator::createClassificator($type, 'type'));
+    }
+
+    public function getPPurpose(): ?string
+    {
+        if ( $this->product->getPurpose() == null ) {
+            return null;
+        }
+        return $this->product->getPurpose()->getCode();
     }
 
     /**
-     * @return Classificator
+     * @param string $purpose
      */
-    public function getPManufacturer(): ?Classificator
+    public function setPPurpose(string $purpose=null): void
     {
-        return $this->product->getManufacturer();
+        if (  empty($purpose) ) {
+            $this->product->setPurpose(null);
+            return;
+        }
+        $this->product->setPurpose( Classificator::createClassificator($purpose, 'purpose') );
+    }
+
+    public function getPMeasure(): ?string
+    {
+        if ( $this->product->getMeasure() == null ) {
+            return null;
+        }
+        return $this->product->getMeasure()->getCode();
     }
 
     /**
-     * @param Classificator $manufacturer
+     * @param string $measure
      */
-    public function setPManufacturer(Classificator $manufacturer=null): void
+    public function setPMeasure(string $measure=null): void
     {
-        $this->product->setManufacturer( $manufacturer );
-    }
+        if (empty($measure )) {
+            $this->product->setMeasure(null);
+            return;
+        }
 
-    /**
-     * @return Classificator
-     */
-    public function getPType(): ?Classificator
-    {
-        return $this->product->getType();
-    }
-
-    /**
-     * @param Classificator $type
-     */
-    public function setPType(Classificator $type=null): void
-    {
-        $this->product->setType($type);
-    }
-
-    /**
-     * @return Classificator
-     */
-    public function getPPurpose(): ?Classificator
-    {
-        return $this->product->getPurpose();
-    }
-
-    /**
-     * @param Classificator $purpose
-     */
-    public function setPPurpose(Classificator $purpose=null): void
-    {
-        $this->product->setPurpose( $purpose );
-    }
-
-    /**
-     * @return Classificator
-     */
-    public function getPMeasure(): ?Classificator
-    {
-        return $this->product->getMeasure();
-    }
-
-    /**
-     * @param Classificator $measure
-     */
-    public function setPMeasure(Classificator $measure=null): void
-    {
-        $this->product->setMeasure( $measure );
+        $this->product->setMeasure( Classificator::createClassificator($measure, 'measure') );
     }
 
     /**
