@@ -62,4 +62,14 @@ class Category
     {
         $this->parent = $parent;
     }
+
+    /**
+     * @param $code
+     * @return Category
+     */
+    public static function createCategory ( $code ) {
+        $category = new Category();
+        $category->setCode($code);
+        return $category;
+    }
 }
