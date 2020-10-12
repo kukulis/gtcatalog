@@ -123,15 +123,13 @@ services:
 
 
 # -- pictures --
-    gt.catalog.pictures_service:
-        class: 'Gt\Catalog\Services\PicturesService'
-
     Gt\Catalog\Controller\PicturesController:
         tags:
             - "controller.service_arguments"
         bind:
             $logger: '@logger'
             $picturesService: '@gt.catalog.pictures_service'
+            $productsService: '@gt.catalog.products_service'
 
     gt.catalog.pictures_dao:
         class: 'Gt\Catalog\Dao\PicturesDao'
@@ -139,3 +137,12 @@ services:
         arguments:
             - '@logger'
             - '@doctrine'
+
+    gt.catalog.pictures_service:
+        class: 'Gt\Catalog\Services\PicturesService'
+        arguments:
+            - '@gt.catalog.pictures_dao'
+        calls:
+            - [setRootPath, ['%kernel.project_dir%']]
+            - [setBaseDir, ['img']]
+

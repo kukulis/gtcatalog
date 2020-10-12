@@ -9,10 +9,12 @@
 namespace Gt\Catalog\Controller;
 
 
+use Gt\Catalog\Exception\CatalogErrorException;
 use Gt\Catalog\Services\PicturesService;
 use Gt\Catalog\Services\ProductsService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -20,18 +22,28 @@ class PicturesController  extends AbstractController
 {
 
     public function uploadPicture(Request $r, LoggerInterface $logger, PicturesService $picturesService, ProductsService $productsService) {
-        // TODO
+        try {
+            $sku = $r->get('sku', 0);
 
-        $sku=$r->get('sku', 0 );
+            $product = $productsService->getProduct($sku); // jei užkrauna tai ok, o jei ne
+            if ($product == null) {
+                throw new CatalogErrorException('Cant load product with sku=' . $sku);
+            }
 
-        $product = $productsService->getProduct($sku); // jei užkrauna tai ok, o jei ne
-        if ( $product == null ) {
+            /** @var UploadedFile $pictureFile */
+            $pictureFile = $r->files->get('picture');
+
+            if ($pictureFile == null) {
+                throw new CatalogErrorException('Picture file is not given');
+            }
+            $picture = $picturesService->createPicture($pictureFile->getRealPath(), $pictureFile->getClientOriginalName());
+            return new Response('Uploaded picture with id=' . $picture->getId() . ' and name '.$picture->getName() );
+        } catch ( CatalogErrorException $e ) {
             return $this->render('@Catalog/error/error.html.twig', [
-                'error' => 'Cant load product with sku='.$sku,
+                'error' => $e->getMessage(),
             ]);
         }
 
-        return new Response('TODO upload picture for '.$sku );
     }
 
 
