@@ -30,7 +30,7 @@ class ProductCategory
      * @var Category
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Category" )
-     * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="category", referencedColumnName="code")
      */
     private $category;
 

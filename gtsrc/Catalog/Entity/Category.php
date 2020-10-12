@@ -18,41 +18,18 @@ use Doctrine\ORM\Mapping as ORM;
 class Category
 {
     /**
-     * @var int
-     * @ORM\Id
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
-
-    /**
      * @var string
-     * @ORM\Column(type="string", length=64, unique=true)
+     * @ORM\Column(type="string", length=64)
+     * @ORM\Id
      */
     private $code;
 
-
     /**
-     * @var string
-     * @ORM\Column(type="string")
+     * @var Category
+     * @ORM\ManyToOne(targetEntity="Category" )
+     * @ORM\JoinColumn(name="parent", referencedColumnName="code")
      */
-    private $name;
-
-    /**
-     * @return int
-     */
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param int $id
-     */
-    public function setId(int $id): void
-    {
-        $this->id = $id;
-    }
+    private $parent;
 
     /**
      * @return string
@@ -71,18 +48,18 @@ class Category
     }
 
     /**
-     * @return string
+     * @return Category
      */
-    public function getName(): ?string
+    public function getParent(): ?Category
     {
-        return $this->name;
+        return $this->parent;
     }
 
     /**
-     * @param string $name
+     * @param Category $parent
      */
-    public function setName(string $name): void
+    public function setParent(Category $parent=null): void
     {
-        $this->name = $name;
+        $this->parent = $parent;
     }
 }
