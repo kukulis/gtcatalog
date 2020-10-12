@@ -30,6 +30,9 @@ class Picture
      */
     private $name;
 
+    // -- not stored to db
+    private $configuredPath;
+
     /**
      * @return int
      */
@@ -60,5 +63,21 @@ class Picture
     public function setName(string $name): void
     {
         $this->name = $name;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getConfiguredPath()
+    {
+        return $this->configuredPath;
+    }
+
+    /**
+     * @param mixed $configuredPath
+     */
+    public function setConfiguredPath($configuredPath): void
+    {
+        $this->configuredPath = $configuredPath;
     }
 }

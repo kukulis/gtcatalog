@@ -8,6 +8,19 @@
             {{ product.sku }}
 
             <a href="{{ path( 'gt.catalog.product_pictures_add_form', {sku: product.sku} ) }}">add</a>
+            <table>
+                {% for pp in pps %}
+                    <tr>
+                        <td>{{ pp.picture.id }}</td>
+                        <td>{{ pp.picture.name }}</td>
+                        <td><img  style="max-width: 200px; max-height: 200px;"
+                                  alt="{{ pp.picture.name }}"
+                                  src="{{ pp.picture.configuredPath }}"
+                            /></td>
+                        <td><a href="{{ path('gt.catalog.product_picture_delete', {sku: pp.product.sku, id_picture: pp.picture.id }) }}">X</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
 
         </div>
     </div>

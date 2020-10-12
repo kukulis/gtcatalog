@@ -12,7 +12,6 @@ namespace Gt\Catalog\Dao;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
 use Gt\Catalog\Entity\Picture;
-use Gt\Catalog\Entity\Product;
 use Gt\Catalog\Entity\ProductPicture;
 use Psr\Log\LoggerInterface;
 
@@ -61,7 +60,7 @@ class PicturesDao
      */
     public function getProductPictures($sku) {
         $class = ProductPicture::class;
-        $dql = /** @lang DQL */ "SELECT pp, pi from $class join pp.product pr join pp.picture pi where pr.sku = :sku";
+        $dql = /** @lang DQL */ "SELECT pp, pi from $class pp join pp.product pr join pp.picture pi where pr.sku = :sku";
 
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
@@ -73,5 +72,37 @@ class PicturesDao
         $productPictures = $query->getResult();
 
         return $productPictures;
+    }
+
+    /**
+     * @param string $sku
+     * @param int $id
+     * @return ProductPicture
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findPictureAssignement($sku, $id) {
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        $class = ProductPicture::class;
+        $dql = /** @lang DQL */"SELECT pp from $class pp join pp.product pr join pp.picture pi where pr.sku=:sku and pi.id=:id";
+        $query =$em->createQuery($dql);
+        $query->setParameter('sku', $sku );
+        $query->setParameter('id', $id );
+
+        /** @var ProductPicture $pp */
+        $pp = $query->getSingleResult();
+
+        return $pp;
+    }
+
+    /**
+     * @param ProductPicture $productPicture
+     */
+    public function deletePictureAssignement ( ProductPicture $productPicture ) {
+        $em = $this->doctrine->getManager();
+        $em->remove($productPicture);
+        $em->flush();
     }
 }

@@ -9,10 +9,12 @@
 namespace Gt\Catalog\Services;
 
 
+use Doctrine\ORM\ORMException;
 use Gt\Catalog\Dao\PicturesDao;
 use Gt\Catalog\Entity\Picture;
 use Gt\Catalog\Entity\Product;
 use Gt\Catalog\Entity\ProductPicture;
+use Gt\Catalog\Exception\CatalogErrorException;
 use Gt\Catalog\Utils\PicturesHelper;
 
 class PicturesService
@@ -38,7 +40,6 @@ class PicturesService
         $this->picturesDao = $picturesDao;
         $this->pathSeparator = DIRECTORY_SEPARATOR;
     }
-
 
     /**
      * @param string $path
@@ -69,6 +70,19 @@ class PicturesService
     }
 
     /**
+     * @param $id
+     * @param $name
+     * @return string
+     */
+    public function calculatePicturePath($id, $name, $separator=null ) {
+        if ( $separator == null ) {
+            $separator = $this->pathSeparator;
+        }
+        $targetDir = PicturesHelper::calculateImagePath( $this->baseDir, $id, $separator);
+        return $targetDir.$this->pathSeparator.$name;
+    }
+
+    /**
      * @param Product $product
      * @param Picture $picture
      */
@@ -79,6 +93,25 @@ class PicturesService
 
         $this->picturesDao->assignProductPicture($productPicture);
     }
+
+
+    /**
+     * @param string $sku
+     * @return ProductPicture[]
+     */
+    public function getProductPictures ( $sku ) {
+        $productPictures = $this->picturesDao->getProductPictures($sku);
+        foreach ($productPictures as $pp ) {
+            $picture = $pp->getPicture();
+            $path = '/'. $this->calculatePicturePath($picture->getId(), $picture->getName(), '/');
+            $picture->setConfiguredPath($path);
+        }
+        return $productPictures;
+    }
+
+    // =====================================================================
+    // ========================= DI ========================================
+    // =====================================================================
 
     /**
      * @param string $rootPath
@@ -96,4 +129,29 @@ class PicturesService
         $this->baseDir = $baseDir;
     }
 
+    /**
+     * @param string $sku
+     * @param int $id
+     * @return bool
+     * @throws CatalogErrorException
+     */
+    public function unassignPicture ( $sku, $id ) {
+        // pašalinam tik prisegimą prie produkto.
+        // paveikslėlius pačius trinsime atskiru procesu.
+        // Toks užmanymas dėl to, kad kai bus versijuojami produktai,
+        // gali būti, kad reiks atstatyti pav. ištrynimą. Tokiu būdu pav. turės būti failinėj sistemoj.
+        // Su tuo atskiru procesu trinsime senus nepririštus prie produktų, paveikslėius.
+
+        try {
+            $pp = $this->picturesDao->findPictureAssignement($sku, $id);
+            if ($pp == null) {
+                throw new CatalogErrorException('The picture ' . $id . ' is not assigned to product ' . $sku);
+            }
+
+            $this->picturesDao->deletePictureAssignement($pp);
+            return true;
+        } catch (ORMException $e ) {
+            throw new CatalogErrorException( $e->getMessage());
+        }
+    }
 }

@@ -13,28 +13,10 @@ gt.catalog.product_edit:
     controller: Gt\Catalog\Controller\ProductsController::editAction
     methods: [GET, POST]
 
-## gal nebereikalingas
-gt.catalog.product_update:
-    path: "/product/update/{sku}"
-    controller: Gt\Catalog\Controller\ProductsController::updateAction
-    methods: POST
-
 gt.catalog.product_delete:
     path: "/product/delete/{sku}"
     controller: Gt\Catalog\Controller\ProductsController::deleteAction
     methods: DELETE
-
-## gal nebereikalingas
-gt.catalog.product_new:
-    path: "/product/new/{sku}"
-    controller: Gt\Catalog\Controller\ProductsController::newAction
-    methods: GET
-
-
-gt.catalog.product_pictures:
-    path: "/product/{sku}/pictures/"
-    controller: Gt\Catalog\Controller\ProductsController::picturesList
-    methods: GET
 
 gt.catalog.import_products_form:
     path: "/products/import_form"
@@ -57,3 +39,14 @@ gt.catalog.upload_picture:
     path: "/product/{sku}/pictures/upload"
     controller: Gt\Catalog\Controller\PicturesController::uploadPicture
     methods: POST
+
+gt.catalog.product_pictures:
+    path: "/product/{sku}/pictures/"
+    controller: Gt\Catalog\Controller\PicturesController::picturesList
+    methods: GET
+
+
+gt.catalog.product_picture_delete:
+    path: "/product/{sku}/picture/{id_picture}/delete"
+    controller: Gt\Catalog\Controller\PicturesController::deletePicture
+    methods: GET

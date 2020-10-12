@@ -121,28 +121,13 @@ class ProductsController extends AbstractController
         return new Response('TODO delete product' );
     }
 
-    public function picturesList(Request $request, $sku, ProductsService $productsService) {
-        // show assigned pictures list and picture form
+    public function addPictureForm($sku, ProductsService $productsService) {
         $product = $productsService->getProduct($sku);
-        // TODO load
-
-        return $this->render('@Catalog/products/pictures.html.twig',
-            [
-                'product' => $product
-        ] );
-
-    }
-
-    public function addPictureForm(Request $request, $sku, ProductsService $productsService) {
-        $product = $productsService->getProduct($sku);
-        // TODO load pictures ?
-
         return $this->render('@Catalog/pictures/add.html.twig',
             [
                 'product' => $product
             ] );
     }
-
 
     public function importProductsFormAction() {
         return $this->render('@Catalog/products/import_form.html.twig', []);

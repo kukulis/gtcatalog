@@ -21,7 +21,15 @@ use Symfony\Component\HttpFoundation\Response;
 class PicturesController  extends AbstractController
 {
 
+    /**
+     * @param Request $r
+     * @param LoggerInterface $logger
+     * @param PicturesService $picturesService
+     * @param ProductsService $productsService
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     */
     public function uploadPicture(Request $r, LoggerInterface $logger, PicturesService $picturesService, ProductsService $productsService) {
+        $logger->debug('upload picture called' );
         try {
             $sku = $r->get('sku', 0);
 
@@ -39,9 +47,8 @@ class PicturesController  extends AbstractController
             $picture = $picturesService->createPicture($pictureFile->getRealPath(), $pictureFile->getClientOriginalName());
 
             $picturesService->assignPictureToProduct($product, $picture);
-            return new Response('Uploaded picture with id=' . $picture->getId() . ' and name '.$picture->getName() );
-
-            // TODO redirect ?
+//            return new Response('Uploaded picture with id=' . $picture->getId() . ' and name '.$picture->getName() );
+            return $this->redirect($this->generateUrl('gt.catalog.product_pictures', ['sku'=>$sku]));
         } catch ( CatalogErrorException $e ) {
             return $this->render('@Catalog/error/error.html.twig', [
                 'error' => $e->getMessage(),
@@ -50,5 +57,39 @@ class PicturesController  extends AbstractController
 
     }
 
+    /**
+     * @param Request $request
+     * @param $sku
+     * @param ProductsService $productsService
+     * @param PicturesService $picturesService
+     * @return Response
+     * @throws CatalogErrorException
+     */
+    public function picturesList($sku, ProductsService $productsService, PicturesService $picturesService) {
+        // show assigned pictures list and picture form
+        $product = $productsService->getProduct($sku);
+        $pps = $picturesService->getProductPictures ( $sku );
+        return $this->render('@Catalog/products/pictures.html.twig',
+            [
+                'product' => $product,
+                'pps' => $pps,
+            ] );
+    }
 
+    /**
+     * @param string $sku
+     * @param int $id_picture
+     * @param PicturesService $picturesService
+     * @return Response
+     */
+    public function deletePicture($sku, $id_picture, PicturesService $picturesService) {
+        try {
+            $picturesService->unassignPicture($sku, $id_picture);
+            return $this->redirect($this->generateUrl('gt.catalog.product_pictures', ['sku'=>$sku]));
+        } catch (CatalogErrorException $e ) {
+            return $this->render('@Catalog/error/error.html.twig', [
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
 }
