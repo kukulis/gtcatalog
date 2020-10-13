@@ -14,13 +14,20 @@
                 {{ form(filterForm) }}
             </div>
             <div class="col-md-12">
-                <table>
+                <table class="table table-bordered" >
+                    <tr>
+                        <th>Code</th>
+                        <th>Parent code</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                    </tr>
                     {% for cl in categoriesLanguages %}
                         <tr>
                             <td>{{ cl.category.code }}</td>
                             <td>{{ cl.category.parentCode }}</td>
                             <td>{{ cl.name }}</td>
                             <td>{{ cl.description }}</td>
+                            <td><a href="{{ path('gt.catalog.category_edit', {code: cl.category.code, languageCode: languageCode}) }}">Edit</a></td>
                         </tr>
                     {% endfor %}
 {#                    {% for p in products %}#}

@@ -2,38 +2,54 @@
 
 namespace Gt\Catalog\Controller;
 
-use Gt\Catalog\Entity\Category;
+use Gt\Catalog\Exception\CatalogErrorException;
+use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Form\CategoriesFilterType;
 use Gt\Catalog\Form\CategoryFormType;
 use Gt\Catalog\Services\CategoriesService;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 
 class CategoriesController extends AbstractController
 {
     /**
-     * @Route("/categories/{code}/edit", name="categories_edit")
-     *
-     * @param Category $category
+     * @param string $code
+     * @param string $languageCode
      * @param Request $request
      * @param CategoriesService $categoriesService
      * @return Response
      */
-    public function editAction(Category $category, Request $request, CategoriesService $categoriesService)
+    public function editAction( Request $request, $code, $languageCode, CategoriesService $categoriesService)
     {
-        $form = $this->createForm(CategoryFormType::class, $category);
+        try {
+            $categoryLanguage = $categoriesService->getCategoryLanguage($code, $languageCode);
 
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $categoriesService->newCategory($form);
-            return $this->redirectToRoute('gt.catalog.categories');
+            $categoryFormType = new CategoryFormType();
+            $categoryFormType->setCategoryLanguage($categoryLanguage);
+
+            $form = $this->createForm(CategoryFormType::class, $categoryFormType);
+
+            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                $categoriesService->storeCategoryLanguage($categoryLanguage);
+                return $this->redirectToRoute('gt.catalog.categories', [ 'categories_filter[language]' => $languageCode]);
+            }
+
+            $allLanguages = $categoriesService->getAllLanguages();
+
+            return $this->render('@Catalog/categories/edit.html.twig', [
+                'categoryForm' => $form->createView(),
+                'languageCode' => $languageCode,
+                'code' => $code,
+                'languages' => $allLanguages,
+            ]);
+        } catch (CatalogValidateException|CatalogErrorException $e ) {
+            return $this->render('@Catalog/error/error.html.twig', [
+                'error' => $e->getMessage(),
+            ]);
         }
-
-        return $this->render('@Catalog/categories/new.html.twig', [
-            'categoryForm' => $form->createView()
-        ]);
     }
 
     /**
@@ -41,20 +57,27 @@ class CategoriesController extends AbstractController
      * @param CategoriesService $categoriesService
      * @return Response
      */
-    public function listAction(Request $request, CategoriesService $categoriesService)
+    public function listAction(Request $request, LoggerInterface $logger, CategoriesService $categoriesService)
     {
-        $categoriesFilter = new CategoriesFilterType();
-        $filterForm = $this->createForm( CategoriesFilterType::class, $categoriesFilter);
-        $filterForm->handleRequest($request);
+        try {
+            $logger->debug('Categories.listAction called');
+            $categoriesFilter = new CategoriesFilterType();
+            $filterForm = $this->createForm(CategoriesFilterType::class, $categoriesFilter);
+            $filterForm->handleRequest($request);
 
-        $languageCode = $categoriesFilter->getLanguageCode();
+            $languageCode = $categoriesFilter->getLanguageCode();
 
-        $categoriesLanguages = $categoriesService->getCategoriesLanguages($categoriesFilter);
-        return $this->render('@Catalog/categories/list.html.twig', [
-            'categoriesLanguages' => $categoriesLanguages,
-            'languageCode'  => $languageCode,
-            'filterForm' => $filterForm->createView(),
-        ]);
+            $categoriesLanguages = $categoriesService->getCategoriesLanguages($categoriesFilter);
+            return $this->render('@Catalog/categories/list.html.twig', [
+                'categoriesLanguages' => $categoriesLanguages,
+                'languageCode' => $languageCode,
+                'filterForm' => $filterForm->createView(),
+            ]);
+        } catch (CatalogErrorException $e ) {
+            return $this->render('@Catalog/error/error.html.twig', [
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function importAction () {

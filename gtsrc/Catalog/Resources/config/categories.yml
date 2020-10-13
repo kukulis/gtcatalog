@@ -4,7 +4,7 @@ gt.catalog.categories:
   methods: GET
 
 gt.catalog.category_edit:
-  path: "/categories/{code}/edit"
+  path: "/categories/edit/{code}/l/{languageCode}"
   controller: Gt\Catalog\Controller\CategoriesController::editAction
   methods: GET|POST
 

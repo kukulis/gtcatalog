@@ -15,6 +15,7 @@ class CategoryDao
 {
     /** @var LoggerInterface  */
     private $logger;
+
     /** @var Registry  */
     private $doctrine;
 
@@ -39,20 +40,6 @@ class CategoryDao
         $em->flush();
     }
 
-//    /**
-//     * @param int $offset
-//     * @param int $limit
-//     * @return int|mixed|string
-//     */
-//    public function getCategories($offset, $limit)
-//    {
-//        $categoryClass = Category::class;
-//        $dql = "SELECT c FROM $categoryClass c";
-//        /** @var EntityManager $em */
-//        $em = $this->doctrine->getManager();
-//        return $em->createQuery($dql)->setMaxResults($limit)->setFirstResult($offset)->execute();
-//    }
-
     /**
      * @param CategoriesFilter $filter
      * @return Category[]
@@ -75,6 +62,8 @@ class CategoryDao
             $builder->andWhere('p.code like :likeParent');
             $builder->setParameter('likeParent', '%'.$filter->getLikeParent().'%' );
         }
+
+        $builder->orderBy('c.code');
 
         $builder->setMaxResults( $filter->getLimit() );
 
@@ -105,5 +94,51 @@ class CategoryDao
         $categoriesLanguages = $query->getResult();
 
         return $categoriesLanguages;
+    }
+
+    /**
+     * @param $code
+     * @param $languageCode
+     * @return CategoryLanguage
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function getCategoryLanguage ( $code, $languageCode ) {
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+        $class = CategoryLanguage::class;
+
+        $dql= /** @lang DQL */ "SELECT cl FROM $class cl 
+                  JOIN cl.category c JOIN cl.language l 
+              WHERE c.code=:code and l.code=:languageCode";
+        $query = $em->createQuery($dql);
+        $query->setParameter('code', $code );
+        $query->setParameter('languageCode', $languageCode );
+
+        /** @var CategoryLanguage $categoryLanguage */
+        $categoryLanguage = $query->getSingleResult();
+
+        return $categoryLanguage;
+    }
+
+    /**
+     * @param string $code
+     * @return Category
+     */
+    public function getCategory ($code) {
+        $em = $this->doctrine->getManager();
+        /** @var Category $category */
+        $category = $em->find(Category::class, $code );
+        return $category;
+    }
+
+    /**
+     * @param CategoryLanguage $cl
+     */
+    public function storeCategoryLanguage (CategoryLanguage  $cl) {
+        $em = $this->doctrine->getManager();
+        $em->persist($cl);
+        $em->flush();
+        return $cl;
     }
 }

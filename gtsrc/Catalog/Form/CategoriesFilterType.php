@@ -8,7 +8,6 @@
 
 namespace Gt\Catalog\Form;
 
-
 use Gt\Catalog\Data\CategoriesFilter;
 use Gt\Catalog\Entity\Language;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -28,6 +27,10 @@ class CategoriesFilterType extends AbstractType implements CategoriesFilter
     private $likeParent;
     private $limit=100;
 
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -107,6 +110,9 @@ class CategoriesFilterType extends AbstractType implements CategoriesFilter
         $this->limit = $limit;
     }
 
+    /**
+     * @return string
+     */
     public function getLanguageCode() {
         if ( $this->language != null ) {
             return $this->language->getCode();
