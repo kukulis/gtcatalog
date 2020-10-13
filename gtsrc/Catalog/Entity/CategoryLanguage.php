@@ -8,7 +8,13 @@
 
 namespace Gt\Catalog\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
 
+
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="categories_languages")
+ */
 class CategoryLanguage
 {
     /**
@@ -75,7 +81,7 @@ class CategoryLanguage
     /**
      * @return string
      */
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -83,7 +89,7 @@ class CategoryLanguage
     /**
      * @param string $name
      */
-    public function setName(string $name): void
+    public function setName(string $name=null): void
     {
         $this->name = $name;
     }
@@ -91,7 +97,7 @@ class CategoryLanguage
     /**
      * @return string
      */
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -99,7 +105,7 @@ class CategoryLanguage
     /**
      * @param string $description
      */
-    public function setDescription(string $description): void
+    public function setDescription(string $description=null): void
     {
         $this->description = $description;
     }

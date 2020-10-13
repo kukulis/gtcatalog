@@ -94,6 +94,7 @@ services:
         arguments:
             - '@logger'
             - '@gt.catalog.category_dao'
+            - '@gt.catalog.language_dao'
 
     Gt\Catalog\Controller\CategoriesController:
         tags:

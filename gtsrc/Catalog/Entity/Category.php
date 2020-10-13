@@ -72,4 +72,15 @@ class Category
         $category->setCode($code);
         return $category;
     }
+
+    public function lambdaGetCode ( Category $category ) {
+        return $category->getCode();
+    }
+
+    public function getParentCode() {
+        if ( $this->parent == null ) {
+            return null;
+        }
+        return $this->parent->getCode();
+    }
 }

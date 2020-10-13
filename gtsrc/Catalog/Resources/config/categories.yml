@@ -8,8 +8,12 @@ gt.catalog.category_edit:
   controller: Gt\Catalog\Controller\CategoriesController::editAction
   methods: GET|POST
 
-gt.catalog.category_new:
-  path: "/categories/new"
-  controller: Gt\Catalog\Controller\CategoriesController::newAction
-  methods: GET|POST
+#gt.catalog.category_new:
+#  path: "/categories/new"
+#  controller: Gt\Catalog\Controller\CategoriesController::newAction
+#  methods: GET|POST
 
+gt.catalog.import_categories_form:
+    path: "/categories/import_form"
+    controller: Gt\Catalog\Controller\CategoriesController::importAction
+    methods: GET|POST

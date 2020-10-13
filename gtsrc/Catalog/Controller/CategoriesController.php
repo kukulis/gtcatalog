@@ -1,13 +1,11 @@
 <?php
 
-
 namespace Gt\Catalog\Controller;
 
-
 use Gt\Catalog\Entity\Category;
+use Gt\Catalog\Form\CategoriesFilterType;
 use Gt\Catalog\Form\CategoryFormType;
 use Gt\Catalog\Services\CategoriesService;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -43,35 +41,24 @@ class CategoriesController extends AbstractController
      * @param CategoriesService $categoriesService
      * @return Response
      */
-    public function listAction(Request $request, LoggerInterface $logger, CategoriesService $categoriesService)
+    public function listAction(Request $request, CategoriesService $categoriesService)
     {
-        $logger->info('Categories list action called');
-        $page = $request->get('page', 0);
-        $categories = $categoriesService->getCategories($page);
+        $categoriesFilter = new CategoriesFilterType();
+        $filterForm = $this->createForm( CategoriesFilterType::class, $categoriesFilter);
+        $filterForm->handleRequest($request);
+
+        $languageCode = $categoriesFilter->getLanguageCode();
+
+        $categoriesLanguages = $categoriesService->getCategoriesLanguages($categoriesFilter);
         return $this->render('@Catalog/categories/list.html.twig', [
-            'categories' => $categories
+            'categoriesLanguages' => $categoriesLanguages,
+            'languageCode'  => $languageCode,
+            'filterForm' => $filterForm->createView(),
         ]);
     }
 
-    /**
-     * @Route("/categories/new", name="categories_new")
-     *
-     * @param Request $request
-     * @param CategoriesService $categoriesService
-     * @return Response
-     */
-    public function newAction(Request $request, CategoriesService $categoriesService)
-    {
-        $form = $this->createForm(CategoryFormType::class);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $categoriesService->newCategory($form);
-            return $this->redirectToRoute('gt.catalog.categories');
-        }
-
-        return $this->render('@Catalog/categories/new.html.twig', [
-            'categoryForm' => $form->createView()
-        ]);
+    public function importAction () {
+    // TODO
+        return new Response('TODO import categories' );
     }
 }

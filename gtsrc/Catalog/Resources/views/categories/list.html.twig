@@ -1,27 +1,40 @@
-<h1>
-    {% trans %}Categories{% endtrans %}
-</h1>
-<div>
-{#    <a href="{{ path('gt.catalog.category_new') }}" class="btn btn-primary">#}
-{#        {% trans %}Add new category{% endtrans %}#}
-{#    </a>#}
-    {# vietoj naujo sukūrimo darysim importą #}
-</div>
-<table>
-    <tr>
-        <th>{% trans %}Code{% endtrans %}</th>
-        <th>{% trans %}Name{% endtrans %}</th>
-        <th>Actions</th>
-    </tr>
-    {% for c in categories %}
-        <tr>
-            <td>{{ c.code }}</td>
-            <td>{{ c.name }}</td>
-            <td>
-                <a href="{{ path('gt.catalog.category_edit', {code: c.code}) }}" class="btn btn-primary">
-                    {% trans %}Edit{% endtrans %}
-                </a>
-            </td>
-        </tr>
-    {% endfor %}
-</table>
+{% extends 'base.html.twig' %}
+{% block title %}
+    Categories list
+{% endblock %}
+{% block body %}
+    <h1>
+        {% trans %}Categories{% endtrans %}
+    </h1>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12"><a href="{{ path('gt.catalog.import_categories_form') }}">Import</a></div>
+            <div class="col-md-12">
+                {{ form(filterForm) }}
+            </div>
+            <div class="col-md-12">
+                <table>
+                    {% for cl in categoriesLanguages %}
+                        <tr>
+                            <td>{{ cl.category.code }}</td>
+                            <td>{{ cl.category.parentCode }}</td>
+                            <td>{{ cl.name }}</td>
+                            <td>{{ cl.description }}</td>
+                        </tr>
+                    {% endfor %}
+{#                    {% for p in products %}#}
+{#                        <tr>#}
+{#                            <td>{{ p.sku }}</td>#}
+{#                            <td>{{ p.lastUpdate | date('Y-m-d H:i:s') }}</td>#}
+{#                            <td>{{ p.version }}</td>#}
+{#                            <td>{{ p.extractedName }}</td>#}
+{#                            <td><a href="{{ path('gt.catalog.product_edit', {sku: p.sku, languageCode: languageCode }) }}">Edit</a></td>#}
+{#                            <td><a href="{{ path('gt.catalog.product_pictures', {sku: p.sku }) }}">Pictures</a></td>#}
+{#                        </tr>#}
+{#                    {% endfor %}#}
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
