@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Import categories
+{% endblock %}
+
+{% block body %}
+<div>
+    <p>Stulpeliai:</p>
+    <ul>
+        <li><b>code</b></li>
+        <li>parent</li>
+        <li><b>language</b></li>
+        <li>name</li>
+        <li>description</li>
+    </ul>
+</div>
+
+<form method="post" enctype="multipart/form-data" action="{{ path('gt.catalog.import_categories') }}">
+    <input type="file" name="csvfile" /><br/>
+    <input type="submit" name="import" value="Importuoti" /><br/>
+</form>
+{% endblock %}

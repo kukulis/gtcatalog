@@ -2,6 +2,8 @@
 
 namespace Gt\Catalog\Services;
 
+use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\ORMException;
 use Gt\Catalog\Dao\CategoryDao;
@@ -12,6 +14,7 @@ use Gt\Catalog\Entity\CategoryLanguage;
 use Gt\Catalog\Entity\Language;
 use Gt\Catalog\Exception\CatalogErrorException;
 use Gt\Catalog\Exception\CatalogValidateException;
+use Gt\Catalog\Utils\CsvUtils;
 use Psr\Log\LoggerInterface;
 
 class CategoriesService
@@ -19,6 +22,8 @@ class CategoriesService
     const PAGE_SIZE = 10;
 
     const DEFAULT_LANGUAGE_CODE = 'en';
+
+    const STEP = 100;
 
     /** @var LoggerInterface */
     private $logger;
@@ -152,5 +157,132 @@ class CategoriesService
             $c->setParent($parentCategory);
         }
         return $c;
+    }
+
+    /**
+     * @param string  $file
+     * @return int
+     * @throws CatalogValidateException
+     */
+    public function importCategories ( $file ) {
+        $f = fopen ( $file, 'r');
+
+        // read head
+        $head  = fgetcsv($f);
+        $this->validateHead ( $head );
+
+        $headMap = array_flip ( $head );
+
+        $headMapWithLastUpdate = $headMap;
+        $headMapWithLastUpdate['last_update'] = -1;
+
+        // read all data to memory
+
+        $lines = [];
+        while ( ($line = fgetcsv($f)) != null ) {
+            $lines[] = $line;
+        }
+        fclose($f);
+
+        $this->logger->debug ( 'read lines count '.count($lines) );
+
+        $count = 0;
+        for ( $i =0; $i < count($lines); $i += self::STEP ) {
+            $part = array_slice ( $lines, $i, self::STEP);
+            $count += $this->importCategoriesData($part, $headMap );
+        }
+        return $count;
+    }
+
+    /**
+     * @param string[][] $lines
+     * @param int[] $headMap indexes are strings
+     * @return int
+     * @throws CatalogValidateException
+     * @throws CatalogErrorException
+     */
+    public function importCategoriesData( $lines, $headMap ) {
+        /** @var Category[] $categories */
+        $categories = [];
+
+        /** @var CategoryLanguage[] $categoriesLanguages */
+        $categoriesLanguages=[];
+
+        foreach ( $lines as $l ) {
+
+            if ( count($l) != count($headMap)) {
+                throw new CatalogValidateException('Wrong amount of elements in line ['.join ( ',',$l ).'] = '.count($l).', while '.count($headMap). ' is needed');
+            }
+            $line = CsvUtils::arrayToAssoc($headMap, $l);
+
+            $category = new Category();
+            $category->setCode( $line['code'] );
+
+            // TODO validate code and parent code ( also validate in classificators and in products skus )
+            // TODO test null parents
+
+            if ( isset($line['parent']) ) {
+                if ( $line['parent'] == ''  or $line['parent'] == '-') {
+                    $category->setParent(null);
+                } else {
+                    $category->setParent(Category::createCategory($line['parent']));
+                }
+            }
+            $lang = new Language();
+            $lang->setCode($line['language']);
+
+            $catLang = new CategoryLanguage();
+            $catLang->setCategory($category);
+            $catLang->setLanguage($lang);
+            if ( isset($line['name']) ) {
+                $catLang->setName($line['name']);
+            }
+            if ( isset($line['description'])) {
+                $catLang->setDescription($line['description']);
+            }
+
+            $categories[] = $category;
+            $categoriesLanguages[] = $catLang;
+        }
+
+        try {
+            $catCount = $this->categoryDao->importCategories($categories, $headMap);
+            $catLangCount = $this->categoryDao->importCategoriesLanguages($categoriesLanguages, $headMap);
+
+            return max($catCount, $catLangCount);
+
+        } catch ( ForeignKeyConstraintViolationException $e ) {
+            $msg = $e->getMessage();
+            if ( strpos($msg,'FOREIGN KEY (`parent`)') !== false  ) {
+                throw new CatalogValidateException('Neteisinga parent reikšmė.
+                 
+                 
+                 Detalės: '.$msg);
+            }
+            throw new CatalogValidateException( $e->getMessage() );
+        } catch (DBALException $e ) {
+            $msg = $e->getMessage();
+            throw new CatalogErrorException( $msg);
+        }
+    }
+
+    /**
+     * @param array $head
+     * @throws CatalogValidateException
+     */
+    public function validateHead ( $head ) {
+        $categoryAndLanguageFields = array_merge(Category::ALLOWED_FIELDS, CategoryLanguage::ALLOWED_FIELDS);
+        $nonValidFields = array_diff ( $head, $categoryAndLanguageFields );
+
+        if ( count($nonValidFields) > 0 ) {
+            throw new CatalogValidateException('Non valid fields:'.join(',', $nonValidFields));
+        }
+
+        $requiredFields = ['code', 'language' ];
+
+        $missingFields = array_diff($requiredFields, $head );
+        if ( count($missingFields) > 0 ) {
+            throw new CatalogValidateException('Missing fields:'.join(',', $missingFields));
+        }
     }
 }

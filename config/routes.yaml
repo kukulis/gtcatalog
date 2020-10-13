@@ -16,4 +16,4 @@ classificators_routes:
     resource: '@CatalogBundle/Resources/config/classificators_routes.yml'
 
 categories_routes:
-    resource: '@CatalogBundle/Resources/config/categories.yml'
+    resource: '@CatalogBundle/Resources/config/categories_routes.yml'

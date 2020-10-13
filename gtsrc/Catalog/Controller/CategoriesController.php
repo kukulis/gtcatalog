@@ -9,6 +9,7 @@ use Gt\Catalog\Form\CategoryFormType;
 use Gt\Catalog\Services\CategoriesService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -80,8 +81,29 @@ class CategoriesController extends AbstractController
         }
     }
 
-    public function importAction () {
-    // TODO
-        return new Response('TODO import categories' );
+    /**
+     * @return Response
+     */
+    public function importFormAction () {
+        return $this->render('@Catalog/categories/import_form.html.twig',
+            []);
+    }
+
+    /**
+     * @param Request $r
+     * @param CategoriesService $categoriesService
+     * @return Response
+     */
+    public function importAction(Request $r, CategoriesService $categoriesService) {
+        try {
+            /** @var File $csvFileObj */
+            $csvFileObj = $r->files->get('csvfile');
+            $count = $categoriesService->importCategories($csvFileObj->getRealPath());
+            return new Response('Imported categories ' . $count);
+        } catch ( CatalogValidateException $e ) {
+            return $this->render('@Catalog/error/error.html.twig', [
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }

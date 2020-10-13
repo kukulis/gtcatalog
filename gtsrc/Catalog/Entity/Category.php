@@ -17,6 +17,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Category
 {
+    const ALLOWED_FIELDS = ['code', 'parent' ];
+
     /**
      * @var string
      * @ORM\Column(type="string", length=64)

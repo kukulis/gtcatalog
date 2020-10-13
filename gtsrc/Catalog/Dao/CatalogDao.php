@@ -549,6 +549,7 @@ class CatalogDao
         $valuesStr = join ( ",\n", $rows );
         $fieldsStr = join ( ',', $importingFieldsAndSkuLang);
 
+        // TODO pratestuoti kai duota minimaliai laukelių
         $updates=[];
         foreach ($importingFields as $f) {
             $updateStr = "$f=VALUES($f)";
@@ -564,7 +565,7 @@ class CatalogDao
                 ON DUPLICATE KEY UPDATE
                 $updatesStr";
 
-        $this->logger->debug('importProducts: sql='.$sql);
+//        $this->logger->debug('importProducts: sql='.$sql);
         return $conn->exec($sql);
     }
 

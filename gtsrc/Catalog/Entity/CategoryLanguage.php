@@ -17,6 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class CategoryLanguage
 {
+    const ALLOWED_FIELDS = [ 'category', 'language', 'name', 'description'];
     /**
      * @var Category
      * @ORM\Id
@@ -108,5 +109,19 @@ class CategoryLanguage
     public function setDescription(string $description=null): void
     {
         $this->description = $description;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getCode() {
+        return $this->category->getCode();
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getLanguageCode() {
+        return $this->language->getCode();
     }
 }

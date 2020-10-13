@@ -15,5 +15,10 @@ gt.catalog.category_edit:
 
 gt.catalog.import_categories_form:
     path: "/categories/import_form"
-    controller: Gt\Catalog\Controller\CategoriesController::importAction
+    controller: Gt\Catalog\Controller\CategoriesController::importFormAction
     methods: GET|POST
+
+gt.catalog.import_categories:
+    path: "/categories/import"
+    controller:  Gt\Catalog\Controller\CategoriesController::importAction
+    methods: POST

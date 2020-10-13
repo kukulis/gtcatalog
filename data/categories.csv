@@ -1,0 +1,8 @@
+code,parent,name,description,language
+main,-,Pagr,Dar viena pagrindinė,lt
+vienas,main,Vienas,Vienas katės pienas,lt
+du,vienas,Du, Du po padu,lt
+trys,main,Trys,Gaidys pragys,lt
+keturi,main,Keturi,Ką kišenėj turi?,lt
+penki,main,Penki,Kieme malkas renki,lt
+sesi,main,Šeši,Kam tu mano barzdą peši?,lt
