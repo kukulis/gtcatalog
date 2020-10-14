@@ -559,7 +559,7 @@ class CatalogDao extends BaseDao
 
         $valuesStr = join ( ",\n", $values );
 
-        $sql = /** @lang MySQL */ "INSERT INTO  products_categories 
+        $sql = /** @lang MySQL */ "INSERT INTO  products_categories (sku, category, deleted)
             VALUES $valuesStr
             ON DUPLICATE KEY UPDATE deleted=values(deleted)";
 

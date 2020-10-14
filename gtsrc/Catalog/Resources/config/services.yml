@@ -28,6 +28,7 @@ services:
             - '@logger'
             - '@gt.catalog.catalog_dao'
             - '@gt.catalog.language_dao'
+            - '@gt.catalog.category_dao'
 
     gt.catalog.languages_service:
         class: 'Gt\Catalog\Services\LanguagesService'

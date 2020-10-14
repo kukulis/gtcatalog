@@ -410,16 +410,18 @@ class ProductsService
                 $classificators = [];
                 foreach ($part as $l) {
                     $line = CsvUtils::arrayToAssoc($headMap, $l);
+                    $sku = $line['sku'];
                     foreach ($importingFieldsProductsClassificators as $cg ) {
-                        $c = Classificator::createClassificator($line[$cg], $cg );
+                        $ccode = $line[$cg];
+
+                        $this->validateClassificatorsCode($ccode, 'for '.$sku.'  group '.$cg );
+                        $c = Classificator::createClassificator($ccode, $cg );
                         $classificators[] = $c;
 
                         $count++;
                     }
                 }
 
-                $codes = array_map( [Classificator::class, 'lambdaGetCode'], $classificators);
-                $this->validateClassificatorsCodes($codes);
                 $this->catalogDao->importClassificators($classificators);
                 // langs too without update ?
             }
@@ -480,14 +482,13 @@ class ProductsService
     }
 
     /**
-     * @param string[] $codes
+     * @param string $code
+     * @param string $context
      * @throws CatalogValidateException
      */
-    private function validateClassificatorsCodes($codes) {
-        foreach ( $codes as $code ) {
-             if ( ! CategoriesHelper::validateClassificatorCode($code) ) {
-                 throw new CatalogValidateException('Invalid classificator code '.$code );
-             }
-        }
+    private function validateClassificatorsCode($code, $context) {
+         if ( ! CategoriesHelper::validateClassificatorCode($code) ) {
+             throw new CatalogValidateException('Invalid classificator code '.$code.'    '.$context );
+         }
     }
 }

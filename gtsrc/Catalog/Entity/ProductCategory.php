@@ -37,14 +37,14 @@ class ProductCategory
 
     /**
      * @var int
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", options={"default":1})
      */
     private $priority;
 
 
     /**
      * @var int
-     * @ORM\Column(type="smallint")
+     * @ORM\Column(type="smallint", options={"default":0})
      */
     private $deleted=0;
 
