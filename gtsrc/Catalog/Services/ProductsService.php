@@ -273,7 +273,9 @@ class ProductsService
                 }
                 $this->validateClassificators($products);
                 $productsCount += $this->catalogDao->importProducts($products, $headMapWithLastUpdate);
-                $prodLangCount += $this->catalogDao->importProductsLangs($productsLangs, $headMap);
+                if ( count($productsLangs )) {
+                    $prodLangCount += $this->catalogDao->importProductsLangs($productsLangs, $headMap);
+                }
             }
             return max ( $productsCount, $prodLangCount);
         } catch ( DBALException $e ) {
@@ -376,5 +378,13 @@ class ProductsService
         if ( count($nonValidFields) > 0 ) {
             throw new CatalogValidateException('Non valid fields:'.join(',', $nonValidFields));
         }
+
+        $requiredFields = ['sku','brand','line'];
+        $missingFields = array_diff($requiredFields, $head);
+
+        if ( count($missingFields) > 0 ) {
+            throw new CatalogValidateException('Missing fields:'.join(',', $missingFields));
+        }
+
     }
 }

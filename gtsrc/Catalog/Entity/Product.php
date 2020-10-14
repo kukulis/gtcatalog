@@ -10,6 +10,7 @@ namespace Gt\Catalog\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gt\Catalog\Exception\CatalogErrorException;
+use \DateTime;
 
 /**
  * @ORM\Entity
@@ -145,13 +146,13 @@ class Product
 
     /**
      * @var bool
-     * @ORM\Column(type="boolean", name="for_male")
+     * @ORM\Column(type="boolean", name="for_male", options={"default":0})
      */
     private $forMale=false;
 
     /**
      * @var bool
-     * @ORM\Column(type="boolean", name="for_female")
+     * @ORM\Column(type="boolean", name="for_female", options={"default":0})
      */
     private $forFemale=false;
 
@@ -175,22 +176,22 @@ class Product
 
     /**
      * @var float
-     * @ORM\Column(type="decimal", scale=2, precision=10 )
+     * @ORM\Column(type="decimal", scale=2, precision=10, options={"default":0} )
      */
     private $weight=0;
     /**
      * @var float
-     * @ORM\Column(type="decimal", scale=2, precision=10 )
+     * @ORM\Column(type="decimal", scale=2, precision=10, options={"default":0} )
      */
     private $length=0;
     /**
      * @var float
-     * @ORM\Column(type="decimal", scale=2, precision=10 )
+     * @ORM\Column(type="decimal", scale=2, precision=10, options={"default":0} )
      */
     private $height=0;
     /**
      * @var float
-     * @ORM\Column(type="decimal", scale=2, precision=10 )
+     * @ORM\Column(type="decimal", scale=2, precision=10, options={"default":0} )
      */
     private $width=0;
 
@@ -229,7 +230,7 @@ class Product
     /**
      * @return \DateTime
      */
-    public function getLastUpdate(): ?\DateTime
+    public function getLastUpdate(): ?DateTime
     {
         return $this->lastUpdate;
     }
@@ -237,7 +238,7 @@ class Product
     /**
      * @param \DateTime $lastUpdate
      */
-    public function setLastUpdate(\DateTime $lastUpdate=null): void
+    public function setLastUpdate(DateTime $lastUpdate=null): void
     {
         $this->lastUpdate = $lastUpdate;
     }

@@ -8,6 +8,7 @@
 
 namespace Gt\Catalog\Utils;
 
+use \DateTime;
 
 class PropertiesHelper
 {
@@ -26,9 +27,10 @@ class PropertiesHelper
             if ( is_object($val) and $subobjectProperty != null ) {
                 $subvalGetter = 'get'.$subobjectProperty;
                 $subVal = $val->$subvalGetter();
-                $props[] = $subVal;
+                $val = $subVal;
             }
-            else {
+
+            if ( !empty($val)) {
                 $props[] = $val;
             }
         }
@@ -64,7 +66,7 @@ class PropertiesHelper
             $getter = 'get'. self::removeUnderScores($p);
             $val = $obj->$getter();
 
-            if ( is_object($val) && get_class($val) == \DateTime::class ) {
+            if ( is_object($val) && get_class($val) == DateTime::class ) {
                     /** @var \DateTime $dtVal */
                 $dtVal = $val;
                 $values[] = $dtVal->format(self::DATE_TIME_FORMAT );
