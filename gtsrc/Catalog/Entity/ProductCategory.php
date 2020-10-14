@@ -112,4 +112,26 @@ class ProductCategory
     {
         $this->deleted = $deleted;
     }
+
+    public static function lambdaGetCategoryCode(ProductCategory $pc) {
+        return $pc->getCategory()->getCode();
+    }
+
+    /**
+     * @param string $sku
+     * @param string $code
+     *
+     * @return ProductCategory
+     */
+    public static function create($sku, $code) {
+        $pc = new ProductCategory();
+        $product = new Product();
+        $product->setSku($sku);
+        $category = new Category();
+        $category->setCode($code);
+        $pc->setProduct($product);
+        $pc->setCategory($category);
+
+        return $pc;
+    }
 }

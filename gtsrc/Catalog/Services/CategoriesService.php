@@ -12,12 +12,14 @@ use Gt\Catalog\Data\CategoriesFilter;
 use Gt\Catalog\Entity\Category;
 use Gt\Catalog\Entity\CategoryLanguage;
 use Gt\Catalog\Entity\Language;
+use Gt\Catalog\Entity\ProductCategory;
 use Gt\Catalog\Exception\CatalogErrorException;
 use Gt\Catalog\Exception\CatalogValidateException;
+use Gt\Catalog\Utils\CategoriesHelper;
 use Gt\Catalog\Utils\CsvUtils;
 use Psr\Log\LoggerInterface;
 
-class CategoriesService
+class CategoriesService extends ProductsBaseService
 {
     const PAGE_SIZE = 10;
 
@@ -27,9 +29,6 @@ class CategoriesService
 
     /** @var LoggerInterface */
     private $logger;
-
-    /** @var CategoryDao */
-    private $categoryDao;
 
     /** @var LanguageDao */
     private $languageDao;
@@ -283,6 +282,48 @@ class CategoriesService
         $missingFields = array_diff($requiredFields, $head );
         if ( count($missingFields) > 0 ) {
             throw new CatalogValidateException('Missing fields:'.join(',', $missingFields));
+        }
+    }
+
+    public function getProductCategories ( $sku ) {
+        return $this->categoryDao->getProductCategories($sku);
+    }
+
+    /**
+     * @param ProductCategory[] $productCategories
+     * @return string
+     */
+    public function getProductCategoriesCodesStr ($productCategories) {
+        $codes = array_map ([ProductCategory::class, 'lambdaGetCategoryCode'], $productCategories);
+        return join ( " ", $codes );
+    }
+
+    /**
+     * @param string $sku
+     * @param string $categoriesStr
+     * @return int
+     * @throws CatalogErrorException
+     * @throws CatalogValidateException
+     */
+    public function updateProductCategories( $sku, $categoriesStr ) {
+        $codes = CategoriesHelper::splitCategoriesStr($categoriesStr);
+        $this->validateExistingCategories($codes);
+
+        /** @var ProductCategory[] $productCategories */
+        $productCategories = [];
+
+        foreach ($codes as $code ) {
+             $productCategories[] = ProductCategory::create($sku, $code);
+        }
+
+        try {
+            $this->categoryDao->markDeletedProductCategories([$sku]);
+            $count = $this->categoryDao->importProductCategories($productCategories);
+            $this->categoryDao->deleteMarkedProductCategories();
+
+            return $count;
+        } catch ( DBALException $e ) {
+            throw new CatalogErrorException( $e->getMessage() );
         }
     }
 }

@@ -50,3 +50,14 @@ gt.catalog.product_picture_delete:
     path: "/product/{sku}/picture/{id_picture}/delete"
     controller: Gt\Catalog\Controller\PicturesController::deletePicture
     methods: GET
+
+gt.catalog.product_categories_edit_form:
+    path: "/product/{sku}/categories_edit_form"
+    controller: Gt\Catalog\Controller\ProductsController::editProductCategoriesFormAction
+    methods: GET
+
+
+gt.catalog.product_categories:
+    path: "/product/{sku}/update_categories"
+    controller: Gt\Catalog\Controller\ProductsController::updateProductCategoriesAction
+    methods: POST

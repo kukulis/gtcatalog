@@ -42,7 +42,7 @@ class ProductFormType extends AbstractType
         $builder
             ->add('p_sku'                   , TextType::class, ['disabled'=>true, 'label'=> 'sku' ] )
             ->add('p_last_update'           , DateTimeType::class, ['disabled'=>true,  'label'=> 'updated' ])
-            ->add('p_version'               , TextType::class, ['required'=>false, 'readonly'=>true, 'label'=> 'version'] )
+            ->add('p_version'               , TextType::class, ['required'=>false, 'disabled'=>true, 'label'=> 'version'] )
             ->add('p_brand_code'            , TextType::class, ['label'=> 'Brand code'] )
             ->add('p_line_code'             , TextType::class, ['label'=> 'Line code'] )
             ->add('p_parent_sku'            , TextType::class, ['required'=>false, 'label'=> 'Parent'] )

@@ -33,28 +33,27 @@ use Gt\Catalog\Utils\PropertiesHelper;
 use Psr\Log\LoggerInterface;
 use \DateTime;
 
-class ProductsService
+class ProductsService extends ProductsBaseService
 {
     const PAGE_SIZE=10;
 
     /** @var LoggerInterface */
-    private $logger;
+    protected $logger;
 
     /** @var CatalogDao */
-    private $catalogDao;
-
-    /** @var CategoryDao */
-    private $categoryDao;
+    protected $catalogDao;
 
     /**
      * @var LanguageDao
      */
-    private $languageDao;
+    protected $languageDao;
 
     /**
      * ProductsService constructor.
      * @param LoggerInterface $logger
      * @param CatalogDao $catalogDao
+     * @param LanguageDao $languageDao
+     * @param CategoryDao $categoryDao
      */
     public function __construct(LoggerInterface $logger,
                                 CatalogDao $catalogDao,
@@ -64,7 +63,7 @@ class ProductsService
         $this->logger = $logger;
         $this->catalogDao = $catalogDao;
         $this->languageDao = $languageDao;
-        $this->categoryDao = $categoryDao;
+        $this->categoryDao = $categoryDao; // from base class
     }
 
     /**
@@ -320,10 +319,10 @@ class ProductsService
 
                     $this->validateExistingCategories($catCodes);
 
-                    $this->catalogDao->markDeletedProductCategories($delSkus);
-                    $pcCount = $this->catalogDao->importProductCategories($productCategories);
+                    $this->categoryDao->markDeletedProductCategories($delSkus);
+                    $pcCount = $this->categoryDao->importProductCategories($productCategories);
                     $this->logger->debug('Imported '.$pcCount.' product categories assignments' );
-                    $this->catalogDao->deleteMarkedProductCategories();
+                    $this->categoryDao->deleteMarkedProductCategories();
                 }
             }
             return max ( $productsCount, $prodLangCount);
@@ -449,25 +448,6 @@ class ProductsService
 
         if ( count($missingFields) > 0 ) {
             throw new CatalogValidateException('Missing fields:'.join(',', $missingFields));
-        }
-    }
-
-
-    /**
-     * @param $categoriesCodes
-     * @throws CatalogValidateException
-     */
-    private function validateExistingCategories($categoriesCodes) {
-
-        /** @var Category[] $categories */
-        $categories = $this->categoryDao->loadCategories($categoriesCodes);
-
-        $loadedCodes = array_map([Category::class, 'lambdaGetCode'], $categories );
-
-        $diff = array_diff($categoriesCodes, $loadedCodes);
-
-        if ( count($diff) > 0 ) {
-            throw new CatalogValidateException('Categories codes was not found in DB :'.join ( ',', $diff));
         }
     }
 

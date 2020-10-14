@@ -18,6 +18,7 @@
         <td>{{ p.extractedName }}</td>
         <td><a href="{{ path('gt.catalog.product_edit', {sku: p.sku, languageCode: languageCode }) }}">Edit</a></td>
         <td><a href="{{ path('gt.catalog.product_pictures', {sku: p.sku }) }}">Pictures</a></td>
+        <td><a href="{{ path('gt.catalog.product_categories_edit_form', {sku: p.sku }) }}">Categories</a></td>
     </tr>
 {% endfor %}
 </table>

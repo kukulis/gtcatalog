@@ -14,6 +14,7 @@ use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Exception\WrongAssociationsException;
 use Gt\Catalog\Form\ProductFormType;
 use Gt\Catalog\Form\ProductsFilterType;
+use Gt\Catalog\Services\CategoriesService;
 use Gt\Catalog\Services\ProductsService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -170,4 +171,37 @@ class ProductsController extends AbstractController
         }
     }
 
+    public function editProductCategoriesFormAction ($sku, ProductsService $productsService, CategoriesService $categoriesService ) {
+        try {
+            $product = $productsService->getProduct($sku);
+
+            if ($product == null) {
+                throw new CatalogValidateException('Cant find product with sku ' . $sku . ' in DB');
+            }
+            $productCategories = $categoriesService->getProductCategories($sku);
+            $categoriesCodesStr = $categoriesService->getProductCategoriesCodesStr($productCategories);
+            return $this->render('@Catalog/products/edit_product_categories.html.twig',
+                ['sku' => $sku,
+                    'categoriesCodesStr' => $categoriesCodesStr,
+                    'productCategories' => $productCategories,
+                ]
+            );
+        } catch ( CatalogValidateException | CatalogErrorException $e ) {
+            return $this->render('@Catalog/error/error.html.twig', [
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function updateProductCategoriesAction ( Request $r, $sku, CategoriesService $categoriesService ) {
+        try {
+            $categoriesStr = $r->get('categories');
+            $count = $categoriesService->updateProductCategories($sku, $categoriesStr);
+            return new Response('Updated product ' . $sku . ' categories ' . $count);
+        } catch ( CatalogValidateException | CatalogErrorException $e ) {
+            return $this->render('@Catalog/error/error.html.twig', [
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
 }

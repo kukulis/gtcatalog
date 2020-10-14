@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManager;
 use Gt\Catalog\Data\CategoriesFilter;
 use Gt\Catalog\Entity\Category;
 use Gt\Catalog\Entity\CategoryLanguage;
+use Gt\Catalog\Entity\ProductCategory;
 use Psr\Log\LoggerInterface;
 
 class CategoryDao extends BaseDao
@@ -206,4 +207,87 @@ class CategoryDao extends BaseDao
 
         return $categories;
     }
+
+    /**
+     * @param string $sku
+     * @return ProductCategory[]
+     */
+    public function getProductCategories ( $sku ) {
+        $class = ProductCategory::class;
+        $dql = /** @lang DQL */ "SELECT pc from $class pc join pc.product p where p.sku=:sku";
+
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        $query = $em->createQuery($dql);
+        $query->setParameter('sku', $sku );
+
+        /** @var ProductCategory[] $productCategories */
+        $productCategories = $query->getResult();
+
+        return $productCategories;
+    }
+
+    /**
+     * @param ProductCategory[] $productCategories
+     * @return int
+     * @throws DBALException
+     */
+    public function importProductCategories($productCategories) {
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        $conn = $em->getConnection();
+
+        $quoter = $this->getQuoter($conn);
+        $values = [];
+        foreach ( $productCategories as $pc ) {
+            $line = [
+                $pc->getProduct()->getSku(),
+                $pc->getCategory()->getCode(),
+                0
+            ];
+
+            $qLine = array_map ( $quoter, $line);
+            $lineStr = '('.join ( ',', $qLine).')';
+
+            $values[] = $lineStr;
+        }
+
+        $valuesStr = join ( ",\n", $values );
+
+        $sql = /** @lang MySQL */ "INSERT INTO  products_categories (sku, category, deleted)
+            VALUES $valuesStr
+            ON DUPLICATE KEY UPDATE deleted=values(deleted)";
+
+        return $conn->exec($sql);
+    }
+
+    /**
+     * @param string[] $skus
+     * @return int
+     * @throws DBALException
+     */
+    public function markDeletedProductCategories($skus) {
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+        $conn = $em->getConnection();
+        $qSkus = array_map ( [$conn, 'quote'], $skus );
+        $skusStr = join ( ",", $qSkus );
+        $sql = /** @lang MySQL */  "update products_categories set deleted=1 where sku in ($skusStr)";
+        return  $conn->exec($sql);
+    }
+
+    /**
+     * @return int
+     * @throws DBALException
+     */
+    public function deleteMarkedProductCategories() {
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+        $conn = $em->getConnection();
+        $sql = /** @lang MySQL */  "delete from products_categories where deleted=1";
+        return  $conn->exec($sql);
+    }
+
 }

@@ -1,0 +1,8 @@
+Product categories.
+{{ sku }}
+
+<form method="post" action="{{ path('gt.catalog.product_categories', {sku:sku}) }}">
+    <label for="categories">Categories:</label><textarea id="categories" name="categories"
+    >{{ categoriesCodesStr }}</textarea>
+    <button type="submit" >Update</button>
+</form>

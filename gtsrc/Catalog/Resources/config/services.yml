@@ -42,6 +42,7 @@ services:
         bind:
             $logger: '@logger'
             $productsService: '@gt.catalog.products_service'
+            $categoriesService: '@gt.catalog.categories_service'
 
     Gt\Catalog\Controller\LanguagesController:
         tags:
