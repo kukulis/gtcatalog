@@ -11,6 +11,10 @@ namespace Gt\Catalog\Services;
 
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\ORMException;
+use Gt\Catalog\Dao\CategoryDao;
+use Gt\Catalog\Entity\Category;
+use Gt\Catalog\Entity\ProductCategory;
+use Gt\Catalog\Utils\CategoriesHelper;
 use Gt\Catalog\Utils\CsvUtils;
 use Gt\Catalog\Dao\CatalogDao;
 use Gt\Catalog\Dao\LanguageDao;
@@ -24,6 +28,7 @@ use Gt\Catalog\Exception\CatalogErrorException;
 use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Exception\RelatedObject;
 use Gt\Catalog\Exception\RelatedObjectClassificator;
+use Gt\Catalog\Utils\ProductsHelper;
 use Gt\Catalog\Utils\PropertiesHelper;
 use Psr\Log\LoggerInterface;
 use \DateTime;
@@ -38,6 +43,9 @@ class ProductsService
     /** @var CatalogDao */
     private $catalogDao;
 
+    /** @var CategoryDao */
+    private $categoryDao;
+
     /**
      * @var LanguageDao
      */
@@ -48,11 +56,15 @@ class ProductsService
      * @param LoggerInterface $logger
      * @param CatalogDao $catalogDao
      */
-    public function __construct(LoggerInterface $logger, CatalogDao $catalogDao, LanguageDao $languageDao )
+    public function __construct(LoggerInterface $logger,
+                                CatalogDao $catalogDao,
+                                LanguageDao $languageDao,
+                                CategoryDao $categoryDao)
     {
         $this->logger = $logger;
         $this->catalogDao = $catalogDao;
         $this->languageDao = $languageDao;
+        $this->categoryDao = $categoryDao;
     }
 
     /**
@@ -225,6 +237,8 @@ class ProductsService
                 /** @var ProductLanguage[] $productsLangs */
                 $productsLangs = [];
 
+                $productCategories = [];
+
                 // make array for importing product
 
                 // we transform to Product and ProductLanguage arrays, because
@@ -237,6 +251,8 @@ class ProductsService
 
                     $product = new Product();
                     $product->setSku($line['sku']);
+
+                    $this->validateProductSku( $product->getSku() );
 
                     foreach ($importingFieldsProductsClassificators as $f ) {
                         $setter = 'set'. PropertiesHelper::removeUnderScores($f);
@@ -270,11 +286,44 @@ class ProductsService
                         }
                         $productsLangs [] = $productLang;
                     }
+
+                    if ( isset($line['categories'])) {
+                        $categoriesStr = $line['categories'];
+                        $categoriesArr = CategoriesHelper::splitCategoriesStr( $categoriesStr);
+
+                        $this->validateCategoriesCodes($categoriesArr, ' product sku '.$product->getSku());
+
+                        foreach ( $categoriesArr as $code ) {
+                            $pc = new ProductCategory();
+                            $pc->setCategory(Category::createCategory($code));
+                            $pc->setProduct($product);
+
+                            $productCategories[] = $pc;
+                        }
+                    }
                 }
                 $this->validateClassificators($products);
                 $productsCount += $this->catalogDao->importProducts($products, $headMapWithLastUpdate);
                 if ( count($productsLangs )) {
                     $prodLangCount += $this->catalogDao->importProductsLangs($productsLangs, $headMap);
+                }
+
+                if ( count($productCategories) > 0  ) {
+                    $delSkus = [];
+                    $catCodes = [];
+                    foreach ($productCategories as $pc ) {
+                        $delSkus[] = $pc->getProduct()->getSku();
+                        $catCodes[] = $pc->getCategory()->getCode();
+                    }
+                    $delSkus = array_unique($delSkus);
+                    $catCodes = array_unique($catCodes);
+
+                    $this->validateExistingCategories($catCodes);
+
+                    $this->catalogDao->markDeletedProductCategories($delSkus);
+                    $pcCount = $this->catalogDao->importProductCategories($productCategories);
+                    $this->logger->debug('Imported '.$pcCount.' product categories assignments' );
+                    $this->catalogDao->deleteMarkedProductCategories();
                 }
             }
             return max ( $productsCount, $prodLangCount);
@@ -283,6 +332,18 @@ class ProductsService
         }
     }
 
+    /**
+     * @param $categoriesArr
+     * @param string $context
+     * @throws CatalogValidateException
+     */
+    private function validateCategoriesCodes($categoriesArr, $context='') {
+        foreach ($categoriesArr as $code) {
+            if ( ! CategoriesHelper::validateCategoryCode($code) ) {
+                throw new CatalogValidateException('Invalid category code ['.$code.'] in '.$context );
+            }
+        }
+    }
     /**
      * @param Product[] $products
      * @throws CatalogValidateException
@@ -357,6 +418,8 @@ class ProductsService
                     }
                 }
 
+                $codes = array_map( [Classificator::class, 'lambdaGetCode'], $classificators);
+                $this->validateClassificatorsCodes($codes);
                 $this->catalogDao->importClassificators($classificators);
                 // langs too without update ?
             }
@@ -372,7 +435,7 @@ class ProductsService
      * @throws CatalogValidateException
      */
     public function validateHead ( $head ) {
-        $productAndLanguageFields = array_merge ( ['sku', 'language'], Product::ALLOWED_FIELDS, ProductLanguage::ALLOWED_FIELDS );
+        $productAndLanguageFields = array_merge ( ['sku', 'language', 'categories'], Product::ALLOWED_FIELDS, ProductLanguage::ALLOWED_FIELDS );
         $nonValidFields = array_diff ( $head, $productAndLanguageFields );
 
         if ( count($nonValidFields) > 0 ) {
@@ -385,6 +448,46 @@ class ProductsService
         if ( count($missingFields) > 0 ) {
             throw new CatalogValidateException('Missing fields:'.join(',', $missingFields));
         }
+    }
 
+
+    /**
+     * @param $categoriesCodes
+     * @throws CatalogValidateException
+     */
+    private function validateExistingCategories($categoriesCodes) {
+
+        /** @var Category[] $categories */
+        $categories = $this->categoryDao->loadCategories($categoriesCodes);
+
+        $loadedCodes = array_map([Category::class, 'lambdaGetCode'], $categories );
+
+        $diff = array_diff($categoriesCodes, $loadedCodes);
+
+        if ( count($diff) > 0 ) {
+            throw new CatalogValidateException('Categories codes was not found in DB :'.join ( ',', $diff));
+        }
+    }
+
+    /**
+     * @param $sku
+     * @throws CatalogValidateException
+     */
+    private function validateProductSku ( $sku ) {
+        if ( ! ProductsHelper::validateProductSku($sku) ) {
+            throw new CatalogValidateException('Invalid sku '.$sku );
+        }
+    }
+
+    /**
+     * @param string[] $codes
+     * @throws CatalogValidateException
+     */
+    private function validateClassificatorsCodes($codes) {
+        foreach ( $codes as $code ) {
+             if ( ! CategoriesHelper::validateClassificatorCode($code) ) {
+                 throw new CatalogValidateException('Invalid classificator code '.$code );
+             }
+        }
     }
 }

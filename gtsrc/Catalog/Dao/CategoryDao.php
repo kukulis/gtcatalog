@@ -168,6 +168,7 @@ class CategoryDao extends BaseDao
     /**
      * @param CategoryLanguage[] $categoriesLangs
      * @return int
+     * @throws DBALException
      */
     public function importCategoriesLanguages($categoriesLangs, $givenFieldsSet) {
         $givenFields = array_keys($givenFieldsSet);
@@ -183,5 +184,26 @@ class CategoryDao extends BaseDao
 
         $sql = $this->buildImportSql($categoriesLangs, $importingFields, $updatingFields, $this->getQuoter($conn), 'code' , 'categories_languages');
         return $conn->exec($sql);
+    }
+
+    /**
+     * @param string[] $codes
+     * @return Category[]
+     */
+    public function loadCategories ( $codes ) {
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        $class = Category::class;
+
+        $dql = /** @lang DQL */  "SELECT c from $class c where c.code in (:codes)";
+
+        $query = $em->createQuery($dql);
+        $query->setParameter('codes', $codes );
+
+        /** @var Category[] $categories */
+        $categories = $query->getResult();
+
+        return $categories;
     }
 }

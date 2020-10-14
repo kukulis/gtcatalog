@@ -37,10 +37,17 @@ class ProductCategory
 
     /**
      * @var int
-     * @ORM\Id
      * @ORM\Column(type="integer")
      */
     private $priority;
+
+
+    /**
+     * @var int
+     * @ORM\Column(type="smallint")
+     */
+    private $deleted=0;
+
 
     /**
      * @return Product
@@ -88,5 +95,21 @@ class ProductCategory
     public function setPriority(int $priority): void
     {
         $this->priority = $priority;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDeleted(): int
+    {
+        return $this->deleted;
+    }
+
+    /**
+     * @param int $deleted
+     */
+    public function setDeleted(int $deleted): void
+    {
+        $this->deleted = $deleted;
     }
 }

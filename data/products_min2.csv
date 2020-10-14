@@ -1,3 +1,3 @@
-sku,brand,line,language,name
-123456,aaa,"",en,"Alioša"
-aaabbb,bbb,"",lt,"Bilboša"
+sku,brand,line,language,name,categories
+123456,aaa,"",en,"Alioša",vienas du trys
+aaabbb,bbb,"",lt,"Bilboša",vienas du trys

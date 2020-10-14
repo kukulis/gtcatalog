@@ -75,10 +75,17 @@ class Category
         return $category;
     }
 
-    public function lambdaGetCode ( Category $category ) {
+    /**
+     * @param Category $category
+     * @return string|null
+     */
+    public static function lambdaGetCode ( Category $category ) {
         return $category->getCode();
     }
 
+    /**
+     * @return string|null
+     */
     public function getParentCode() {
         if ( $this->parent == null ) {
             return null;
