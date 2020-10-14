@@ -5,16 +5,14 @@ namespace Gt\Catalog\Dao;
 
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 use Gt\Catalog\Data\CategoriesFilter;
 use Gt\Catalog\Entity\Category;
 use Gt\Catalog\Entity\CategoryLanguage;
-use Gt\Catalog\Utils\PropertiesHelper;
 use Psr\Log\LoggerInterface;
 
-class CategoryDao
+class CategoryDao extends BaseDao
 {
     /** @var LoggerInterface  */
     private $logger;
@@ -157,44 +155,13 @@ class CategoryDao
 
         $skipUpdates = ['code'];
 
+        $updatingFields = array_diff( $importingFields, $skipUpdates );
+
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
         $conn = $em->getConnection();
 
-        $rows = [];
-        foreach ($categories as $cat ) {
-            $values = PropertiesHelper::getValuesArray($cat, $importingFields, 'code');
-            $qValues = array_map($this->getQuoter($conn), $values);
-            $row = '('. join ( ',', $qValues ) . ')';
-            $rows[] = $row;
-        }
-
-        $valuesStr = join ( ",\n", $rows );
-        $fieldsStr = join ( ',', $importingFields);
-
-        $updates=[];
-        foreach ($importingFields as $f) {
-            if ( array_search( $f, $skipUpdates) !== false ) {
-                continue;
-            }
-            $updateStr = "$f=VALUES($f)";
-            $updates[] = $updateStr;
-        }
-
-        $updatesInstruction = '';
-
-        if( count($updates) > 0 ) {
-            $updatesStr = join(",\n", $updates);
-
-            $updatesInstruction = "ON DUPLICATE KEY UPDATE
-                $updatesStr";
-        }
-
-        $sql = /** @lang MySQL */
-            "INSERT INTO categories ($fieldsStr)
-                VALUES $valuesStr
-                $updatesInstruction";
-
+        $sql = $this->buildImportSql($categories, $importingFields, $updatingFields, $this->getQuoter($conn), 'code', 'categories' );
         return $conn->exec($sql);
     }
 
@@ -203,70 +170,18 @@ class CategoryDao
      * @return int
      */
     public function importCategoriesLanguages($categoriesLangs, $givenFieldsSet) {
-
-        // TODO reuse code both in this function and in importCategories
-
         $givenFields = array_keys($givenFieldsSet);
         $importingFields = array_intersect($givenFields, CategoryLanguage::ALLOWED_FIELDS );
         $importingFields = array_merge( $importingFields, ['category']);
-
         // skip updates
         $skipUpdates = ['category', 'language' ];
+        $updatingFields = array_diff($importingFields, $skipUpdates);
 
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
         $conn = $em->getConnection();
 
-        $rows = [];
-        foreach ($categoriesLangs as $catLang ) {
-            $values = PropertiesHelper::getValuesArray($catLang, $importingFields, 'code');
-            $qValues = array_map($this->getQuoter($conn), $values);
-            $row = '('. join ( ',', $qValues ) . ')';
-            $rows[] = $row;
-        }
-
-        $valuesStr = join ( ",\n", $rows );
-        $fieldsStr = join ( ',', $importingFields);
-
-        $updates=[];
-        foreach ($importingFields as $f) {
-            if ( array_search( $f, $skipUpdates) !== false ) {
-                continue;
-            }
-            $updateStr = "$f=VALUES($f)";
-            $updates[] = $updateStr;
-        }
-
-        $updatesInstruction = '';
-
-        if( count($updates) > 0 ) {
-            $updatesStr = join(",\n", $updates);
-
-            $updatesInstruction = "ON DUPLICATE KEY UPDATE
-                $updatesStr";
-        }
-
-        $sql = /** @lang MySQL */
-            "INSERT INTO categories_languages ($fieldsStr)
-                VALUES $valuesStr
-                $updatesInstruction";
-
+        $sql = $this->buildImportSql($categoriesLangs, $importingFields, $updatingFields, $this->getQuoter($conn), 'code' , 'categories_languages');
         return $conn->exec($sql);
-    }
-
-    /**
-     * @param Connection $con
-     * @return \Closure
-     */
-    public function getQuoter ( Connection $con ) {
-        $f = function ($str) use($con) {
-            if ( $str == null ) {
-                return 'null';
-            }
-            else {
-                return $con->quote($str);
-            }
-        };
-        return $f;
     }
 }

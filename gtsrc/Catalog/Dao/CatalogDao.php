@@ -22,14 +22,10 @@ use Gt\Catalog\Exception\CatalogDetailedException;
 use Gt\Catalog\Exception\CatalogErrorException;
 use Gt\Catalog\Exception\RelatedObjectClassificator;
 use Gt\Catalog\Exception\WrongAssociationsException;
-use Gt\Catalog\Utils\DbHelper;
-use Gt\Catalog\Utils\PropertiesHelper;
 use Psr\Log\LoggerInterface;
 
-class CatalogDao
+class CatalogDao extends BaseDao
 {
-
-
     /**
      * @var LoggerInterface
      */
@@ -48,7 +44,6 @@ class CatalogDao
         $this->logger = $logger;
         $this->doctrine = $doctrine;
     }
-
 
     /**
      * @param int $offset
@@ -488,37 +483,10 @@ class CatalogDao
 
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
-
         $conn = $em->getConnection();
 
-        $rows = [];
-        foreach ( $products as $p  ) {
-            $values = PropertiesHelper::getValuesArray($p, $importingFieldsAndSku, 'code');
-            $dbValues = array_map ( [DbHelper::class, 'boolToInt'],  $values );
-            $qValues = array_map([$conn, 'quote'], $dbValues);
-            $row = '('. join ( ',', $qValues ) . ')';
-            $rows[] = $row;
-        }
+        $sql = $this->buildImportSql($products, $importingFieldsAndSku, $importingFields, $this->getQuoter($conn), 'code', 'products' );
 
-        $valuesStr = join ( ",\n", $rows );
-        $fieldsStr = join ( ',', $importingFieldsAndSku);
-
-        $updates=[];
-        foreach ($importingFields as $f) {
-            $updateStr = "$f=VALUES($f)";
-            $updates[] = $updateStr;
-        }
-
-        $updatesStr = join ( ",\n", $updates );
-
-
-        $sql = /** @lang MySQL */
-        "INSERT INTO products ($fieldsStr)
-                VALUES $valuesStr
-                ON DUPLICATE KEY UPDATE
-                $updatesStr";
-
-        $this->logger->debug('importProducts: sql='.$sql);
         return $conn->exec($sql);
     }
 
@@ -538,34 +506,8 @@ class CatalogDao
 
         $conn = $em->getConnection();
 
-        $rows = [];
-        foreach ( $productsLangs as $p  ) {
-            $values = PropertiesHelper::getValuesArray($p, $importingFieldsAndSkuLang, 'code');
-            $qValues = array_map([$conn, 'quote'], $values);
-            $row = '('. join ( ',', $qValues ) . ')';
-            $rows[] = $row;
-        }
+        $sql = $this->buildImportSql($productsLangs, $importingFieldsAndSkuLang, $importingFields, $this->getQuoter($conn), 'code', 'products_languages' );
 
-        $valuesStr = join ( ",\n", $rows );
-        $fieldsStr = join ( ',', $importingFieldsAndSkuLang);
-
-        // TODO pratestuoti kai duota minimaliai laukelių
-        $updates=[];
-        foreach ($importingFields as $f) {
-            $updateStr = "$f=VALUES($f)";
-            $updates[] = $updateStr;
-        }
-
-        $updatesStr = join ( ",\n", $updates );
-
-
-        $sql = /** @lang MySQL */
-            "INSERT INTO products_languages ($fieldsStr)
-                VALUES $valuesStr
-                ON DUPLICATE KEY UPDATE
-                $updatesStr";
-
-//        $this->logger->debug('importProducts: sql='.$sql);
         return $conn->exec($sql);
     }
 

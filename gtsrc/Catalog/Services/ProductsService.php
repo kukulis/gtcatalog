@@ -212,8 +212,9 @@ class ProductsService
         $importingFieldsProductsClassificators = array_intersect($givenFields, Product::CLASSIFICATORS_GROUPS );
 
         try {
+            $productsCount = 0;
+            $prodLangCount = 0;
             $partSize = 100;
-
             for ($i = 0; $i < count($lines); $i += $partSize) {
 
                 $part = array_slice($lines, $i, $partSize);
@@ -244,7 +245,11 @@ class ProductsService
 
                     foreach ($importingFieldsProducts as $f ) {
                         $setter = 'set'.PropertiesHelper::removeUnderScores($f);
-                        $product->$setter($line[$f]);
+                        $val = $line[$f];
+                        if ( $val === '' ) {
+                            $val = null;
+                        }
+                        $product->$setter($val);
                     }
 
                     $product->setLastUpdate( new DateTime() );
@@ -267,13 +272,13 @@ class ProductsService
                     }
                 }
                 $this->validateClassificators($products);
-                $this->catalogDao->importProducts($products, $headMapWithLastUpdate);
-                $this->catalogDao->importProductsLangs($productsLangs, $headMap);
+                $productsCount += $this->catalogDao->importProducts($products, $headMapWithLastUpdate);
+                $prodLangCount += $this->catalogDao->importProductsLangs($productsLangs, $headMap);
             }
+            return max ( $productsCount, $prodLangCount);
         } catch ( DBALException $e ) {
             throw new CatalogErrorException($e->getMessage());
         }
-        return 0;
     }
 
     /**
