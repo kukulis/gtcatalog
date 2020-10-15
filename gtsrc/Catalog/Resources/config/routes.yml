@@ -61,3 +61,7 @@ gt.catalog.product_categories:
     path: "/product/{sku}/update_categories"
     controller: Gt\Catalog\Controller\ProductsController::updateProductCategoriesAction
     methods: POST
+
+_gt.catalog.rest:
+    resource: "rest-routing.yml"
+    prefix: '/api/ezp/v2'

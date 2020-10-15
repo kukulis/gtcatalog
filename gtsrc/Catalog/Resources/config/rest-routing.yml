@@ -1,0 +1,4 @@
+gt.catalog.rest.prekes:
+    path: "/prekes/{language}"
+    controller: Gt\Catalog\Rest\Controllers\ProductsLegacyRestController::getPrekesAction
+    methods: GET|POST

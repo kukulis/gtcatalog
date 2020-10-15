@@ -149,3 +149,9 @@ services:
             - [setRootPath, ['%kernel.project_dir%']]
             - [setBaseDir, ['img']]
 
+    # REST
+    Gt\Catalog\Rest\Controllers\ProductsLegacyRestController:
+        tags:
+            - "controller.service_arguments"
+        bind:
+            $logger: '@logger'
