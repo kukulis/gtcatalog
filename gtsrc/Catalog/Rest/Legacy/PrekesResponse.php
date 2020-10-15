@@ -11,5 +11,6 @@ namespace Gt\Catalog\Rest\Legacy;
 
 class PrekesResponse
 {
-
+    /** @var Prekes */
+    public $Prekes=[];
 }

@@ -87,4 +87,30 @@ class PropertiesHelper
         return str_replace( '_', '', $prop );
     }
 
+    /**
+     * @param mixed $obj
+     * @param string $property
+     * @param string $subproperty
+     * @return mixed
+     */
+    public static function getSubProperty ( $obj, $property, $subproperty ) {
+        $subObject = $obj->{'get'.$property}();
+        if ( $subObject == null ) {
+            return null;
+        }
+        return $subObject->{'get'.$subproperty}();
+    }
+
+
+    /**
+     * @param mixed $obj
+     * @param string $property
+     * @return mixed
+     */
+    public static function getPropertyOrNull ( $obj = null, $property='' ) {
+        if ( $obj == null ) {
+            return null;
+        }
+        return $obj->{'get'.$property}();
+    }
 }

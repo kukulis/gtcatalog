@@ -1,3 +1,10 @@
+parameters:
+    gt.catalog.languages_map:
+        lt: 'lt'
+        lit-LT: 'lt'
+        en: 'en'
+        eng-GB: 'en'
+
 services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
@@ -149,9 +156,20 @@ services:
             - [setRootPath, ['%kernel.project_dir%']]
             - [setBaseDir, ['img']]
 
-    # REST
+
+    # ----------------- REST -----------------------------------
+    gt.catalog.products_rest_service:
+        class: 'Gt\Catalog\Services\Rest\ProductsRestService'
+        arguments:
+            - '@logger'
+            - '@gt.catalog.catalog_dao'
+            - '@gt.catalog.category_dao'
+        calls:
+            - [setLanguagesMap,['%gt.catalog.languages_map%']]
+
     Gt\Catalog\Rest\Controllers\ProductsLegacyRestController:
         tags:
             - "controller.service_arguments"
         bind:
             $logger: '@logger'
+            $productsRestService: '@gt.catalog.products_rest_service'

@@ -45,23 +45,23 @@ class CatalogDao extends BaseDao
         $this->doctrine = $doctrine;
     }
 
-    /**
-     * @param int $offset
-     * @param int $limit
-     * @return Product[]
-     */
-    public function getProductsList(  $offset, $limit ) {
-        $productClass = Product::class;
-        $dql = /** @lang DQL */ "SELECT p from $productClass p";
-
-        /** @var EntityManager $em */
-        $em = $this->doctrine->getManager();
-
-        /** @var Product[] $products */
-        $products = $em->createQuery($dql)->setMaxResults($limit)->setFirstResult($offset)->execute();
-
-        return $products;
-    }
+//    /**
+//     * @param int $offset
+//     * @param int $limit
+//     * @return Product[]
+//     */
+//    public function getProductsList(  $offset, $limit ) {
+//        $productClass = Product::class;
+//        $dql = /** @lang DQL */ "SELECT p from $productClass p";
+//
+//        /** @var EntityManager $em */
+//        $em = $this->doctrine->getManager();
+//
+//        /** @var Product[] $products */
+//        $products = $em->createQuery($dql)->setMaxResults($limit)->setFirstResult($offset)->execute();
+//
+//        return $products;
+//    }
 
     public function getProductsListByFilter ( ProductsFilter $filter ) {
         /** @var EntityManager $em */
@@ -96,7 +96,33 @@ class CatalogDao extends BaseDao
      */
     public function getProductsLangs ( $skus, $languageCode ) {
         $class = ProductLanguage::class;
-        $dql = /** @lang DQL */  "SELECT pl from $class pl join pl.product p join pl.language l 
+        $dql = /** @lang DQL */  "SELECT pl, p from $class pl join pl.product p join pl.language l 
+        where p.sku in (:skus) and l.code = :languageCode";
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        $query = $em->createQuery($dql);
+
+        $query->setParameter('skus', $skus );
+        $query->setParameter('languageCode', $languageCode );
+
+        /** @var ProductLanguage[] $productLanguages */
+        $productLanguages = $query->getResult();
+
+        return $productLanguages;
+    }
+
+    /**
+     * @param $skus
+     * @param $languageCode
+     * @return ProductLanguage[]
+     */
+    public function getProductsLangsWithSubobjects($skus, $languageCode) {
+        $class = ProductLanguage::class;
+        $dql = /** @lang DQL */  "SELECT pl, p, ty, pur, me from $class pl join pl.product p join pl.language l
+        left join p.type ty 
+        left join p.purpose pur
+        left join p.measure me 
         where p.sku in (:skus) and l.code = :languageCode";
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
