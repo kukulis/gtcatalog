@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="lt">
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
@@ -33,10 +33,18 @@
                         <a class="nav-link" href="{{ path('gt.catalog.categories') }}">{% trans %}Categories{% endtrans %}</a>
                     </li>
                 </ul>
-                <form class="form-inline my-2 my-lg-0">
-                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-                </form>
+{#                <form class="form-inline my-2 my-lg-0">#}
+{#                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">#}
+{#                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>#}
+{#                </form>#}
+                <div>{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+{#                        {{ dump(app.user) }}#}
+                        {{ app.user.email }}
+                        <a href="/logout">Logout</a>
+                        {% else %}
+                            <a href="/login">Login</a>
+                    {% endif %}
+                </div>
             </div>
         </nav>
     {% endblock %}

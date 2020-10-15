@@ -1,3 +1,7 @@
+{% extends 'base.html.twig' %}
+{% block title %}{% trans %}Add picture{% endtrans %}{% endblock %}
+
+{% block body %}
 <form enctype="multipart/form-data" method="post" action="{{ path('gt.catalog.upload_picture', {sku: product.sku}) }}">
     <dl>
         <dt>
@@ -9,3 +13,4 @@
         <dt><input type="submit" name="upload" value="upload" /></dt>
     </dl>
 </form>
+{% endblock %}

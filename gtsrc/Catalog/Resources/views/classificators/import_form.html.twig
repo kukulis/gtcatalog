@@ -1,3 +1,7 @@
+{% extends 'base.html.twig' %}
+{% block title %}{% trans %}Classificators Import Form{% endtrans %}{% endblock %}
+
+{% block body %}
 <div>
     <p>Stulpeliai:</p>
     <ul>
@@ -10,9 +14,10 @@
 <form method="post" enctype="multipart/form-data" action="{{ path('gt.catalog.classificators.import') }}">
     <input type="file" name="csvfile" />
     <input type="submit" name="import" value="Importuoti" />
-    <select name="language">
+    <label for="language">Kalba</label><select id="language" name="language">
         {% for l in languages %}
             <option value="{{ l.code  }}">{{  l.name }}</option>
         {% endfor %}
     </select>
 </form>
+{% endblock %}

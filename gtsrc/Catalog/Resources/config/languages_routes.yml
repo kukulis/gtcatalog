@@ -1,10 +1,10 @@
 gt.catalog.language_new:
-    path: "/languages/new"
+    path: "/language/new"
     controller: Gt\Catalog\Controller\LanguagesController::newAction
     methods: GET|POST
 
 gt.catalog.language_edit:
-    path: "/languages/{code}/edit"
+    path: "/language/edit/{code}"
     controller: Gt\Catalog\Controller\LanguagesController::editAction
     methods: GET|POST
 

@@ -1,3 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Product categories {{ sku }}
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
 Product categories.
 {{ sku }}
 
@@ -6,3 +17,7 @@ Product categories.
     >{{ categoriesCodesStr }}</textarea>
     <button type="submit" >Update</button>
 </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

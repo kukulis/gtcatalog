@@ -1,5 +1,7 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Products list{% endblock %}
+
 {% block body %}
 
 <div class="container">
@@ -9,7 +11,7 @@
             {{ form(filterForm) }}
         </div>
         <div class="col-md-12">
-<table>
+<table class="table table-bordered">
 {% for p in products %}
     <tr>
         <td>{{ p.sku }}</td>

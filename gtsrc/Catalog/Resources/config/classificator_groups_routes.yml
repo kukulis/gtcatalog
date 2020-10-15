@@ -1,10 +1,10 @@
 gt.catalog.classificator_group_new:
-  path: "/classificator_groups/new"
+  path: "/classificator_group/new"
   controller: Gt\Catalog\Controller\ClassificatorGroupsController::newAction
   methods: GET|POST
 
 gt.catalog.classificator_group_edit:
-  path: "/classificator_groups/{code}/edit"
+  path: "/classificator_group/edit/{code}"
   controller: Gt\Catalog\Controller\ClassificatorGroupsController::editAction
   methods: GET|POST
 

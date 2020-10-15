@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-
+{% block title %}{% trans %}Classificators{% endtrans %}{% endblock %}
 {% block body %}
     <div class="container">
     <div class="row">
@@ -9,16 +9,18 @@
 
 {{ form(form) }}
 
-<table>
+<table class="table table-bordered">
 {% for c in classificators %}
     <tr>
         <td>{{ c.code }}</td>
         <td>{{ c.group.name }}</td>
         <td>{{ c.assignedValue }}</td>
         <td>
+            {% if c.code is not empty %}
             <a href="{{ path('gt.catalog.classificator_edit', {code: c.code, languageCode: languageCode }) }}" class="btn btn-primary">
                 {% trans %}Edit{% endtrans %}
             </a>
+            {% endif %}
         </td>
     </tr>
 {% endfor %}

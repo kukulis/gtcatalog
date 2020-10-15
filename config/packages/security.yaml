@@ -37,7 +37,16 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/products, roles: [ROLE_EDITOR, ROLE_ADMIN] }
+        - { path: ^/product, roles: [ROLE_EDITOR, ROLE_ADMIN] }
+        - { path: ^/classificator_groups, roles: [ROLE_ADMIN, ROLE_EDITOR] }
+        - { path: ^/classificator_group/edit, roles: ROLE_ADMIN }
+        - { path: ^/classificator_group/new, roles: ROLE_ADMIN }
+        - { path: ^/classificators, roles: [ROLE_EDITOR, ROLE_ADMIN] }
+        - { path: ^/classificator, roles: [ROLE_EDITOR, ROLE_ADMIN] }
+        - { path: ^/categories, roles: [ROLE_EDITOR, ROLE_ADMIN] }
+        - { path: ^/language/edit, roles: ROLE_ADMIN }
+        - { path: ^/language/new, roles: ROLE_ADMIN }
+        - { path: ^/languages, roles: [ROLE_EDITOR, ROLE_ADMIN] }
 
     enable_authenticator_manager: true
