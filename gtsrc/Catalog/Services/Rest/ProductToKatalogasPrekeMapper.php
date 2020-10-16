@@ -130,6 +130,8 @@ class ProductToKatalogasPrekeMapper
                 $kp->Nuotraukos->{$property} = $nuotrauka;
             }
         }
+
+        $kp->kalba = $pl->getLanguage()->getCode();
         return $kp;
     }
 }

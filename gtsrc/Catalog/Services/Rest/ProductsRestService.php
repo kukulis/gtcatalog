@@ -120,7 +120,7 @@ class ProductsRestService
         /** @var CategoryLanguage[][] $productsCategoriesArraysMap */
         $productsCategoriesArraysMap = [];
         foreach ($skus as $sku ) {
-            $productsPicturesArraysMap[$sku] = [];
+            $productsCategoriesArraysMap[$sku] = [];
         }
 
         foreach ($productsCategories as $pc ) {

@@ -11,7 +11,7 @@ namespace Gt\Catalog\Rest\Legacy;
 
 class Prekes
 {
-    public $resultCode;
+    public $resultCode="OK";
     public $errorMessage;
     public $message;
     public $dataType;
