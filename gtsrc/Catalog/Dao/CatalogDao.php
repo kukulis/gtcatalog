@@ -119,10 +119,12 @@ class CatalogDao extends BaseDao
      */
     public function getProductsLangsWithSubobjects($skus, $languageCode) {
         $class = ProductLanguage::class;
-        $dql = /** @lang DQL */  "SELECT pl, p, ty, pur, me from $class pl join pl.product p join pl.language l
+
+        $dql = /** @lang DQL */  "SELECT pl, p, ty, pur, me, pg from $class pl join pl.product p join pl.language l
         left join p.type ty 
         left join p.purpose pur
         left join p.measure me 
+        left join p.productgroup pg 
         where p.sku in (:skus) and l.code = :languageCode";
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
@@ -554,5 +556,29 @@ class CatalogDao extends BaseDao
         $classificators = $query->getResult();
 
         return $classificators;
+    }
+
+    /**
+     * @param string[] $codes
+     * @param string $languageCode
+     * @return ClassificatorLanguage[]
+     */
+    public function loadClassificatorsLanguagesByCodes ($codes, $languageCode) {
+        $class = ClassificatorLanguage::class;
+        $dql = /** @lang DQL */ "SELECT cl from $class cl 
+                join cl.classificator c
+                join cl.language l 
+                where c.code in (:codes) and l.code=:languageCode";
+
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+        $query = $em->createQuery($dql);
+        $query->setParameter('codes', $codes );
+        $query->setParameter('languageCode', $languageCode );
+
+        /** @var ClassificatorLanguage[] $classificatorLanguages */
+        $classificatorLanguages = $query->getResult();
+
+        return $classificatorLanguages;
     }
 }

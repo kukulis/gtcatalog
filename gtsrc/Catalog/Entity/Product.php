@@ -26,6 +26,7 @@ class Product
         'purpose',
         'type',
         'vendor',
+        'productgroup',
     ];
 
     const ALLOWED_FIELDS = [
@@ -206,6 +207,56 @@ class Product
      * @ORM\Column(type="string", length=64, name="info_provider", nullable=true)
      */
     private $infoProvider;
+
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=32, name="deposit_code", nullable=true)
+     */
+    private $depositCode;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=32, name="code_from_custom", nullable=true)
+     */
+    private $codeFromCustom;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=64, name="guaranty", nullable=true)
+     */
+    private $guaranty;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=32, name="code_from_supplier", nullable=true)
+     */
+    private $codeFromSupplier;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=32, name="code_from_vendor", nullable=true)
+     */
+    private $codeFromVendor;
+
+    /**
+     * @var Classificator
+     * @ORM\ManyToOne(targetEntity="Classificator" )
+     * @ORM\JoinColumn(name="productgroup", referencedColumnName="code")
+     */
+    private $productgroup;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=32, name="priority", nullable=true)
+     */
+    private $prority;
+
+    /**
+     * @var int
+     * @ORM\Column(type="integer", name="google_product_category_id", nullable=true)
+     */
+    private $googleProductCategoryId=0;
 
 
     /** @var string */
@@ -645,5 +696,133 @@ class Product
     public function setExtractedName(string $extractedName): void
     {
         $this->extractedName = $extractedName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDepositCode(): ?string
+    {
+        return $this->depositCode;
+    }
+
+    /**
+     * @param string $depositCode
+     */
+    public function setDepositCode(string $depositCode=null): void
+    {
+        $this->depositCode = $depositCode;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCodeFromCustom(): ?string
+    {
+        return $this->codeFromCustom;
+    }
+
+    /**
+     * @param string $codeFromCustom
+     */
+    public function setCodeFromCustom(string $codeFromCustom=null): void
+    {
+        $this->codeFromCustom = $codeFromCustom;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGuaranty(): ?string
+    {
+        return $this->guaranty;
+    }
+
+    /**
+     * @param string $guaranty
+     */
+    public function setGuaranty(string $guaranty=null): void
+    {
+        $this->guaranty = $guaranty;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCodeFromSupplier(): ?string
+    {
+        return $this->codeFromSupplier;
+    }
+
+    /**
+     * @param string $codeFromSupplier
+     */
+    public function setCodeFromSupplier(string $codeFromSupplier=null): void
+    {
+        $this->codeFromSupplier = $codeFromSupplier;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCodeFromVendor(): ?string
+    {
+        return $this->codeFromVendor;
+    }
+
+    /**
+     * @param string $codeFromVendor
+     */
+    public function setCodeFromVendor(string $codeFromVendor=null): void
+    {
+        $this->codeFromVendor = $codeFromVendor;
+    }
+
+    /**
+     * @return Classificator
+     */
+    public function getProductGroup(): ?Classificator
+    {
+        return $this->productgroup;
+    }
+
+    /**
+     * @param Classificator $productgroup
+     */
+    public function setProductGroup(Classificator $productgroup=null): void
+    {
+        $this->productgroup = $productgroup;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPrority(): ?string
+    {
+        return $this->prority;
+    }
+
+    /**
+     * @param string $prority
+     */
+    public function setPrority(string $prority=null): void
+    {
+        $this->prority = $prority;
+    }
+
+    /**
+     * @return int
+     */
+    public function getGoogleProductCategoryId(): ?int
+    {
+        return $this->googleProductCategoryId;
+    }
+
+    /**
+     * @param int $googleProductCategoryId
+     */
+    public function setGoogleProductCategoryId(int $googleProductCategoryId): void
+    {
+        $this->googleProductCategoryId = $googleProductCategoryId;
     }
 }

@@ -39,7 +39,7 @@ class ProductCategory
      * @var int
      * @ORM\Column(type="integer", options={"default":1})
      */
-    private $priority;
+    private $priority=1;
 
 
     /**

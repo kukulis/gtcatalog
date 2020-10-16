@@ -113,4 +113,17 @@ class PropertiesHelper
         }
         return $obj->{'get'.$property}();
     }
+
+    /**
+     * @param array $map
+     * @param string $key
+     * @param string $property
+     * @return mixed
+     */
+    public static function getPropertyFromMap ( $map, $key, $property ) {
+        if ( array_key_exists($key, $map )) {
+            return $map[$key]->{'get'.$property}();
+        }
+        return null;
+    }
 }

@@ -75,6 +75,25 @@ class PicturesDao
     }
 
     /**
+     * @param string[] $skus
+     */
+    public function getProductsPictures( $skus ) {
+        $class = ProductPicture::class;
+        $dql = /** @lang DQL */ "SELECT pp, pi from $class pp join pp.product pr join pp.picture pi where pr.sku in (:skus)";
+
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        $query = $em->createQuery($dql);
+        $query->setParameter('skus', $skus );
+
+        /** @var ProductPicture[] $productPictures */
+        $productPictures = $query->getResult();
+
+        return $productPictures;
+    }
+
+    /**
      * @param string $sku
      * @param int $id
      * @return ProductPicture

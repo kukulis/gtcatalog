@@ -164,6 +164,8 @@ services:
             - '@logger'
             - '@gt.catalog.catalog_dao'
             - '@gt.catalog.category_dao'
+            - '@gt.catalog.pictures_dao'
+            - '@gt.catalog.pictures_service'
         calls:
             - [setLanguagesMap,['%gt.catalog.languages_map%']]
 

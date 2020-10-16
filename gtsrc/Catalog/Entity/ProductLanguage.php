@@ -82,6 +82,26 @@ class ProductLanguage
     private $tags;
 
     /**
+     * @var string
+     * @ORM\Column(type="string", length=32, name="label_size", nullable=true)
+     */
+    private $labelSize;
+
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=64, nullable=true)
+     */
+    private $distributor;
+
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $composition;
+
+    /**
      * @return string
      */
     public function getSku () {
@@ -216,4 +236,55 @@ class ProductLanguage
         $this->tags = $tags;
     }
 
+    /**
+     * @return string
+     */
+    public function getLabelSize(): ?string
+    {
+        return $this->labelSize;
+    }
+
+    /**
+     * @param string $labelSize
+     */
+    public function setLabelSize(string $labelSize=null): void
+    {
+        $this->labelSize = $labelSize;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDistributor(): ?string
+    {
+        return $this->distributor;
+    }
+
+    /**
+     * @param string $distributor
+     */
+    public function setDistributor(string $distributor=null): void
+    {
+        $this->distributor = $distributor;
+    }
+
+    /**
+     * @return string
+     */
+    public function getComposition(): ?string
+    {
+        return $this->composition;
+    }
+
+    /**
+     * @param string $composition
+     */
+    public function setComposition(string $composition=null): void
+    {
+        $this->composition = $composition;
+    }
+
+    public static function lambdaGetProduct (ProductLanguage  $productLanguage) {
+        return $productLanguage->getProduct();
+    }
 }

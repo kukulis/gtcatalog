@@ -229,6 +229,26 @@ class CategoryDao extends BaseDao
     }
 
     /**
+     * @param string[] $skus
+     * @return ProductCategory[]
+     */
+    public function getProductsCategories ( $skus ) {
+        $class = ProductCategory::class;
+        $dql = /** @lang DQL */ "SELECT pc from $class pc join pc.product p where p.sku in (:skus)";
+
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        $query = $em->createQuery($dql);
+        $query->setParameter('skus', $skus );
+
+        /** @var ProductCategory[] $productCategories */
+        $productCategories = $query->getResult();
+
+        return $productCategories;
+    }
+
+    /**
      * @param ProductCategory[] $productCategories
      * @return int
      * @throws DBALException

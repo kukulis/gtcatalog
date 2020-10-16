@@ -89,5 +89,15 @@ class ProductPicture
         $this->priority = $priority;
     }
 
-
+    public static function lambdaComparePriority (ProductPicture $pp1, ProductPicture $pp2 ) {
+        if ( $pp1->getPriority() == $pp2->getPriority() ) {
+            return 0;
+        }
+        else if ( $pp1->getPriority() > $pp2->getPriority() ) {
+            return 1;
+        }
+        else {
+            return -1;
+        }
+    }
 }

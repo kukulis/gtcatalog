@@ -10,97 +10,126 @@ namespace Gt\Catalog\Services\Rest;
 
 
 use Gt\Catalog\Entity\CategoryLanguage;
-use Gt\Catalog\Entity\Picture;
+use Gt\Catalog\Entity\ClassificatorLanguage;
 use Gt\Catalog\Entity\ProductLanguage;
-use Gt\Catalog\Rest\Legacy\Aprasymas;
-use Gt\Catalog\Rest\Legacy\Atributai;
+use Gt\Catalog\Entity\ProductPicture;
 use Gt\Catalog\Rest\Legacy\KatalogasPreke;
-use Gt\Catalog\Rest\Legacy\Klasifikatorius;
 use Gt\Catalog\Rest\Legacy\Nuotrauka;
-use Gt\Catalog\Rest\Legacy\Nuotraukos;
 use Gt\Catalog\Utils\PropertiesHelper;
 
 class ProductToKatalogasPrekeMapper
 {
     /**
      * @param ProductLanguage $pl
-     * @param CategoryLanguage[] $categoriesLanguages
-     * @param Picture[] $pictures
+     * @param CategoryLanguage[] $categoriesLangs
+     * @param ProductPicture[] $productPictures
+     * @param ClassificatorLanguage [] $clMap   key:group_code
      * @return KatalogasPreke
      */
-    public static function mapProduct2KatalogasPreke(ProductLanguage $pl, $categoriesLanguages, $pictures) {
+    public static function mapProduct2KatalogasPreke(ProductLanguage $pl, $categoriesLangs, $productPictures, $clMap) {
         $kp = new KatalogasPreke();
-
 
         $kp->nomnr            = $pl->getProduct()->getSku();
         $kp->pavadinimas      = $pl->getName() ;
         $kp->brandas          = PropertiesHelper::getPropertyOrNull( $pl->getProduct()->getBrand(),  'code' );
         $kp->linija           = PropertiesHelper::getPropertyOrNull($pl->getProduct()->getLine(), 'code');
-        $kp->depozito_kodas   = ''; // TODO field
-        $kp->muitines_kodas   = ''; // TODO field
+        $kp->depozito_kodas   = $pl->getProduct()->getDepositCode();
+        $kp->muitines_kodas   = $pl->getProduct()->getCodeFromCustom();
         $kp->origin_country   = $pl->getProduct()->getOriginCountryCode();
         $kp->parent           = $pl->getProduct()->getParentSku();
         $kp->info_provider    = $pl->getProduct()->getInfoProvider();
         $kp->tags             = $pl->getTags() ;
 
-
         $kp->Atributai->nomnr                                = $pl->getProduct()->getSku();
         $kp->Atributai->spalva                               = $pl->getProduct()->getColor();
-        $kp->Atributai->garantija                            = ''; // TODO field
-        $kp->Atributai->tiekejo_kodas                        = ''; // TODO field
-        $kp->Atributai->gamintojo_kodas                      = ''; // TODO field
+        $kp->Atributai->garantija                            = $pl->getProduct()->getGuaranty();
+        $kp->Atributai->tiekejo_kodas                        = $pl->getProduct()->getCodeFromSupplier();
+        $kp->Atributai->gamintojo_kodas                      = $pl->getProduct()->getCodeFromVendor();
         $kp->Atributai->svoris                               = $pl->getProduct()->getWeight();
         $kp->Atributai->ilgis                                = $pl->getProduct()->getLength();
         $kp->Atributai->aukstis                              = $pl->getProduct()->getHeight();
         $kp->Atributai->plotis                               = $pl->getProduct()->getWidth();
         $kp->Atributai->pristatymo_laikas                    = $pl->getProduct()->getDeliveryTime();
         $kp->Atributai->tipas                                = PropertiesHelper::getPropertyOrNull($pl->getProduct()->getType(), 'code');
-//        $kp->Atributai->tipas_title                          = PropertiesHelper::getPropertyOrNull($pl->getProduct()->getType(), 'name');
+        $kp->Atributai->tipas_title                          = PropertiesHelper::getPropertyFromMap($clMap, 'type', 'value' );
         $kp->Atributai->paskirtis                            = PropertiesHelper::getPropertyOrNull($pl->getProduct()->getPurpose(), 'code');
-//        $kp->Atributai->paskirtis_title                      = PropertiesHelper::getPropertyOrNull($pl->getProduct()->getPurpose(), 'name');
+        $kp->Atributai->paskirtis_title                      = PropertiesHelper::getPropertyFromMap($clMap, 'purpose', 'value' );
         $kp->Atributai->vyrams                               = $pl->getProduct()->getForMale();
         $kp->Atributai->moterims                             = $pl->getProduct()->getForFemale();
         $kp->Atributai->dydis                                = $pl->getProduct()->getSize();
         $kp->Atributai->kiekis                               = $pl->getProduct()->getPackAmount();
         $kp->Atributai->matas                                = PropertiesHelper::getPropertyOrNull($pl->getProduct()->getMeasure(), 'code');
-//        $kp->Atributai->matas_title                          = PropertiesHelper::getPropertyOrNull($pl->getProduct()->getMeasure(), 'name');       ;
+        $kp->Atributai->matas_title                          = PropertiesHelper::getPropertyFromMap($clMap, 'measure', 'value' );
         $kp->Atributai->tagai                                = $pl->getTags();
         $kp->Atributai->pack_size                            = $pl->getProduct()->getPackSize();
-//        $kp->Atributai->prekiu_grupe                         =        ; // TODO group field
-//        $kp->Atributai->prekiu_grupe_title                   =        ; // TODO
-//        $kp->Atributai->priority                             =        ; // TODO
-//        $kp->Atributai->google_product_category              =        ; // TODO field and additional object
-//        $kp->Atributai->google_product_category_title        =        ; // TODO
+        $kp->Atributai->prekiu_grupe                         = PropertiesHelper::getPropertyOrNull($pl->getProduct()->getProductGroup(), 'code');
+        $kp->Atributai->prekiu_grupe_title                   = PropertiesHelper::getPropertyFromMap($clMap, 'productgroup', 'value' );
+        $kp->Atributai->priority                             = $pl->getProduct()->getPrority();
+        $kp->Atributai->google_product_category              = $pl->getProduct()->getGoogleProductCategoryId();
+//        $kp->Atributai->google_product_category_title        =        ; // TODO kažkada vėliau šitą
 
-        $categories = [];
+        $categoriesCodes = [];
         $categoriesTitles = [];
-        // TODO
 
-//        $kp->Atributai->kategorijos                          =        ; // TODO
-//        $kp->Atributai->kategorijos_titles                   =        ; // TODO
+        foreach ($categoriesLangs as $c ) {
+            $categoriesCodes[] = $c->getCode();
+            $categoriesTitles[] = $c->getName();
+        }
 
-
-//        $kp->categories       = ; // TODO
+        $kp->Atributai->kategorijos =  join ( ',', $categoriesCodes);
+        $kp->Atributai->kategorijos_titles =  join (',', $categoriesTitles);
+        $kp->categories = $kp->Atributai->kategorijos;
 
         $kp->Aprasymas->pavadinimas            = $pl->getName();
         $kp->Aprasymas->aprasymas              = $pl->getDescription();
         $kp->Aprasymas->ilgas_aprasymas        = $pl->getDescription();
         $kp->Aprasymas->etiketes_tekstas       = $pl->getLabel();
-//        $kp->Aprasymas->etiketes_dydis         = ; // TODO field
+        $kp->Aprasymas->etiketes_dydis         = $pl->getLabelSize();
         $kp->Aprasymas->gamintojas             = PropertiesHelper::getPropertyOrNull($pl->getProduct()->getVendor(), 'code');
-//        $kp->Aprasymas->platintojas            = ; // TODO field
-//        $kp->Aprasymas->sudetis                = ; // TODO field
+        $kp->Aprasymas->platintojas            = $pl->getDistributor();
+        $kp->Aprasymas->sudetis                = $pl->getComposition();
         $kp->Aprasymas->info_provider          = $pl->getInfoProvider();
         $kp->Aprasymas->tagai                  = $pl->getTags();
-//        $kp->Aprasymas->nuotrauka              = ; // TODO gal čia pirmąją nuotrauką sukišti?
-//        $kp->Aprasymas->remote_id              = ;
+//        $kp->Aprasymas->nuotrauka              = ; // šitus paliekam
+//        $kp->Aprasymas->remote_id              = ; // šitus paliekam
         $kp->Aprasymas->modificationTimestamp  = $pl->getProduct()->getLastUpdate();
         $kp->Aprasymas->var_name               = $pl->getVariantName();
 
 
+        if ( count($productPictures ) > 0 ) {
+            $productPictures = array_slice($productPictures, 0, 9); // taking only first 9 pictures
 
-//        $kp->Nuotraukos       = ; // TODO
+            // sort by priority
+            usort($productPictures, [ProductPicture::class, 'lambdaComparePriority']);
 
+            // first picture id is the "version" of the pictures array
+            // we assume that the configuredPath is calculated for each picture
+            $kp->Nuotraukos->versija = $productPictures[0]->getPicture()->getId();
+
+            $nuotraukosProperties = [
+                'nuotrauka',
+                'nuotrauka2',
+                'nuotrauka3',
+                'nuotrauka4',
+                'nuotrauka5',
+                'nuotrauka6',
+                'nuotrauka7',
+                'nuotrauka8',
+                'nuotrauka9',
+            ];
+            for ( $i=0; $i < count($productPictures); $i++) {
+                $pp = $productPictures[$i];
+                $property = $nuotraukosProperties[$i];
+
+                $nuotrauka = new Nuotrauka();
+                $nuotrauka->uri = $pp->getPicture()->getConfiguredPath();
+                $nuotrauka->fileName = $pp->getPicture()->getName();
+                $nuotrauka->imageId = $pp->getPicture()->getId();
+                $nuotrauka->id = $pp->getPicture()->getId();
+
+                $kp->Nuotraukos->{$property} = $nuotrauka;
+            }
+        }
         return $kp;
     }
 }

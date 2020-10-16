@@ -471,16 +471,4 @@ class ProductsService extends ProductsBaseService
              throw new CatalogValidateException('Invalid classificator code '.$code.'    '.$context );
          }
     }
-
-    /**
-     * @param $skus
-     * @param $language
-     * @deprecated wrong class location
-     */
-    public function getProductsBySkus ( $skus , $language ) {
-        $languagesMap = [ // TODO move this to config or separate service
-          'lit-LT' => 'lt',
-          'eng-GB' => 'en',
-        ];
-    }
 }
