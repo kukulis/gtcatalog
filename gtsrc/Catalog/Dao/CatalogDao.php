@@ -45,24 +45,10 @@ class CatalogDao extends BaseDao
         $this->doctrine = $doctrine;
     }
 
-//    /**
-//     * @param int $offset
-//     * @param int $limit
-//     * @return Product[]
-//     */
-//    public function getProductsList(  $offset, $limit ) {
-//        $productClass = Product::class;
-//        $dql = /** @lang DQL */ "SELECT p from $productClass p";
-//
-//        /** @var EntityManager $em */
-//        $em = $this->doctrine->getManager();
-//
-//        /** @var Product[] $products */
-//        $products = $em->createQuery($dql)->setMaxResults($limit)->setFirstResult($offset)->execute();
-//
-//        return $products;
-//    }
-
+    /**
+     * @param ProductsFilter $filter
+     * @return Product[]
+     */
     public function getProductsListByFilter ( ProductsFilter $filter ) {
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
@@ -119,12 +105,16 @@ class CatalogDao extends BaseDao
      */
     public function getProductsLangsWithSubobjects($skus, $languageCode) {
         $class = ProductLanguage::class;
-
-        $dql = /** @lang DQL */  "SELECT pl, p, ty, pur, me, pg from $class pl join pl.product p join pl.language l
+        // kodėl nėra vendor, brand, line, manufacturer ???
+        $dql = /** @lang DQL */  "SELECT pl, p, bra, lin, ven, man, ty, pur, me, pg from $class pl join pl.product p join pl.language l
+        left join p.brand bra
+        left join p.line lin
+        left join p.vendor ven
+        left join p.manufacturer man
         left join p.type ty 
         left join p.purpose pur
         left join p.measure me 
-        left join p.productgroup pg 
+        left join p.productgroup pg
         where p.sku in (:skus) and l.code = :languageCode";
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
@@ -412,8 +402,6 @@ class CatalogDao extends BaseDao
         return $cls;
     }
 
-
-
     /**
      * @param ClassificatorLanguage[] $cls
      * @throws DBALException
@@ -515,7 +503,6 @@ class CatalogDao extends BaseDao
         }
     }
 
-
     /**
      * @param Product[] $products
      * @return int
@@ -530,9 +517,7 @@ class CatalogDao extends BaseDao
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
         $conn = $em->getConnection();
-
         $sql = $this->buildImportSql($products, $importingFieldsAndSku, $importingFields, $this->getQuoter($conn), 'code', 'products' );
-
         return $conn->exec($sql);
     }
 
@@ -549,15 +534,17 @@ class CatalogDao extends BaseDao
 
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
-
         $conn = $em->getConnection();
-
         $sql = $this->buildImportSql($productsLangs, $importingFieldsAndSkuLang, $importingFields, $this->getQuoter($conn), 'code', 'products_languages' );
-
         return $conn->exec($sql);
     }
 
 
+    /**
+     * @param string $group
+     * @param string[] $codes
+     * @return Classificator[]
+     */
     public function findClassificators ( $group, $codes ) {
         $class = Classificator::class;
         $dql = /** @lang DQL */ "SELECT c from  $class c join c.group g where g.code=:groupCode and c.code in (:codes)";
