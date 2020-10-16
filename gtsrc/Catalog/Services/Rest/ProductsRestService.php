@@ -87,12 +87,12 @@ class ProductsRestService
 
 
         // 1) load all data from database
-        $productsLanguages = $this->catalogDao->getProductsLangsWithSubobjects($skus, $langCode); // todo make by parts
+        $productsLanguages = $this->catalogDao->batchGetProductsLangsWithSubobjects($skus, $langCode, self::STEP );
 
         // 1.5) load assotiated objects
 //        $this->categoryDao->getProductCategories()
         //  pictures
-        $productsPictures = $this->picturesDao->getProductsPictures($skus); // todo make by parts
+        $productsPictures = $this->picturesDao->batchGetProductsPictures($skus, self::STEP);
 
         /** @var ProductPicture[][] $productsPicturesArraysMap */
         $productsPicturesArraysMap = [];
@@ -106,11 +106,11 @@ class ProductsRestService
         }
 
         // categories
-        $productsCategories = $this->categoryDao->getProductsCategories($skus); // TODO make by parts
+        $productsCategories = $this->categoryDao->batchGetProductsCategories($skus, self::STEP);
         $categoriesCodes = array_map( [ProductCategory::class, 'lambdaGetCategoryCode'] , $productsCategories);
 
         // categoriesLanguages
-        $categoriesLanguages = $this->categoryDao->getCategoriesLanguages( $categoriesCodes, $langCode ); // TODO make by parts
+        $categoriesLanguages = $this->categoryDao->batchGetCategoriesLanguages( $categoriesCodes, $langCode, self::STEP );
 
         $categoriesLanguagesMap = [];
         foreach ($categoriesLanguages as $cl) {
@@ -131,7 +131,6 @@ class ProductsRestService
                 $productsCategoriesArraysMap[$sku][] = $cl;
             }
         }
-
 
         // classificators
         $products = array_map ( [ProductLanguage::class, 'lambdaGetProduct'], $productsLanguages);

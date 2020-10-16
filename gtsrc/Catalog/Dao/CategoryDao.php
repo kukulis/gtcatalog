@@ -99,6 +99,24 @@ class CategoryDao extends BaseDao
     }
 
     /**
+     * @param string[] $categoriesCodes
+     * @param string $languageCode
+     * @param int $step
+     * @return CategoryLanguage[]
+     */
+    public function batchGetCategoriesLanguages($categoriesCodes, $languageCode, $step) {
+        /** @var CategoryLanguage[] $categoriesLanguagesTotal */
+        $categoriesLanguagesTotal = [];
+
+        for ( $i = 0; $i < count($categoriesCodes); $i+= $step ) {
+            $part = array_slice ( $categoriesCodes, $i, $step);
+            $categoriesLanguages = $this->getCategoriesLanguages($part, $languageCode);
+            $categoriesLanguagesTotal = array_merge($categoriesLanguagesTotal, $categoriesLanguages);
+        }
+        return $categoriesLanguagesTotal;
+    }
+
+    /**
      * @param $code
      * @param $languageCode
      * @return CategoryLanguage
@@ -246,6 +264,23 @@ class CategoryDao extends BaseDao
         $productCategories = $query->getResult();
 
         return $productCategories;
+    }
+
+    /**
+     * @param string[] $skus
+     * @param int $step
+     * @return ProductCategory[]
+     */
+    public function batchGetProductsCategories($skus, $step) {
+        /** @var ProductCategory[] $productsCategoriesTotal */
+        $productsCategoriesTotal = [];
+
+        for ( $i = 0; $i < count($skus); $i+= $step ) {
+            $part = array_slice ( $skus, $i, $step);
+            $productsCategories = $this->getProductsCategories($part);
+            $productsCategoriesTotal = array_merge($productsCategoriesTotal, $productsCategories);
+        }
+        return $productsCategoriesTotal;
     }
 
     /**

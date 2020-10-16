@@ -141,6 +141,24 @@ class CatalogDao extends BaseDao
     }
 
     /**
+     * @param string[] $skus
+     * @param string $languageCode
+     * @param int $step
+     * @return ProductLanguage[]
+     */
+    public function batchGetProductsLangsWithSubobjects($skus, $languageCode, $step ) {
+        /** @var ProductLanguage[] $productsLanguagesTotal */
+        $productsLanguagesTotal = [];
+        for ( $i=0; $i < count($skus); $i += $step ) {
+            $part = array_slice($skus, $i, $step );
+            $productsLanguages = $this->getProductsLangsWithSubobjects($part, $languageCode);
+            $productsLanguagesTotal = array_merge($productsLanguagesTotal, $productsLanguages);
+        }
+
+        return $productsLanguagesTotal;
+    }
+
+    /**
      * @param string $sku
      * @return Product
      * @throws \Doctrine\ORM\ORMException
@@ -580,5 +598,23 @@ class CatalogDao extends BaseDao
         $classificatorLanguages = $query->getResult();
 
         return $classificatorLanguages;
+    }
+
+    /**
+     * @param string[] $codes
+     * @param string $languageCode
+     * @param int $step
+     * @return ClassificatorLanguage[]
+     */
+    public function batchLoadClassificatorsLanguagesByCodes ($codes, $languageCode, $step) {
+        /** @var ClassificatorLanguage[] $classificatorLanguagesTotal */
+        $classificatorLanguagesTotal = [];
+
+        for ( $i = 0; $i < count($codes); $i+= $step ) {
+            $part = array_slice ( $codes, $i, $step);
+            $classificatorLanguages = $this->loadClassificatorsLanguagesByCodes($part, $languageCode);
+            $classificatorLanguagesTotal = array_merge($classificatorLanguagesTotal, $classificatorLanguages);
+        }
+        return $classificatorLanguagesTotal;
     }
 }

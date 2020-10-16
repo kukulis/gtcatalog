@@ -76,6 +76,7 @@ class PicturesDao
 
     /**
      * @param string[] $skus
+     * @return ProductPicture[]
      */
     public function getProductsPictures( $skus ) {
         $class = ProductPicture::class;
@@ -94,6 +95,24 @@ class PicturesDao
     }
 
     /**
+     * @param string[] $skus
+     * @param int $step
+     * @return ProductPicture[]
+     */
+    public function batchGetProductsPictures( $skus, $step ) {
+        /** @var ProductPicture[] $productPicturesTotal */
+        $productPicturesTotal = [];
+
+        for ( $i = 0; $i < count($skus); $i+= $step ) {
+            $part = array_slice ( $skus, $i, $step);
+            $productPictures = $this->getProductsPictures($part);
+            $productPicturesTotal = array_merge($productPicturesTotal, $productPictures);
+        }
+        return $productPicturesTotal;
+    }
+
+
+        /**
      * @param string $sku
      * @param int $id
      * @return ProductPicture
