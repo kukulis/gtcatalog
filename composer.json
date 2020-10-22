@@ -1,6 +1,14 @@
 {
     "type": "project",
     "license": "proprietary",
+
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../sketis-b2bcommon"
+        }
+    ],
+
     "require": {
         "php": "^7.2.5",
         "ext-ctype": "*",
@@ -29,7 +37,9 @@
         "symfony/twig-pack": "*",
         "symfony/validator": "5.1.*",
         "symfony/web-link": "5.1.*",
-        "symfony/yaml": "5.1.*"
+        "symfony/yaml": "5.1.*",
+        "guzzlehttp/guzzle": "*",
+        "sketis/b2bcommon": ">=1.0"
     },
     "require-dev": {
         "symfony/debug-pack": "*",

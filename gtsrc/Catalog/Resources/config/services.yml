@@ -175,3 +175,12 @@ services:
         bind:
             $logger: '@logger'
             $productsRestService: '@gt.catalog.products_rest_service'
+
+
+    # ------------- commands --------------------------------------------
+    gt.catalog.legacy.import_data_to_tmp_command:
+        class: Gt\Catalog\Command\Legacy\ImportTmpDataFromRestCommand
+        tags:
+            - { name: 'console.command', command: 'catalog:import_data_to_tmp' }
+
+
