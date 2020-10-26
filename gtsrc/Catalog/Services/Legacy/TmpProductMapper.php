@@ -37,7 +37,7 @@ class TmpProductMapper
         $tmpProduct->vendor                         = $kp->Atributai->tiekejo_kodas;
         $tmpProduct->manufacturer                   = $kp->Atributai->gamintojo_kodas;
         $tmpProduct->type                           = $kp->Atributai->tipas;
-        $tmpProduct->purpose                        = $kp->Atributai->paskirtis;
+        $tmpProduct->purpose                        = substr($kp->Atributai->paskirtis, 0, 64);
         $tmpProduct->measure                        = $kp->Atributai->matas;
         $tmpProduct->productgroup                   = $kp->Atributai->prekiu_grupe;
         $tmpProduct->deposit_code                   = $kp->depozito_kodas;
@@ -127,12 +127,12 @@ class TmpProductMapper
         $vendorC->language_code = $langCode;
         $tmpClassificators[] = $vendorC;
 
-        $manuvacturerC = new TmpClassificator();
-        $manuvacturerC->language_code = $langCode;
-        $manuvacturerC->group_code = 'manufacturer';
-        $manuvacturerC->classificator_code = $kp->Atributai->gamintojo_kodas;
-        $manuvacturerC->value = $kp->Atributai->gamintojo_kodas;
-        $tmpClassificators[] = $manuvacturerC;
+        $manufacturerC = new TmpClassificator();
+        $manufacturerC->language_code = $langCode;
+        $manufacturerC->group_code = 'manufacturer';
+        $manufacturerC->classificator_code = $kp->Atributai->gamintojo_kodas;
+        $manufacturerC->value = $kp->Atributai->gamintojo_kodas;
+        $tmpClassificators[] = $manufacturerC;
 
         $typeC = new TmpClassificator();
         $typeC->language_code = $langCode;
@@ -144,7 +144,7 @@ class TmpProductMapper
         $purposeC = new TmpClassificator();
         $purposeC->language_code = $langCode;
         $purposeC->group_code = 'purpose';
-        $purposeC->classificator_code = $kp->Atributai->paskirtis;
+        $purposeC->classificator_code = substr($kp->Atributai->paskirtis, 0, 64);
         $purposeC->value = $kp->Atributai->paskirtis_title;
         $tmpClassificators[] = $purposeC;
 
