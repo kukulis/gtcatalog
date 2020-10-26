@@ -66,7 +66,7 @@ class TmpProductMapper
         $tmpProductLanguage->variant_name  = $kp->Aprasymas->var_name;
         $tmpProductLanguage->info_provider = $kp->Aprasymas->info_provider;
         $tmpProductLanguage->tags          =  is_array($kp->Aprasymas->tagai) ? join ( ',', $kp->Aprasymas->tagai ) : $kp->Aprasymas->tagai;
-        $tmpProductLanguage->label_size    = $kp->Aprasymas->etiketes_dydis;
+        $tmpProductLanguage->label_size    = is_string($kp->Aprasymas->etiketes_dydis)? substr( $kp->Aprasymas->etiketes_dydis, 32 ):strval($kp->Aprasymas->etiketes_dydis);
         $tmpProductLanguage->distributor   = $kp->Aprasymas->platintojas;
         $tmpProductLanguage->composition   = $kp->Aprasymas->sudetis;
 
