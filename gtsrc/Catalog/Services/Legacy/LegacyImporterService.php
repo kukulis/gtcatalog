@@ -21,7 +21,10 @@ class LegacyImporterService
     const LANGUAGES_MAP = [
       'lit-LT' => 'lt',
       'eng-GB' => 'en',
-      'eng-US' => 'us',
+      'eng-US' => 'en',
+      'lav-LV' => 'lv',
+      'pol-PL' => 'pl',
+      'swe-SE' => 'se',
     ];
 
     /** @var Logger */
