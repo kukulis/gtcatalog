@@ -1,4 +1,4 @@
-drop table tmp_full_products;
+drop table if exists tmp_full_products;
 create table tmp_full_products
 (
 	sku varchar(32) not null primary key,
@@ -35,7 +35,7 @@ create table tmp_full_products
 	google_product_category_id int null
 );
 
-drop table tmp_full_products_languages;
+drop table if exists tmp_full_products_languages;
 
 create table tmp_full_products_languages
 (
@@ -53,7 +53,7 @@ create table tmp_full_products_languages
 	primary key (sku, language)
 );
 
-drop table tmp_products_pictures;
+drop table if exists  tmp_products_pictures;
 create table tmp_products_pictures
 (
 	priority int null,
@@ -65,7 +65,7 @@ create table tmp_products_pictures
 );
 
 
-drop table tmp_products_categories;
+drop table if exists  tmp_products_categories;
 create table tmp_products_categories (
     category varchar(64) not null,
     parent varchar(64) null,
@@ -75,6 +75,8 @@ create table tmp_products_categories (
     description longtext null,
     primary key (category, language, sku)
 );
+
+drop table if exists tmp_classificators;
 
 create table tmp_classificators (
     language_code varchar(2) not null,
