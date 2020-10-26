@@ -63,8 +63,18 @@ class PropertiesHelper
         $values = [];
         foreach ($properties as $p ) {
 
-            $getter = 'get'. self::removeUnderScores($p);
-            $val = $obj->$getter();
+            if ( isset($obj->$p)) {
+                $val = $obj->$p;
+            }
+            else {
+                $getter = 'get' . self::removeUnderScores($p);
+                if ( method_exists($obj, $getter)) {
+                    $val = $obj->$getter();
+                }
+                else {
+                    $val=null;
+                }
+            }
 
             if ( is_object($val) && get_class($val) == DateTime::class ) {
                     /** @var \DateTime $dtVal */

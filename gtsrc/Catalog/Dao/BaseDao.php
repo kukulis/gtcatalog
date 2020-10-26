@@ -19,7 +19,7 @@ class BaseDao
      * @param Connection $con
      * @return \Closure
      */
-    public function getQuoter ( Connection $con ) {
+    public static function getQuoter ( Connection $con ) {
         $f = function ($str) use($con) {
             if ( $str === null ) {
                 return 'null';
@@ -45,7 +45,7 @@ class BaseDao
      * @param $subobjectProperty
      * @return string
      */
-    public function buildImportSql( $dataArray, $fields, $updatedFields, Closure $quoter, $subobjectProperty, $tableName) {
+    public static function buildImportSql( $dataArray, $fields, $updatedFields, Closure $quoter, $subobjectProperty, $tableName) {
         $rows = [];
         foreach ($dataArray as $dataObj ) {
             $values = PropertiesHelper::getValuesArray($dataObj, $fields, $subobjectProperty);

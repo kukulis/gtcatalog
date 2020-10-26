@@ -27,6 +27,7 @@ class Product
         'type',
         'vendor',
         'productgroup',
+        'purpose'
     ];
 
     const ALLOWED_FIELDS = [
