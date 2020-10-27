@@ -1,4 +1,7 @@
 monolog:
+    channels:
+        - 'katalogas_client'
+
     handlers:
         main:
             type: fingers_crossed
@@ -14,3 +17,8 @@ monolog:
             type: console
             process_psr_3_messages: false
             channels: ["!event", "!doctrine"]
+        katalogas_client:
+            type: stream
+            level: debug
+            channels: katalogas_client
+            path: '%kernel.logs_dir%/katalogas_client.log'

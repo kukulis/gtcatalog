@@ -186,7 +186,7 @@ services:
         arguments:
             - '@gt.catalog.guzzle'
             - 'application/vnd.ez.api.Content+json'
-            - '@logger'
+            - '@monolog.logger.katalogas_client'
 
     # ------------------ legacy -----------------------------------------
     gt.catalog.tmp_dao:

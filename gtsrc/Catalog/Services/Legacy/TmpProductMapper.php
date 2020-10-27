@@ -2,12 +2,12 @@
 namespace Gt\Catalog\Services\Legacy;
 
 
+use Gt\Catalog\Utils\ProductsHelper;
 use Sketis\B2b\Common\Data\Catalog\KatalogasPreke;
 use Sketis\B2b\Common\Data\Catalog\Nuotrauka;
 
 class TmpProductMapper
 {
-
     /**
      * @param KatalogasPreke $kp
      * @param $now
@@ -32,14 +32,14 @@ class TmpProductMapper
         $tmpProduct->width                          = $kp->Atributai->plotis;
         $tmpProduct->delivery_time                  = $kp->Atributai->pristatymo_laikas;
         $tmpProduct->info_provider                  = $kp->Atributai->info_provider;
-        $tmpProduct->brand                          = $kp->brandas;
-        $tmpProduct->line                           = $kp->linija;
-        $tmpProduct->vendor                         = $kp->Atributai->tiekejo_kodas;
-        $tmpProduct->manufacturer                   = $kp->Atributai->gamintojo_kodas;
-        $tmpProduct->type                           = $kp->Atributai->tipas;
-        $tmpProduct->purpose                        = substr($kp->Atributai->paskirtis, 0, 64);
-        $tmpProduct->measure                        = $kp->Atributai->matas;
-        $tmpProduct->productgroup                   = $kp->Atributai->prekiu_grupe;
+        $tmpProduct->brand                          = ProductsHelper::fixCode( $kp->brandas );
+        $tmpProduct->line                           = ProductsHelper::fixCode($kp->linija );
+        $tmpProduct->vendor                         = null; // blogi duomenys kataloge
+        $tmpProduct->manufacturer                   = ProductsHelper::fixCode( $kp->Atributai->gamintojo_kodas );
+        $tmpProduct->type                           = ProductsHelper::fixCode($kp->Atributai->tipas);
+        $tmpProduct->purpose                        = ProductsHelper::fixCode($kp->Atributai->paskirtis);
+        $tmpProduct->measure                        = ProductsHelper::fixCode($kp->Atributai->matas);
+        $tmpProduct->productgroup                   = ProductsHelper::fixCode($kp->Atributai->prekiu_grupe);
         $tmpProduct->deposit_code                   = $kp->depozito_kodas;
         $tmpProduct->code_from_custom               = $kp->muitines_kodas;
         $tmpProduct->guaranty                       = $kp->Atributai->garantija;
@@ -84,8 +84,8 @@ class TmpProductMapper
         if ( is_array($kp->categories)) {
             foreach ($kp->categories as $c) {
                 $tmpProductCategory = new TmpProductCategory();
-                $tmpProductCategory->category = substr($c->identifikatorius, 0, 64);
-                $tmpProductCategory->parent = substr($c->parent, 0, 64);
+                $tmpProductCategory->category = ProductsHelper::fixCode($c->identifikatorius);
+                $tmpProductCategory->parent = ProductsHelper::fixCode($c->parent);
                 $tmpProductCategory->sku = $kp->nomnr;
                 $tmpProductCategory->language = $langCode;
                 $tmpProductCategory->name = $c->title;
@@ -109,49 +109,50 @@ class TmpProductMapper
         $brandC = new TmpClassificator();
         $brandC->group_code = 'brand';
         $brandC->language_code = $langCode;
-        $brandC->classificator_code = $kp->brandas;
+        $brandC->classificator_code = ProductsHelper::fixCode($kp->brandas);
         $brandC->value = $kp->brandas;
         $tmpClassificators[] = $brandC;
 
         $lineC = new TmpClassificator();
         $lineC->group_code = 'line';
         $lineC->language_code = $langCode;
-        $lineC->classificator_code = $kp->linija;
+        $lineC->classificator_code = ProductsHelper::fixCode($kp->linija);
         $lineC->value = $kp->linija;
         $tmpClassificators[] = $brandC;
 
-        $vendorC = new TmpClassificator();
-        $vendorC->group_code = 'vendor';
-        $vendorC->classificator_code = $kp->Atributai->tiekejo_kodas;
-        $vendorC->value = $kp->Atributai->tiekejo_kodas;
-        $vendorC->language_code = $langCode;
-        $tmpClassificators[] = $vendorC;
+        // blogi duomenys kataloge
+//        $vendorC = new TmpClassificator();
+//        $vendorC->group_code = 'vendor';
+//        $vendorC->classificator_code = $kp->Aprasymas->platintojas;
+//        $vendorC->value = $kp->Aprasymas->platintojas;
+//        $vendorC->language_code = $langCode;
+//        $tmpClassificators[] = $vendorC;
 
         $manufacturerC = new TmpClassificator();
         $manufacturerC->language_code = $langCode;
         $manufacturerC->group_code = 'manufacturer';
-        $manufacturerC->classificator_code = $kp->Atributai->gamintojo_kodas;
+        $manufacturerC->classificator_code = ProductsHelper::fixCode($kp->Atributai->gamintojo_kodas);
         $manufacturerC->value = $kp->Atributai->gamintojo_kodas;
         $tmpClassificators[] = $manufacturerC;
 
         $typeC = new TmpClassificator();
         $typeC->language_code = $langCode;
         $typeC->group_code = 'type';
-        $typeC->classificator_code = $kp->Atributai->tipas;
+        $typeC->classificator_code = ProductsHelper::fixCode($kp->Atributai->tipas);
         $typeC->value = $kp->Atributai->tipas_title;
         $tmpClassificators[] = $typeC;
 
         $purposeC = new TmpClassificator();
         $purposeC->language_code = $langCode;
         $purposeC->group_code = 'purpose';
-        $purposeC->classificator_code = substr($kp->Atributai->paskirtis, 0, 64);
+        $purposeC->classificator_code = ProductsHelper::fixCode($kp->Atributai->paskirtis);
         $purposeC->value = $kp->Atributai->paskirtis_title;
         $tmpClassificators[] = $purposeC;
 
         $measureC = new TmpClassificator();
         $measureC->language_code = $langCode;
         $measureC->group_code = 'measure';
-        $measureC->classificator_code = $kp->Atributai->matas;
+        $measureC->classificator_code = ProductsHelper::fixCode($kp->Atributai->matas);
         $measureC->value = $kp->Atributai->matas_title??$kp->Atributai->matas;
         $tmpClassificators[] = $measureC;
 
@@ -159,7 +160,7 @@ class TmpProductMapper
         $productGroupC = new TmpClassificator();
         $productGroupC->language_code = $langCode;
         $productGroupC->group_code = 'productgroup';
-        $productGroupC->classificator_code = $kp->Atributai->prekiu_grupe;
+        $productGroupC->classificator_code = ProductsHelper::fixCode($kp->Atributai->prekiu_grupe);
         $productGroupC->value = $kp->Atributai->prekiu_grupe_title;
         $tmpClassificators[] = $productGroupC;
 
