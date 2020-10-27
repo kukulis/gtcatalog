@@ -87,4 +87,14 @@ create table tmp_classificators (
 );
 
 
+alter table tmp_products_categories
+add column depth int null;
+
+
+create index tmp_products_categories_depth_idx
+    on tmp_products_categories (depth);
+
+create index tmp_products_categories_parent_idx
+    on tmp_products_categories (parent);
+
 
