@@ -84,8 +84,8 @@ class TmpProductMapper
         if ( is_array($kp->categories)) {
             foreach ($kp->categories as $c) {
                 $tmpProductCategory = new TmpProductCategory();
-                $tmpProductCategory->category = $c->identifikatorius;
-                $tmpProductCategory->parent = $c->parent;
+                $tmpProductCategory->category = substr($c->identifikatorius, 0, 64);
+                $tmpProductCategory->parent = substr($c->parent, 0, 64);
                 $tmpProductCategory->sku = $kp->nomnr;
                 $tmpProductCategory->language = $langCode;
                 $tmpProductCategory->name = $c->title;
