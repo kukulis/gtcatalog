@@ -18,13 +18,14 @@ class LegacyImporterService
 {
     const STEP=100;
 
-    const LANGUAGES_MAP = [
+    const LANGUAGES_MAP = [ //TODO galima iš db nuskaityti
       'lit-LT' => 'lt',
       'eng-GB' => 'en',
       'eng-US' => 'en',
       'lav-LV' => 'lv',
       'pol-PL' => 'pl',
       'swe-SE' => 'se',
+      'rus-RU' => 'ru',
     ];
 
     /** @var Logger */
@@ -53,6 +54,7 @@ class LegacyImporterService
 
 
     public function importToTmp ($katalogasUrl, $localeCode) {
+        $this->logger->debug('Importuojam kalbą '.$localeCode);
         $this->katalogasClient->setKatalogasRestBaseUrl($katalogasUrl.'/api/ezp/v2');
         $this->katalogasClient->setKatalogasSiteBaseUrl($katalogasUrl);
 
