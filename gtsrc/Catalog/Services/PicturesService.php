@@ -83,6 +83,35 @@ class PicturesService
     }
 
     /**
+     * @param $id
+     * @param null|string $separator
+     * @return string
+     */
+    public function calculatePictureFullDir($id, $separator=null) {
+        if ( $separator == null ) {
+            $separator = $this->pathSeparator;
+        }
+        $targetDir = PicturesHelper::calculateImagePath( $this->baseDir, $id, $this->pathSeparator);
+        $fullDir = $this->rootPath. $separator .$targetDir;
+        return $fullDir;
+    }
+
+    /**
+     * @param $id int
+     * @param $name string
+     * @param string|null $separator
+     * @return string
+     */
+    public function calculatePictureFullPath($id, $name, $separator=null) {
+        if ( $separator == null ) {
+            $separator = $this->pathSeparator;
+        }
+        $fullDir = $this->calculatePictureFullDir($id, $separator);
+        $fullPath = $fullDir.$separator.$name;
+        return $fullPath;
+    }
+
+    /**
      * @param Product $product
      * @param Picture $picture
      */
@@ -154,4 +183,5 @@ class PicturesService
             throw new CatalogErrorException( $e->getMessage());
         }
     }
+
 }

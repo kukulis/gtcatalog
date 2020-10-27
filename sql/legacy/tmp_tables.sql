@@ -98,8 +98,9 @@ create index tmp_products_categories_parent_idx
     on tmp_products_categories (parent);
 
 
+-- alter table tmp_products_pictures drop column is_uploaded;
 alter table tmp_products_pictures add column
-is_uploaded tinyint null ;
+is_downloaded tinyint null ;
 
 create index tmp_products_pictures_sku_idx
 on tmp_products_pictures (sku);

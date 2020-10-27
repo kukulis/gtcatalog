@@ -17,4 +17,5 @@ class TmpProductPicture
     public $legacy_id; // key
     public $url;
     public $name;
+    public $is_downloaded;
 }

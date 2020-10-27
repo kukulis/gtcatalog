@@ -201,12 +201,21 @@ services:
             - '@logger'
             - '@gt.catalog.katalogas_client'
             - '@gt.catalog.tmp_dao'
+            - '@gt.catalog.pictures_service'
 
     # ------------- commands --------------------------------------------
     gt.catalog.legacy.import_data_to_tmp_command:
         class: Gt\Catalog\Command\Legacy\ImportTmpDataFromRestCommand
         tags:
             - { name: 'console.command', command: 'catalog:import_data_to_tmp' }
+        arguments:
+            - '@logger'
+            - '@gt.catalog.legacy_importer_service'
+
+    gt.catalog.legacy.download_legacy_pictures_command:
+        class: Gt\Catalog\Command\Legacy\DownloadLegacyPicturesCommand
+        tags:
+            - { name: 'console.command', command: 'catalog:download_legacy_pictures' }
         arguments:
             - '@logger'
             - '@gt.catalog.legacy_importer_service'

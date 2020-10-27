@@ -1,15 +1,9 @@
 <?php
-/**
- * LegacyImporterService.php
- * Created by Giedrius Tumelis.
- * Date: 2020-10-23
- * Time: 08:28
- */
-
 namespace Gt\Catalog\Services\Legacy;
 
-
+use Doctrine\DBAL\DBALException;
 use Gt\Catalog\Exception\CatalogErrorException;
+use Gt\Catalog\Services\PicturesService;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 use Sketis\B2b\Common\Data\Catalog\KatalogasPreke;
@@ -37,19 +31,26 @@ class LegacyImporterService
     /** @var TmpDao */
     private $tmpDao;
 
+    /** @var PicturesService */
+    private $picturesService;
+
     /**
      * LegacyImporterService constructor.
      * @param LoggerInterface $logger
      * @param KatalogasClient $katalogasClient
      * @param TmpDao $tmpDao
+     * @param PicturesService $picturesService
      */
     public function __construct(LoggerInterface $logger,
                                 KatalogasClient $katalogasClient,
-                                TmpDao $tmpDao)
+                                TmpDao $tmpDao,
+                                PicturesService $picturesService
+)
     {
         $this->logger = $logger;
         $this->katalogasClient = $katalogasClient;
         $this->tmpDao = $tmpDao;
+        $this->picturesService = $picturesService;
     }
 
 
@@ -136,6 +137,60 @@ class LegacyImporterService
         $this->tmpDao->importClassificators($tmpClassificators);
         $this->tmpDao->importCategories($tmpCategories);
         $this->tmpDao->importPictures($tmpProductsPictures);
+        return $count;
+    }
+
+    /**
+     * @param $url
+     * @return int
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function downloadPictures($url) {
+        $pics = $this->tmpDao->getAllUnuploadedTmpPictures();
+        $count = 0;
+        for ( $i=0; $i <= count($pics); $i+= self::STEP ) {
+            $this->logger->debug ( 'from '.$i.' and url '.$url );
+            $part = array_slice($pics, $i, self::STEP);
+            $count += $this->downloadPartPictures($url, $part);
+        }
+
+        return $count;
+    }
+
+    /**
+     * @param $url string
+     * @param $part TmpProductPicture[]
+     * @return int
+     * @throws CatalogErrorException
+     */
+    private function downloadPartPictures($url, $part) {
+        $count = 0 ;
+        $picturesReferences = [];
+        foreach ($part as $tmpPicture ) {
+            if ( empty($tmpPicture->is_downloaded)) {
+                try {
+                    $pictureUrl = $url . $tmpPicture->url;
+                    $content = file_get_contents($pictureUrl);
+
+                    $dir = $this->picturesService->calculatePictureFullDir($tmpPicture->picture_id);
+                    if (!file_exists($dir)) {
+                        @mkdir($dir, 0775, true);
+                    }
+                    $path = $this->picturesService->calculatePictureFullPath($tmpPicture->picture_id, $tmpPicture->name);
+                    file_put_contents($path, $content);
+                    $tmpPicture->is_downloaded = 1;
+                    $count += 1;
+                    $picturesReferences[] = $tmpPicture->legacy_id;
+                } catch (\Exception $e) {
+                    $this->logger->error('Klaida siunčiantis paveikslėlį '.$tmpPicture->legacy_id.' Prekei'.$tmpPicture->sku.' : '.$e->getMessage());
+                }
+            }
+        }
+        try {
+            $this->tmpDao->updateDownloaded($picturesReferences);
+        } catch (DBALException $e ) {
+            throw new CatalogErrorException($e->getMessage());
+        }
         return $count;
     }
 }

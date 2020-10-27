@@ -220,4 +220,40 @@ class TmpDao
 
         return $conn->exec($sql);
     }
+
+    /**
+     * @return TmpProductPicture[]
+     * @throws DBALException
+     */
+    public function getAllUnuploadedTmpPictures() {
+        $sql = /** @lang MySQL */ "SELECT * from tmp_products_pictures
+        where (is_downloaded is null or is_downloaded != 1) and picture_id is not null";
+
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        $conn = $em->getConnection();
+
+        /** @var TmpProductPicture[] $pics */
+        $pics = $conn->executeQuery($sql)->fetchAll(PDO::FETCH_CLASS, TmpProductPicture::class);
+        return $pics;
+    }
+
+    /**
+     * @param string[] $references
+     * @return int
+     * @throws DBALException
+     */
+    public function updateDownloaded ( $references ) {
+        if ( count($references) == 0 ) {
+            return 0;
+        }
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+        $conn = $em->getConnection();
+        $qReferences = array_map ([$conn, 'quote'], $references);
+        $referencesStr = join ( ',', $qReferences );
+        $sql = /** @lang MySQL */  "update tmp_products_pictures set is_downloaded=1 where  legacy_id in ($referencesStr)";
+        return $conn->exec($sql);
+    }
 }
