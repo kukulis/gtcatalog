@@ -30,6 +30,12 @@ class Picture
      */
     private $name;
 
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true, unique=true, length=64)
+     */
+    private $reference;
+
     // -- not stored to db
     private $configuredPath;
 
@@ -79,5 +85,21 @@ class Picture
     public function setConfiguredPath($configuredPath): void
     {
         $this->configuredPath = $configuredPath;
+    }
+
+    /**
+     * @return string
+     */
+    public function getReference(): string
+    {
+        return $this->reference;
+    }
+
+    /**
+     * @param string $reference
+     */
+    public function setReference(string $reference): void
+    {
+        $this->reference = $reference;
     }
 }

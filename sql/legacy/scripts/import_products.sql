@@ -62,14 +62,14 @@ google_product_category_id
     width,
     delivery_time,
     info_provider,
-    brand,
-    line,
-    vendor,
-    manufacturer,
-    type,
-    purpose,
-    measure,
-    productgroup,
+    nullif(brand, ''),
+    nullif(line, ''),
+    nullif(vendor,''),
+    nullif(manufacturer,''),
+    nullif(type,''),
+    nullif(purpose,''),
+    nullif(measure,''),
+    nullif(productgroup,''),
     deposit_code,
     code_from_custom,
     guaranty,
@@ -198,7 +198,27 @@ select
     ifnull(depth, 0), -- nelabai korektiška bet kol kas ok gal reikia priority įdėti pagal tai kokiu eiliškumu buvo masyve iš resto?
     sku,
     category
-from tmp_products_categories
+from tmp_products_categories;
 
 -- 9 images ?
+insert ignore into pictures
+    (name, reference)
+    select name, legacy_id
+from tmp_products_pictures
+where legacy_id is not null;
+
+-- update images ids from the
+update tmp_products_pictures tp join pictures p
+on tp.legacy_id = p.reference
+set tp.picture_id = p.id;
+
+-- select * from tmp_products_pictures where picture_id is null;
 -- 10 product images ?
+insert into products_pictures (
+priority,
+sku,
+picture_id)
+select tpp.priority, tpp.sku, tpp.picture_id
+from tmp_products_pictures tpp join products p on tpp.sku = p.sku
+where picture_id is not null;
+
