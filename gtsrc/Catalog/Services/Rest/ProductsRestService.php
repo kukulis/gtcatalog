@@ -73,6 +73,7 @@ class ProductsRestService
      * @param string[] $skus
      * @param string $language
      * @return KatalogasPreke[]
+     * @throws CatalogValidateException
      */
     public function getLegacyPrekes ($skus, $language ) {
         if ( count($skus) > self::MAX_PORTION ) {

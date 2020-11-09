@@ -13,9 +13,10 @@ use Gt\Catalog\Entity\CategoryLanguage;
 use Gt\Catalog\Entity\ClassificatorLanguage;
 use Gt\Catalog\Entity\ProductLanguage;
 use Gt\Catalog\Entity\ProductPicture;
-use Gt\Catalog\Rest\Legacy\KatalogasPreke;
-use Gt\Catalog\Rest\Legacy\Nuotrauka;
 use Gt\Catalog\Utils\PropertiesHelper;
+use Sketis\B2b\Common\Data\Catalog\KatalogasPreke;
+use Sketis\B2b\Common\Data\Catalog\Klasifikatorius;
+use Sketis\B2b\Common\Data\Catalog\Nuotrauka;
 
 class ProductToKatalogasPrekeMapper
 {
@@ -71,14 +72,24 @@ class ProductToKatalogasPrekeMapper
         $categoriesCodes = [];
         $categoriesTitles = [];
 
+        /** @var Klasifikatorius[] $categoriesClassificators */
+        $categoriesClassificators = [];
+
         foreach ($categoriesLangs as $c ) {
+            $categoryClassificator = new Klasifikatorius();
             $categoriesCodes[] = $c->getCode();
             $categoriesTitles[] = $c->getName();
+
+            $categoryClassificator->parent = $c->getCategory()->getParentCode();
+            $categoryClassificator->title = $c->getName();
+            $categoryClassificator->identifikatorius = $c->getCode();
+            $categoryClassificator->atributas = 'kategorijos';
+            $categoriesClassificators[]  = $categoryClassificator;
         }
 
         $kp->Atributai->kategorijos =  join ( ',', $categoriesCodes);
         $kp->Atributai->kategorijos_titles =  join (',', $categoriesTitles);
-        $kp->categories = $kp->Atributai->kategorijos;
+        $kp->categories = $categoriesClassificators;
 
         $kp->Aprasymas->pavadinimas            = $pl->getName();
         $kp->Aprasymas->aprasymas              = $pl->getDescription();
