@@ -118,7 +118,7 @@ class TmpProductMapper
         $lineC->language_code = $langCode;
         $lineC->classificator_code = ProductsHelper::fixCode($kp->linija);
         $lineC->value = $kp->linija;
-        $tmpClassificators[] = $brandC;
+        $tmpClassificators[] = $lineC;
 
         // blogi duomenys kataloge
 //        $vendorC = new TmpClassificator();
