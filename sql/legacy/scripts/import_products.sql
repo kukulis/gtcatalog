@@ -121,57 +121,93 @@ select count(1) from tmp_products_categories where parent is null;
 update tmp_products_categories set depth=0 where parent is null;
 
 -- one time
-update tmp_products_categories
-    c_child join tmp_products_categories c_parent
-    on c_child.parent = c_parent.category
-    set c_child.depth=c_parent.depth+1
-    where c_parent.depth is not null;
+-- update tmp_products_categories
+--     c_child join tmp_products_categories c_parent
+--     on c_child.parent = c_parent.category
+--     set c_child.depth=c_parent.depth+1
+--     where c_parent.depth is not null;
+--
+-- -- second time
+-- update tmp_products_categories
+--     c_child join tmp_products_categories c_parent
+--     on c_child.parent = c_parent.category
+-- set c_child.depth=c_parent.depth+1
+-- where c_parent.depth is not null;
+--
+-- -- third time
+-- update tmp_products_categories
+--     c_child join tmp_products_categories c_parent
+--     on c_child.parent = c_parent.category
+-- set c_child.depth=c_parent.depth+1
+-- where c_parent.depth is not null;
+--
+-- -- fourth time
+-- update tmp_products_categories
+--     c_child join tmp_products_categories c_parent
+--     on c_child.parent = c_parent.category
+-- set c_child.depth=c_parent.depth+1
+-- where c_parent.depth is not null;
+--
+-- -- fifth time ( gal geriau pasidaryti procedūrą )
+-- update tmp_products_categories
+--     c_child join tmp_products_categories c_parent
+--     on c_child.parent = c_parent.category
+-- set c_child.depth=c_parent.depth+1
+-- where c_parent.depth is not null;
 
--- second time
-update tmp_products_categories
-    c_child join tmp_products_categories c_parent
-    on c_child.parent = c_parent.category
+insert into tmp_categories ( category, parent, depth)
+select category, parent, null from tmp_products_categories
+
+update tmp_categories set depth=0 where parent is null;
+
+-- select count(1) from tmp_categories;
+-- -- 1104
+-- select count(1) from tmp_categories where parent is null;
+-- -- 160
+
+update tmp_categories c_child join tmp_categories c_parent
+  on c_child.parent = c_parent.category
 set c_child.depth=c_parent.depth+1
 where c_parent.depth is not null;
 
--- third time
-update tmp_products_categories
-    c_child join tmp_products_categories c_parent
-    on c_child.parent = c_parent.category
-set c_child.depth=c_parent.depth+1
-where c_parent.depth is not null;
 
--- fourth time
-update tmp_products_categories
-    c_child join tmp_products_categories c_parent
-    on c_child.parent = c_parent.category
-set c_child.depth=c_parent.depth+1
-where c_parent.depth is not null;
 
--- fifth time ( gal geriau pasidaryti procedūrą )
-update tmp_products_categories
-    c_child join tmp_products_categories c_parent
-    on c_child.parent = c_parent.category
-set c_child.depth=c_parent.depth+1
-where c_parent.depth is not null;
+-- insert ignore into categories (
+--     code,
+--     parent
+--     )
+--     select category, parent from tmp_products_categories
+--     where depth is not null
+--     order by depth
+-- ;
 
 
 insert ignore into categories (
-    code,
-    parent
-    )
-    select category, parent from tmp_products_categories
-    where depth is not null
-    order by depth
+  code,
+  parent
+)
+  select category, parent from tmp_categories
+  where depth is not null
+  order by depth
 ;
 
+
+
 -- tos kurios neturi parent atitikmens, įterpiam be parent
+-- insert ignore into categories (
+--     code,
+--     parent
+-- )
+-- select category, null from tmp_products_categories
+-- where depth is null;
+
 insert ignore into categories (
-    code,
-    parent
+  code,
+  parent
 )
-select category, null from tmp_products_categories
-where depth is null;
+  select category, null from tmp_categories
+  where depth is null;
+
 
 # select * from tmp_products_categories order by depth desc;
 -- 7 categories langs
