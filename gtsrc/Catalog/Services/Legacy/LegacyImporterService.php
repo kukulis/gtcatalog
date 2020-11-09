@@ -119,7 +119,12 @@ class LegacyImporterService
            $tmpProductLanguage = TmpProductMapper::mapProductLanguage($kp, $langCode );
            $tmpClassificatorsPart = TmpProductMapper::mapClassificators($kp, $langCode);
 
+            $this->logger->debug('Dumpinam klasifikatorius' );
+            var_dump ( $tmpClassificatorsPart );
            $tmpClassificatorsPart = array_filter( $tmpClassificatorsPart, function (TmpClassificator  $c ){ return !empty($c->classificator_code); });
+           $this->logger->debug('Dumpinam klasifikatorius po filtravimo' );
+           var_dump ( $tmpClassificatorsPart );
+
            $tmpCategoriesPart = TmpProductMapper::mapProductCategories($kp, $langCode);
            $tmpPicturesPart = TmpProductMapper::mapProductPictures($kp);
 
