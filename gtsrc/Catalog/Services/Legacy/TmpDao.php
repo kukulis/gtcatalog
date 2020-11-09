@@ -123,7 +123,7 @@ class TmpDao
         /** @var EntityManager $em */
         $em  = $this->doctrine->getManager();
         $conn = $em->getConnection();
-        $sql = /** @lang MySQL */ 'select sku from tmp_skus1';
+        $sql = /** @lang MySQL */ 'select sku from tmp_skus2';
         /** @var string[] $rez */
         $rez = $conn->query($sql)->fetchAll(PDO::FETCH_COLUMN);
         return $rez;
