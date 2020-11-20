@@ -97,6 +97,10 @@ create index tmp_products_categories_depth_idx
 create index tmp_products_categories_parent_idx
     on tmp_products_categories (parent);
 
+create index tmp_products_categories_category_idx
+    on tmp_products_categories (category);
+
+
 
 -- alter table tmp_products_pictures drop column is_uploaded;
 alter table tmp_products_pictures add column

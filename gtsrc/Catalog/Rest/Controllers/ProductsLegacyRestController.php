@@ -10,13 +10,17 @@ namespace Gt\Catalog\Rest\Controllers;
 
 
 use Gt\Catalog\Exception\CatalogErrorException;
-use Gt\Catalog\Rest\Legacy\Prekes;
-use Gt\Catalog\Rest\Legacy\PrekesResponse;
+use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Services\Rest\ProductsRestService;
 use Psr\Log\LoggerInterface;
+use Sketis\B2b\Common\Data\Mock\Prekes;
+use Sketis\B2b\Common\Data\Mock\PrekesRestResult;
+use Sketis\B2b\Common\Data\Rest\ErrorResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use \Exception;
+use Symfony\Component\HttpFoundation\Response;
 
 class ProductsLegacyRestController extends AbstractController{
 
@@ -25,19 +29,21 @@ class ProductsLegacyRestController extends AbstractController{
         $data = json_decode($content);
 
         if( !is_array( $data ) ) {
-            throw new CatalogErrorException('Given json data is not an array' );
+            throw new CatalogErrorException('Given json data is not an array' ); // TODO handle this in a diffirent way
         }
-        $logger->debug('getPrekesAction called '.var_export($data, true) );
-
-
-//        $productsService->getProductsBySkus($data, $language);
-
-        $prekes = $productsRestService->getLegacyPrekes($data, $language);
-
-        $prekesResponse = new PrekesResponse();
-        $prekesResponse->Prekes = new Prekes();
-        $prekesResponse->Prekes->PrekesList = $prekes;
-
-        return new JsonResponse( $prekesResponse );
+        try {
+            $logger->debug('getPrekesAction called ' . var_export($data, true));
+            $prekes = $productsRestService->getLegacyPrekes($data, $language);
+            $prekesResponse = new PrekesRestResult();
+            $prekesResponse->Prekes = new Prekes();
+            $prekesResponse->Prekes->PrekesList = $prekes;
+            return new JsonResponse($prekesResponse);
+        } catch (CatalogValidateException $e ) {
+            return new JsonResponse( new ErrorResponse(ErrorResponse::TYPE_VALIDATION, $e->getMessage(), Response::HTTP_BAD_REQUEST) );
+        } catch ( Exception $e ) {
+             $logger->critical($e->getMessage());
+             $logger->error($e->getTraceAsString());
+            return new JsonResponse( new ErrorResponse(ErrorResponse::TYPE_ERROR, 'Server error', Response::HTTP_INTERNAL_SERVER_ERROR) );
+        }
     }
 }

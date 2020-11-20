@@ -7,6 +7,7 @@ use Gt\Catalog\Services\PicturesService;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 use Sketis\B2b\Common\Data\Catalog\KatalogasPreke;
+use \Exception;
 
 class LegacyImporterService
 {
@@ -181,7 +182,7 @@ class LegacyImporterService
                     $tmpPicture->is_downloaded = 1;
                     $count += 1;
                     $picturesReferences[] = $tmpPicture->legacy_id;
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $this->logger->error('Klaida siunčiantis paveikslėlį '.$tmpPicture->legacy_id.' Prekei'.$tmpPicture->sku.' : '.$e->getMessage());
                 }
             }

@@ -20,10 +20,11 @@ use Gt\Catalog\Entity\ProductCategory;
 use Gt\Catalog\Entity\ProductLanguage;
 use Gt\Catalog\Entity\ProductPicture;
 use Gt\Catalog\Exception\CatalogValidateException;
-use Gt\Catalog\Rest\Legacy\KatalogasPreke;
+//use Gt\Catalog\Rest\Legacy\KatalogasPreke; // Gal imti iš common
 use Gt\Catalog\Services\PicturesService;
 use Gt\Catalog\Utils\ProductsHelper;
 use Psr\Log\LoggerInterface;
+use Sketis\B2b\Common\Data\Catalog\KatalogasPreke;
 
 class ProductsRestService
 {
