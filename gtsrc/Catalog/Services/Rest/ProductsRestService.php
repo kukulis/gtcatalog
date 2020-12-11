@@ -173,7 +173,7 @@ class ProductsRestService
             }
 
             $pictures = [];
-            if ( array_key_exists()) {
+            if ( array_key_exists($productLang->getSku(), $productsPicturesArraysMap)) {
                 $pictures = $productsPicturesArraysMap[$productLang->getSku()];
             }
 
