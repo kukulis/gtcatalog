@@ -166,9 +166,20 @@ class ProductsRestService
                     }
                 }
             }
+
+            $catogeries = [];
+            if ( array_key_exists($productLang->getSku(), $productsCategoriesArraysMap)) {
+                $categories = $productsCategoriesArraysMap[$productLang->getSku()];
+            }
+
+            $pictures = [];
+            if ( array_key_exists()) {
+                $pictures = $productsPicturesArraysMap[$productLang->getSku()];
+            }
+
             $preke = ProductToKatalogasPrekeMapper::mapProduct2KatalogasPreke($productLang,
-                $productsCategoriesArraysMap[$productLang->getSku()],
-                $productsPicturesArraysMap[$productLang->getSku()],
+                $categories,
+                $pictures,
                 $productClassificatorsLanguagesByGroupsMap);
             $prekes[] = $preke;
         }
