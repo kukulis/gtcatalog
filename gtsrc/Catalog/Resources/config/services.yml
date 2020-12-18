@@ -219,3 +219,26 @@ services:
         arguments:
             - '@logger'
             - '@gt.catalog.legacy_importer_service'
+
+    # --------------- customs ----------------------------------------
+
+    gt.catalog.customs_number_dao:
+        class: 'Gt\Catalog\Dao\CustomsNumberDao'
+        arguments:
+            - '@logger'
+            - '@doctrine'
+
+    gt.catalog.import_customs_number_service:
+        class: 'Gt\Catalog\Services\ImportCustomsNumbersService'
+        arguments:
+            - '@logger'
+            - '@gt.catalog.customs_number_dao'
+
+    gt.catalog.import_customs_number_command:
+        class: 'Gt\Catalog\Command\ImportCustomsNumbersCommand'
+        arguments:
+            - '@logger'
+            - '@gt.catalog.import_customs_number_service'
+        tags:
+            - { name: 'console.command', command: 'catalog:import_customs_numbers' }
+
