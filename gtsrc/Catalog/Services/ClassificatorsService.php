@@ -21,11 +21,14 @@ use Gt\Catalog\Entity\ClassificatorLanguage;
 use Gt\Catalog\Entity\Language;
 use Gt\Catalog\Exception\CatalogErrorException;
 use Gt\Catalog\Exception\CatalogValidateException;
+use Gt\Catalog\Utils\CategoriesHelper;
+use Gt\Catalog\Utils\CsvUtils;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Form\FormInterface;
 
 class ClassificatorsService
 {
+    const STEP = 100;
+
     /** @var LoggerInterface */
     private $logger;
 
@@ -96,7 +99,7 @@ class ClassificatorsService
                 continue;
             }
             $cl =  $map[$c->getCode()];
-            $c->setAssignedValue($cl->getValue());
+            $c->setAssignedValue($cl->getName());
         }
 
         return $classificators;
@@ -116,18 +119,11 @@ class ClassificatorsService
             throw new CatalogErrorException('Failed to load language by code '.$languageCode );
         }
 
-
         $f = fopen($file, 'r');
         try {
-
             $header = fgetcsv($f);
-
-            if (count($header) != 3) {
-                throw new CatalogValidateException('Paduotame faile yra ' . count($header) . ' stulpelių, o turi būti 3');
-            }
-
-            // gal reiktų perkelti šitą gabalą į kitą servisą
-            $line = fgetcsv($f);
+            $this->validateHead($header);
+            $headMap = array_flip ( $header );
 
             /** @var ClassificatorLanguage[] $cls */
             $cls = [];
@@ -135,25 +131,129 @@ class ClassificatorsService
             /** @var Classificator[] $cs */
             $cs = [];
 
+            // gal reiktų perkelti šitą gabalą į kitą servisą
+            $l = fgetcsv($f);
+            while ($l != null) {
+                $line = CsvUtils::arrayToAssoc($headMap, $l);
+                $line['language'] = $languageCode;
 
-            while ($line != null) {
-                list($code, $name, $group) = $line;
-                $cl = ClassificatorLanguage::createLangClassificator($code, $name, $group, $language);
-                $cls[] = $cl;
+                $cl = self::mapCsvLineToClassificatorLanguage($line, $language);
+                if ( $cl->getName() != null ) {
+                    $cls[] = $cl;
+                }
                 $cs[] = $cl->getClassificator();
-                $line = fgetcsv($f);
+                $l = fgetcsv($f);
             }
 
+            // ar reikia "tik update" vėliavėlės ir jos handlinimo čia?
+            $count = $this->importClassificatorsDatas($cs, $headMap);
+            $countl = $this->importClassificatorsLangsDatas($cls, $headMap);
 
-            // lets import classificators first
+            return max($count, $countl);
 
-
-            $this->catalogDao->importClassificators($cs);
-            return $this->catalogDao->importClassificatorsLangs($cls);
         } catch ( DBALException $e ) {
             throw new CatalogErrorException( $e->getMessage() );
         } finally {
             fclose($f);
+        }
+    }
+
+    /**
+     * @param Classificator[] $cs
+     * @param array $givenFieldsSet
+     * @return int
+     * @throws DBALException
+     */
+    public function importClassificatorsDatas ($cs, $givenFieldsSet) {
+        $count = 0;
+        for ( $i=0; $i < count($cs); $i += self::STEP ) {
+            $part = array_slice($cs, $i, self::STEP);
+            $count += $this->catalogDao->importClassificators($part, $givenFieldsSet);
+        }
+        return $count;
+    }
+
+    /**
+     * @param ClassificatorLanguage[] $cls
+     * @param array $givenFieldsSet
+     * @return int
+     * @throws DBALException
+     */
+    public function importClassificatorsLangsDatas ( $cls, $givenFieldsSet ) {
+        $count = 0;
+        for ( $i=0; $i < count($cls); $i += self::STEP ) {
+            $part = array_slice($cls, $i, self::STEP);
+            return $this->catalogDao->importClassificatorsLangs($part, $givenFieldsSet);
+        }
+        return $count;
+    }
+
+    /**
+     * @param $line
+     * @param Language|null $language
+     * @return ClassificatorLanguage
+     * @throws CatalogValidateException
+     */
+    public static function mapCsvLineToClassificatorLanguage ($line, Language $language=null) {
+        $code = $line['code'];
+        $group = $line['group'];
+
+        $customsCode = null;
+        if ( array_key_exists('customs_code', $line )) {
+            $customsCode = $line['customs_code'];
+        }
+
+        $languageCode = $line['language'];
+
+        $name = null;
+        if ( array_key_exists('name', $line )) {
+            $name = $line['name'];
+        }
+
+        if ( !CategoriesHelper::validateClassificatorCode($code) ) {
+            throw new CatalogValidateException('Invalid classificator  code:['.$code.']');
+        }
+
+        $classificator = Classificator::createClassificator($code, $group);
+
+        if ( $customsCode != null ) {
+            if ( !CategoriesHelper::validateCustomsCode($customsCode) ) {
+                throw new CatalogValidateException('Wrong customs code: '.$customsCode );
+            }
+            $classificator->setCustomsCode($customsCode);
+        }
+
+        if ( null == $language  ) { // if not given in parameters, create it dynamically
+            $language = new Language();
+            $language->setCode($languageCode);
+        }
+
+        $classificatorLang = new ClassificatorLanguage();
+        $classificatorLang->setLanguage($language);
+        if ( $name != null ) {
+            $classificatorLang->setName($name);
+        }
+        $classificatorLang->setClassificator($classificator);
+        return $classificatorLang;
+    }
+
+    /**
+     * @param array $head
+     * @throws CatalogValidateException
+     */
+    public function validateHead ( $head ) {
+        $classificatorAndLanguageFields = array_merge(Classificator::ALLOWED_FIELDS, ClassificatorLanguage::ALLOWED_FIELDS);
+        $nonValidFields = array_diff ( $head, $classificatorAndLanguageFields );
+
+        if ( count($nonValidFields) > 0 ) {
+            throw new CatalogValidateException('Non valid fields:'.join(',', $nonValidFields));
+        }
+
+        $requiredFields = ['code', 'group' ];
+
+        $missingFields = array_diff($requiredFields, $head );
+        if ( count($missingFields) > 0 ) {
+            throw new CatalogValidateException('Missing fields:'.join(',', $missingFields));
         }
     }
 

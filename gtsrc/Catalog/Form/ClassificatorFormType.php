@@ -25,6 +25,7 @@ class ClassificatorFormType extends AbstractType
                 'choice_label' => 'name'
             ])
             ->add('value', TextType::class )
+            ->add('customscode', TextType::class )
             ->add('save', SubmitType::class, ['label'=>'Saugoti'])
         ;
     }
@@ -81,13 +82,21 @@ class ClassificatorFormType extends AbstractType
      * @return null|string
      */
     public function getValue ( ) {
-        return $this->classificatorLanguage->getValue();
+        return $this->classificatorLanguage->getName();
     }
 
     /**
      * @param $val
      */
     public function setValue ( $val ) {
-        $this->classificatorLanguage->setValue($val);
+        $this->classificatorLanguage->setName($val);
+    }
+
+    public function getCustomsCode() {
+        return $this->classificatorLanguage->getClassificator()->getCustomsCode();
+    }
+
+    public function setCustomsCode ( $customsCode ) {
+        $this->classificatorLanguage->getClassificator()->setCustomsCode($customsCode);
     }
 }

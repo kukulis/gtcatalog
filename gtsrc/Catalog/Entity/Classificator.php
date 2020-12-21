@@ -10,6 +10,7 @@ namespace Gt\Catalog\Entity;
 
 
 use Doctrine\ORM\Mapping as ORM;
+use \DateTime;
 
 /**
  * @ORM\Entity
@@ -17,6 +18,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Classificator
 {
+    const ALLOWED_FIELDS = ['code', 'group', 'customs_code' ];
+
     /**
      * @var string
      * @ORM\Column(type="string", length=64, name="code")
@@ -27,9 +30,29 @@ class Classificator
     /**
      * @var ClassificatorGroup
      * @ORM\ManyToOne(targetEntity="ClassificatorGroup" )
-     * @ORM\JoinColumn(name="group_code", referencedColumnName="code")
+     * @ORM\JoinColumn(name="group", referencedColumnName="code")
      */
     private $group;
+
+    /**
+     * @var bool
+     * @ORM\Column(type="boolean", name="confirmed", nullable=true)
+     */
+    private $confirmed;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", name="customs_code", length=16, nullable=true)
+     */
+    private $customsCode;
+
+    /**
+     * @var DateTime
+     * @ORM\Column(type="datetime", name="date_created", nullable=true, options={"default":"CURRENT_TIMESTAMP"})
+     *
+     */
+    private $dateCreated;
+
 
     private $assignedValue; // not stored in db
 
@@ -112,4 +135,51 @@ class Classificator
         $this->assignedValue = $assignedValue;
     }
 
+    /**
+     * @return bool
+     */
+    public function isConfirmed(): bool
+    {
+        return $this->confirmed;
+    }
+
+    /**
+     * @param bool $confirmed
+     */
+    public function setConfirmed(bool $confirmed): void
+    {
+        $this->confirmed = $confirmed;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCustomsCode(): ?string
+    {
+        return $this->customsCode;
+    }
+
+    /**
+     * @param string $customsCode
+     */
+    public function setCustomsCode(string $customsCode=null): void
+    {
+        $this->customsCode = $customsCode;
+    }
+
+    /**
+     * @return DateTime
+     */
+    public function getDateCreated(): DateTime
+    {
+        return $this->dateCreated;
+    }
+
+    /**
+     * @param DateTime $dateCreated
+     */
+    public function setDateCreated(DateTime $dateCreated): void
+    {
+        $this->dateCreated = $dateCreated;
+    }
 }

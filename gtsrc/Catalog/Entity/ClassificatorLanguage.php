@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: giedrius
- * Date: 20.7.11
- * Time: 18.59
- */
 
 namespace Gt\Catalog\Entity;
 
@@ -16,11 +10,17 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class ClassificatorLanguage
 {
+    const ALLOWED_FIELDS = [
+        'classificator',
+        'language',
+        'name',
+    ];
+
     /**
      * @var Language
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Language" )
-     * @ORM\JoinColumn(name="language_code", referencedColumnName="code")
+     * @ORM\JoinColumn(name="language", referencedColumnName="code")
      */
     private $language;
 
@@ -28,16 +28,16 @@ class ClassificatorLanguage
      * @var Classificator
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Classificator" )
-     * @ORM\JoinColumn(name="classificator_code", referencedColumnName="code")
+     * @ORM\JoinColumn(name="classificator", referencedColumnName="code")
      */
     private $classificator;
 
 
     /**
      * @var string
-     * @ORM\Column(type="string", name="value")
+     * @ORM\Column(type="string", name="name")
      */
-    private $value;
+    private $name;
 
     /**
      * @return Language
@@ -74,17 +74,17 @@ class ClassificatorLanguage
     /**
      * @return string
      */
-    public function getValue(): ?string
+    public function getName(): ?string
     {
-        return $this->value;
+        return $this->name;
     }
 
     /**
-     * @param string $value
+     * @param string $name
      */
-    public function setValue(string $value): void
+    public function setName(string $name): void
     {
-        $this->value = $value;
+        $this->name = $name;
     }
 
     /**
@@ -96,7 +96,7 @@ class ClassificatorLanguage
         $classificator = Classificator::createClassificator($code, $groupCode);
         $classificatorLang = new ClassificatorLanguage();
         $classificatorLang->setLanguage($language);
-        $classificatorLang->setValue($name);
+        $classificatorLang->setName($name);
         $classificatorLang->setClassificator($classificator);
         return $classificatorLang;
     }

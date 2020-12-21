@@ -15,6 +15,7 @@
         <td>{{ c.code }}</td>
         <td>{{ c.group.name }}</td>
         <td>{{ c.assignedValue }}</td>
+        <td>{{ c.customsCode }}</td>
         <td>
             {% if c.code is not empty %}
             <a href="{{ path('gt.catalog.classificator_edit', {code: c.code, languageCode: languageCode }) }}" class="btn btn-primary">

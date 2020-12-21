@@ -14,6 +14,7 @@ use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMException;
 use Gt\Catalog\Data\ProductsFilter;
+use Gt\Catalog\Entity\CategoryLanguage;
 use Gt\Catalog\Entity\Classificator;
 use Gt\Catalog\Entity\ClassificatorLanguage;
 use Gt\Catalog\Entity\Product;
@@ -403,65 +404,47 @@ class CatalogDao extends BaseDao
     }
 
     /**
-     * @param ClassificatorLanguage[] $cls
+     * @param Classificator[] $cs
+     * @param array $givenFieldsSet
      * @throws DBALException
      * @return int
      */
-    public function importClassificatorsLangs ( $cls ) {
+    public function importClassificators ( $cs, $givenFieldsSet ) {
+        $givenFields = array_keys($givenFieldsSet);
+        $importingFields = array_intersect($givenFields, Classificator::ALLOWED_FIELDS );
+        // skip updates
+        $skipUpdates = ['code', 'group' ];
+        $updatingFields = array_diff($importingFields, $skipUpdates);
+
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
         $conn = $em->getConnection();
 
-        $valuesLines = [];
-        foreach ($cls as $cl ) {
-            $line = [
-                $cl->getLanguage()->getCode(),
-                $cl->getClassificator()->getCode(),
-                $cl->getValue()
-            ];
-
-            $qLine = array_map ( [$conn, 'quote'], $line );
-
-            $lineStr =  '('.join (',',$qLine).')';
-            $valuesLines[] = $lineStr;
-        }
-
-        $valuesStr = join (",\n", $valuesLines );
-
-        $sql = /** @lang MySQL */ "INSERT INTO classificator_lang (language_code, classificator_code, value )
-          values $valuesStr
-          ON DUPLICATE  KEY UPDATE value=values(value)";
-
+        $sql = $this->buildImportSql($cs, $importingFields, $updatingFields, $this->getQuoter($conn), 'code' , 'classificators');
         return $conn->exec($sql);
     }
 
     /**
-     * @param Classificator[] $cs
+     * @param ClassificatorLanguage[] $cls
+     * @param array $givenFieldsSet
      * @throws DBALException
      * @return int
      */
-    public function importClassificators ( $cs ) {
+    public function importClassificatorsLangs ( $cls, $givenFieldsSet ) {
+        $givenFields = array_keys($givenFieldsSet);
+        $givenFields = array_merge ( $givenFields, ['classificator', 'language'] );
+        $importingFields = array_intersect($givenFields, ClassificatorLanguage::ALLOWED_FIELDS );
+        // skip updates
+        $skipUpdates = ['classificator', 'language' ];
+        $updatingFields = array_diff($importingFields, $skipUpdates);
+
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
         $conn = $em->getConnection();
 
-        $valuesLines = [];
-
-        foreach ($cs as $c ) {
-            $values = [$c->getCode(),
-            $c->getGroupCode() ];
-
-            $qValues = array_map ([$conn, 'quote'], $values);
-            $line = '('. join ( ',', $qValues). ')';
-
-            $valuesLines [] = $line;
-        }
-
-        $valuesStr = join ( ",\n", $valuesLines);
-
-        $sql = /** @lang MySQL*/ "insert ignore into classificators ( code, group_code )
-                values $valuesStr";
+        $sql = $this->buildImportSql($cls, $importingFields, $updatingFields, $this->getQuoter($conn), 'code' , 'classificator_lang');
         return $conn->exec($sql);
+
     }
 
     /**

@@ -45,7 +45,7 @@ class BaseDao
      * @param $subobjectProperty
      * @return string
      */
-    public static function buildImportSql( $dataArray, $fields, $updatedFields, Closure $quoter, $subobjectProperty, $tableName) {
+    public function buildImportSql( $dataArray, $fields, $updatedFields, Closure $quoter, $subobjectProperty, $tableName) {
         $rows = [];
         foreach ($dataArray as $dataObj ) {
             $values = PropertiesHelper::getValuesArray($dataObj, $fields, $subobjectProperty);
@@ -55,7 +55,9 @@ class BaseDao
         }
 
         $valuesStr = join ( ",\n", $rows );
-        $fieldsStr = join ( ',', $fields);
+
+        $escapedFields = array_map([self::class, 'escapeField'], $fields);
+        $fieldsStr = join ( ',', $escapedFields);
 
         $updates=[];
         foreach ($updatedFields as $f) {
@@ -82,5 +84,9 @@ class BaseDao
                 $updatesInstruction";
 
         return $sql;
+    }
+
+    public static function escapeField ($fieldName ) {
+        return '`'.$fieldName.'`';
     }
 }

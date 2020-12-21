@@ -290,7 +290,9 @@ class CategoriesService extends ProductsBaseService
 
         if ( array_key_exists('customs_code', $line ) ) {
             $customsCode = $line['customs_code'];
-            CategoriesHelper::validateCustomsCode($customsCode);
+            if ( !CategoriesHelper::validateCustomsCode($customsCode) ) {
+                throw new CatalogValidateException('Wrong customs code: '.$customsCode );
+            }
             $category->setCustomsCode($customsCode);
         }
 
