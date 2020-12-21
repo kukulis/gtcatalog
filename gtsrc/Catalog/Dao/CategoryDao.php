@@ -345,4 +345,29 @@ class CategoryDao extends BaseDao
         return  $conn->exec($sql);
     }
 
+    public function  setAllConfirmed () {
+        $sql = /** @lang MySQL */ "update categories set confirmed=1";
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+        $conn = $em->getConnection();
+        return  $conn->exec($sql);
+    }
+
+    public function deleteUnfonfirmedCategoriesLanguages() {
+
+        $sql = /** @lang MySQL */ "DELETE  cl FROM categories_languages  cl JOIN categories c on cl.category = c.code  WHERE confirmed != 1 or confirmed is null";
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+        $conn = $em->getConnection();
+        return  $conn->exec($sql);
+    }
+    public function deleteUnfonfirmedCategories() {
+
+        $sql = /** @lang MySQL */ "DELETE FROM categories WHERE confirmed != 1 or confirmed is null";
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+        $conn = $em->getConnection();
+        return  $conn->exec($sql);
+    }
+
 }

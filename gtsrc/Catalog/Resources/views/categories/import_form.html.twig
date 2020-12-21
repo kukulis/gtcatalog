@@ -13,11 +13,13 @@
         <li><b>language</b></li>
         <li>name</li>
         <li>description</li>
+        <li>customs_code</li>
     </ul>
 </div>
 
 <form method="post" enctype="multipart/form-data" action="{{ path('gt.catalog.import_categories') }}">
     <input type="file" name="csvfile" /><br/>
+    <label for="update_only">Tik atnaujinti(neįterpti naujų)</label><input  id="update_only" type="checkbox" name="update_only" value="1" /> <br/>
     <input type="submit" name="import" value="Importuoti" /><br/>
 </form>
 {% endblock %}

@@ -18,6 +18,7 @@ use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Utils\CategoriesHelper;
 use Gt\Catalog\Utils\CsvUtils;
 use Psr\Log\LoggerInterface;
+use Sketis\B2b\Common\Helper\Utils;
 
 class CategoriesService extends ProductsBaseService
 {
@@ -163,7 +164,7 @@ class CategoriesService extends ProductsBaseService
      * @return int
      * @throws CatalogValidateException
      */
-    public function importCategories ( $file ) {
+    public function importCategories ( $file, $updateOnly ) {
         $f = fopen ( $file, 'r');
 
         // read head
@@ -185,11 +186,22 @@ class CategoriesService extends ProductsBaseService
 
         $this->logger->debug ( 'read lines count '.count($lines) );
 
+        if ( $updateOnly ) {
+            $this->categoryDao->setAllConfirmed();
+        }
+
         $count = 0;
         for ( $i =0; $i < count($lines); $i += self::STEP ) {
             $part = array_slice ( $lines, $i, self::STEP);
             $count += $this->importCategoriesData($part, $headMap );
         }
+
+        if ( $updateOnly ) {
+            $deletedCount = $this->categoryDao->deleteUnfonfirmedCategoriesLanguages();
+            $this->categoryDao->deleteUnfonfirmedCategories();
+            $this->logger->debug('Deleted '.$deletedCount.' unconfirmed categories' );
+        }
+
         return $count;
     }
 
@@ -214,33 +226,9 @@ class CategoriesService extends ProductsBaseService
             }
             $line = CsvUtils::arrayToAssoc($headMap, $l);
 
-            $category = new Category();
-            $category->setCode( $line['code'] );
+            $catLang = self::mapCsvLine($line);
 
-            // TODO validate code and parent code ( also validate in classificators and in products skus )
-            // TODO test null parents
-
-            if ( isset($line['parent']) ) {
-                if ( $line['parent'] == ''  or $line['parent'] == '-') {
-                    $category->setParent(null);
-                } else {
-                    $category->setParent(Category::createCategory($line['parent']));
-                }
-            }
-            $lang = new Language();
-            $lang->setCode($line['language']);
-
-            $catLang = new CategoryLanguage();
-            $catLang->setCategory($category);
-            $catLang->setLanguage($lang);
-            if ( isset($line['name']) ) {
-                $catLang->setName($line['name']);
-            }
-            if ( isset($line['description'])) {
-                $catLang->setDescription($line['description']);
-            }
-
-            $categories[] = $category;
+            $categories[] = $catLang->getCategory();
             $categoriesLanguages[] = $catLang;
         }
 
@@ -253,16 +241,73 @@ class CategoriesService extends ProductsBaseService
         } catch ( ForeignKeyConstraintViolationException $e ) {
             $msg = $e->getMessage();
             if ( strpos($msg,'FOREIGN KEY (`parent`)') !== false  ) {
-                throw new CatalogValidateException('Neteisinga parent reikšmė.
-                 
-                 
-                 Detalės: '.$msg);
+                throw new CatalogValidateException(
+                    'Neteisinga parent reikšmė. 
+                    Detalės: '.$msg);
             }
             throw new CatalogValidateException( $e->getMessage() );
         } catch (DBALException $e ) {
             $msg = $e->getMessage();
             throw new CatalogErrorException( $msg);
         }
+    }
+
+    /**
+     * @param $line
+     * @return CategoryLanguage
+     * @throws CatalogValidateException
+     */
+    public static function mapCsvLine($line ) {
+        $category = new Category();
+        $code = $line['code'];
+
+        $parentCode = null;
+        if ( isset($line['parent']) ) {
+            if ( $line['parent'] == ''  or $line['parent'] == '-') {
+                $parentCode = null;
+            } else {
+                $parentCode = $line['parent'];
+            }
+        }
+
+        if ( $parentCode != null ) {
+            if ( !CategoriesHelper::validateCategoryCode($parentCode) ) {
+                throw new CatalogValidateException('Invalid parent code:['.$parentCode.']');
+            }
+        }
+
+        if ( !CategoriesHelper::validateCategoryCode($code) ) {
+            throw new CatalogValidateException('Invalid category code:['.$code.']');
+        }
+
+        $category->setCode( $code );
+        if ( $parentCode != null ) {
+            $category->setParent(Category::createCategory($parentCode));
+        }
+        else {
+            $category->setParent(null);
+        }
+
+        if ( array_key_exists('customs_code', $line ) ) {
+            $customsCode = $line['customs_code'];
+            CategoriesHelper::validateCustomsCode($customsCode);
+            $category->setCustomsCode($customsCode);
+        }
+
+        $lang = new Language();
+        $lang->setCode($line['language']);
+
+        $catLang = new CategoryLanguage();
+        $catLang->setCategory($category);
+        $catLang->setLanguage($lang);
+        if ( isset($line['name']) ) {
+            $catLang->setName($line['name']);
+        }
+        if ( isset($line['description'])) {
+            $catLang->setDescription($line['description']);
+        }
+
+        return $catLang;
     }
 
     /**

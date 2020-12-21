@@ -98,7 +98,10 @@ class CategoriesController extends AbstractController
         try {
             /** @var File $csvFileObj */
             $csvFileObj = $r->files->get('csvfile');
-            $count = $categoriesService->importCategories($csvFileObj->getRealPath());
+
+            $updateOnly = $r->get('update_only' );
+            $bUpdateOnly = '1' == $updateOnly;
+            $count = $categoriesService->importCategories($csvFileObj->getRealPath(), $bUpdateOnly);
             return new Response('Imported categories ' . $count);
         } catch ( CatalogValidateException $e ) {
             return $this->render('@Catalog/error/error.html.twig', [

@@ -29,4 +29,11 @@ class CategoriesHelper
     public static function validateClassificatorCode($code) {
         return self::validateCategoryCode($code);
     }
+
+    public static function validateCustomsCode($customsCode ) {
+        if ( empty($customsCode)) {
+            return false;
+        }
+        return preg_match ( '/^[0-9\\s]+$/', $customsCode) == 1;
+    }
 }

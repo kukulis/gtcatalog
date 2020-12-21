@@ -10,6 +10,7 @@ namespace Gt\Catalog\Entity;
 
 
 use Doctrine\ORM\Mapping as ORM;
+use \DateTime;
 
 /**
  * @ORM\Entity
@@ -17,7 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Category
 {
-    const ALLOWED_FIELDS = ['code', 'parent' ];
+    const ALLOWED_FIELDS = ['code', 'parent', 'customs_code' ];
 
     /**
      * @var string
@@ -32,6 +33,25 @@ class Category
      * @ORM\JoinColumn(name="parent", referencedColumnName="code")
      */
     private $parent;
+
+    /**
+     * @var bool
+     * @ORM\Column(type="boolean", name="confirmed", nullable=true)
+     */
+    private $confirmed;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", name="customs_code", length=16, nullable=true)
+     */
+    private $customsCode;
+
+    /**
+     * @var DateTime
+     * @ORM\Column(type="datetime", name="date_created", nullable=true, options={"default":"CURRENT_TIMESTAMP"})
+     *
+     */
+    private $dateCreated;
 
     /**
      * @return string
@@ -91,5 +111,53 @@ class Category
             return null;
         }
         return $this->parent->getCode();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isConfirmed(): bool
+    {
+        return $this->confirmed;
+    }
+
+    /**
+     * @param bool $confirmed
+     */
+    public function setConfirmed(bool $confirmed): void
+    {
+        $this->confirmed = $confirmed;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCustomsCode()
+    {
+        return $this->customsCode;
+    }
+
+    /**
+     * @param string $customsCode
+     */
+    public function setCustomsCode(string $customsCode=null)
+    {
+        $this->customsCode = $customsCode;
+    }
+
+    /**
+     * @return DateTime
+     */
+    public function getDateCreated(): DateTime
+    {
+        return $this->dateCreated;
+    }
+
+    /**
+     * @param DateTime $dateCreated
+     */
+    public function setDateCreated(DateTime $dateCreated): void
+    {
+        $this->dateCreated = $dateCreated;
     }
 }
