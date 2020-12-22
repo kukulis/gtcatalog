@@ -134,6 +134,8 @@ class ClassificatorsService
             // gal reiktų perkelti šitą gabalą į kitą servisą
             $l = fgetcsv($f);
             while ($l != null) {
+
+                $l = array_map ( 'trim', $l );
                 $line = CsvUtils::arrayToAssoc($headMap, $l);
                 $line['language'] = $languageCode;
 
