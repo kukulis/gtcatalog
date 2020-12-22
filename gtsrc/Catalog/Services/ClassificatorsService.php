@@ -218,7 +218,7 @@ class ClassificatorsService
 
         $classificator = Classificator::createClassificator($code, $group);
 
-        if ( $customsCode != null ) {
+        if ( $customsCode != null && !empty($customsCode) ) {
             if ( !CategoriesHelper::validateCustomsCode($customsCode) ) {
                 throw new CatalogValidateException('Wrong customs code: '.$customsCode );
             }

@@ -220,10 +220,11 @@ class CategoriesService extends ProductsBaseService
         $categoriesLanguages=[];
 
         foreach ( $lines as $l ) {
-
             if ( count($l) != count($headMap)) {
                 throw new CatalogValidateException('Wrong amount of elements in line ['.join ( ',',$l ).'] = '.count($l).', while '.count($headMap). ' is needed');
             }
+            $l = array_map ( 'trim', $l );
+
             $line = CsvUtils::arrayToAssoc($headMap, $l);
 
             $catLang = self::mapCsvLine($line);
@@ -290,8 +291,10 @@ class CategoriesService extends ProductsBaseService
 
         if ( array_key_exists('customs_code', $line ) ) {
             $customsCode = $line['customs_code'];
-            if ( !CategoriesHelper::validateCustomsCode($customsCode) ) {
-                throw new CatalogValidateException('Wrong customs code: '.$customsCode );
+            if ( !empty($customsCode) ) {
+                if (!CategoriesHelper::validateCustomsCode($customsCode)) {
+                    throw new CatalogValidateException('Wrong customs code: ' . $customsCode);
+                }
             }
             $category->setCustomsCode($customsCode);
         }
