@@ -1,1 +1,7 @@
 move legacy code to separate bundle and then to a separate repository?
+
+OLD legacy dir repository config:
+        {
+            "type": "path",
+            "url": "../gtcatalog-b2bcommon"
+        },

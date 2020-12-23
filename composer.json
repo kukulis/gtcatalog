@@ -4,8 +4,8 @@
 
     "repositories": [
         {
-            "type": "path",
-            "url": "../gtcatalog-b2bcommon"
+            "type": "vcs",
+            "url": "https://github.com/kukulis/b2bcommon"
         }
     ],
 
@@ -40,7 +40,7 @@
         "symfony/web-link": "5.1.*",
         "symfony/yaml": "5.1.*",
         "guzzlehttp/guzzle": "*",
-        "gtcatalog/b2bcommon": ">=1.0"
+        "kukulis/b2bcommon": "dev-main"
     },
     "require-dev": {
         "symfony/debug-pack": "*",
