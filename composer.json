@@ -5,7 +5,7 @@
     "repositories": [
         {
             "type": "path",
-            "url": "../sketis-b2bcommon"
+            "url": "../gtcatalog-b2bcommon"
         }
     ],
 
@@ -40,7 +40,7 @@
         "symfony/web-link": "5.1.*",
         "symfony/yaml": "5.1.*",
         "guzzlehttp/guzzle": "*",
-        "sketis/b2bcommon": ">=1.0"
+        "gtcatalog/b2bcommon": ">=1.0"
     },
     "require-dev": {
         "symfony/debug-pack": "*",
@@ -86,9 +86,6 @@
         "post-update-cmd": [
             "@auto-scripts"
         ]
-    },
-    "conflict": {
-        "symfony/symfony": "*"
     },
     "extra": {
         "symfony": {

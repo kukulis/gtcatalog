@@ -18,7 +18,7 @@ use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Utils\CategoriesHelper;
 use Gt\Catalog\Utils\CsvUtils;
 use Psr\Log\LoggerInterface;
-use Sketis\B2b\Common\Helper\Utils;
+
 
 class CategoriesService extends ProductsBaseService
 {

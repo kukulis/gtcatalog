@@ -9,6 +9,7 @@
 namespace Gt\Catalog\Services\Rest;
 
 
+use Catalog\B2b\Common\Data\Catalog\KatalogasPreke;
 use Gt\Catalog\Dao\CatalogDao;
 use Gt\Catalog\Dao\CategoryDao;
 use Gt\Catalog\Dao\PicturesDao;
@@ -20,11 +21,9 @@ use Gt\Catalog\Entity\ProductCategory;
 use Gt\Catalog\Entity\ProductLanguage;
 use Gt\Catalog\Entity\ProductPicture;
 use Gt\Catalog\Exception\CatalogValidateException;
-//use Gt\Catalog\Rest\Legacy\KatalogasPreke; // Gal imti iš common
 use Gt\Catalog\Services\PicturesService;
 use Gt\Catalog\Utils\ProductsHelper;
 use Psr\Log\LoggerInterface;
-use Sketis\B2b\Common\Data\Catalog\KatalogasPreke;
 
 class ProductsRestService
 {
@@ -167,7 +166,7 @@ class ProductsRestService
                 }
             }
 
-            $catogeries = [];
+            $categories = [];
             if ( array_key_exists($productLang->getSku(), $productsCategoriesArraysMap)) {
                 $categories = $productsCategoriesArraysMap[$productLang->getSku()];
             }

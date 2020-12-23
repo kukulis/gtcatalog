@@ -9,13 +9,13 @@
 namespace Gt\Catalog\Rest\Controllers;
 
 
+use Catalog\B2b\Common\Data\Legacy\Mock\Prekes;
+use Catalog\B2b\Common\Data\Legacy\Mock\PrekesRestResult;
 use Gt\Catalog\Exception\CatalogErrorException;
 use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Services\Rest\ProductsRestService;
 use Psr\Log\LoggerInterface;
-use Sketis\B2b\Common\Data\Mock\Prekes;
-use Sketis\B2b\Common\Data\Mock\PrekesRestResult;
-use Sketis\B2b\Common\Data\Rest\ErrorResponse;
+use Catalog\B2b\Common\Data\Rest\ErrorResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

@@ -1,12 +1,12 @@
 <?php
 namespace Gt\Catalog\Services\Legacy;
 
+use Catalog\B2b\Common\Data\Legacy\Catalog\KatalogasPreke;
 use Doctrine\DBAL\DBALException;
 use Gt\Catalog\Exception\CatalogErrorException;
 use Gt\Catalog\Services\PicturesService;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
-use Sketis\B2b\Common\Data\Catalog\KatalogasPreke;
 use \Exception;
 
 class LegacyImporterService

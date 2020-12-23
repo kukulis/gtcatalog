@@ -9,14 +9,14 @@
 namespace Gt\Catalog\Services\Rest;
 
 
+use Catalog\B2b\Common\Data\Legacy\Catalog\KatalogasPreke;
+use Catalog\B2b\Common\Data\Legacy\Catalog\Klasifikatorius;
+use Catalog\B2b\Common\Data\Legacy\Catalog\Nuotrauka;
 use Gt\Catalog\Entity\CategoryLanguage;
 use Gt\Catalog\Entity\ClassificatorLanguage;
 use Gt\Catalog\Entity\ProductLanguage;
 use Gt\Catalog\Entity\ProductPicture;
 use Gt\Catalog\Utils\PropertiesHelper;
-use Sketis\B2b\Common\Data\Catalog\KatalogasPreke;
-use Sketis\B2b\Common\Data\Catalog\Klasifikatorius;
-use Sketis\B2b\Common\Data\Catalog\Nuotrauka;
 
 class ProductToKatalogasPrekeMapper
 {

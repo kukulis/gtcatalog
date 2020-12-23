@@ -2,9 +2,9 @@
 namespace Gt\Catalog\Services\Legacy;
 
 
+use Catalog\B2b\Common\Data\Legacy\Catalog\KatalogasPreke;
+use Catalog\B2b\Common\Data\Legacy\Catalog\Nuotrauka;
 use Gt\Catalog\Utils\ProductsHelper;
-use Sketis\B2b\Common\Data\Catalog\KatalogasPreke;
-use Sketis\B2b\Common\Data\Catalog\Nuotrauka;
 
 class TmpProductMapper
 {
