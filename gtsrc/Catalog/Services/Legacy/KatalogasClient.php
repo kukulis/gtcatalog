@@ -1,8 +1,8 @@
 <?php
 namespace Gt\Catalog\Services\Legacy;
 
-use Catalog\B2b\Common\Data\Catalog\KatalogasPreke;
-use Catalog\B2b\Common\Data\Mock\PrekesRestResult;
+use Catalog\B2b\Common\Data\Legacy\Catalog\KatalogasPreke;
+use Catalog\B2b\Common\Data\Legacy\Mock\PrekesRestResult;
 use Gt\Catalog\Exception\CatalogErrorException;
 use Gt\Catalog\Exception\CatalogValidateException;
 use GuzzleHttp\Client;
@@ -11,7 +11,7 @@ use GuzzleHttp\Exception\ServerException;
 use Psr\Log\LoggerInterface;
 use \Exception;
 
-// TODO perkelti į atskirą repozitoriją
+// TODO move to a separate repository
 /**
  * Class PrekesService katalogo rest klientas.
  * @package Sketis\PrekesBundle\Service\Spec
