@@ -1,0 +1,4 @@
+gt.catalog.users_list:
+    path: "/users"
+    controller:  Gt\Catalog\Controller\UsersController::listAction
+    methods: GET

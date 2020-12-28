@@ -242,3 +242,9 @@ services:
         tags:
             - { name: 'console.command', command: 'catalog:import_customs_numbers' }
 
+
+    # ---------------- users ---------------------------------------------
+
+    Gt\Catalog\Controller\UsersController:
+        tags:
+            - "controller.service_arguments"

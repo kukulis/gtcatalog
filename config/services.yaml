@@ -1,5 +1,6 @@
 imports:
     - { resource: '@CatalogBundle/Resources/config/services.yml' }
+    - { resource: '@CatalogBundle/Resources/config/services/' }
 
 # This file is the entry point to configure your own services.
 # Files in the packages/ subdirectory configure your dependencies.
@@ -33,3 +34,6 @@ services:
         bind:
             $logger: '@logger'
 
+
+    Gt\Catalog\Repository\UserRepository:
+        tags: [ 'doctrine.repository_service' ]

@@ -2,8 +2,8 @@
 
 namespace App\Security;
 
-use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Gt\Catalog\Entity\User;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

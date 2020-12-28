@@ -17,3 +17,8 @@ classificators_routes:
 
 categories_routes:
     resource: '@CatalogBundle/Resources/config/categories_routes.yml'
+
+users_routes:
+    resource: '@CatalogBundle/Resources/config/users_routes.yml'
+    prefix: '/admin'
+
