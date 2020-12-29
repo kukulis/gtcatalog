@@ -14,6 +14,7 @@ use Gt\Catalog\Data\IUsersFilter;
 use Gt\Catalog\Entity\User;
 use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Repository\UserRepository;
+use Gt\Catalog\Utils\ValidateHelper;
 use Psr\Log\LoggerInterface;
 
 class UsersService
@@ -58,6 +59,7 @@ class UsersService
 
     public function storeUser (User $user) {
         $this->entityManager->persist($user);
+        $this->entityManager->flush();
     }
 
     public function storePassword ( $user, $password, $password2 ) {
@@ -74,6 +76,29 @@ class UsersService
 
         $encryptedPassword = password_hash($password, PASSWORD_DEFAULT);
         $userRepository->upgradePassword($user, $encryptedPassword);
+    }
+
+    /**
+     * @param string $email
+     * @throws CatalogValidateException
+     */
+    public function addUser( $email ) {
+        if ( !ValidateHelper::isValidEmail($email)) {
+            throw new CatalogValidateException('Wrong email: '.$email );
+        }
+
+        /** @var UserRepository $repository */
+        $repository = $this->entityManager->getRepository(User::class );
+        $existing = $repository->findOneBy(['email' => $email] );
+        if ( $existing != null ) {
+            throw new CatalogValidateException('There is a user with email '.$email.' already');
+        }
+
+        $user = new User();
+        $user->setEmail($email);
+        $user->setPassword('');
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
     }
 
 }

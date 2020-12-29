@@ -34,13 +34,11 @@ class UserEditFormType extends AbstractType
             ->add( 'id', TextType::class, ['disabled'=>true] )
             ->add( 'email', TextType::class, ['disabled'=>true] )
             ->add( 'rolesstr', TextType::class )
-            ->add( 'enabled', CheckboxType::class )
+            ->add( 'enabled', CheckboxType::class, ['required'=>false] )
             ->add( 'password', PasswordType::class, ['required'=>false] )
             ->add( 'password2', PasswordType::class, ['required'=>false] )
 
             ->add('save', SubmitType::class );
-
-        $builder->setMethod('get' );
     }
 
     /**

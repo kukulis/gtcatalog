@@ -8,15 +8,14 @@
 
 namespace Gt\Catalog\Controller;
 
-
 use Gt\Catalog\Exception\CatalogValidateException;
+use Gt\Catalog\Form\UserAddFormType;
 use Gt\Catalog\Form\UserEditFormType;
 use Gt\Catalog\Form\UsersFilterFormType;
 use Gt\Catalog\Services\UsersService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class UsersController extends AbstractController
 {
@@ -61,9 +60,8 @@ class UsersController extends AbstractController
                 if (!empty($userFormType->getPassword())) {
                     $usersService->storePassword($user, $userFormType->getPassword(), $userFormType->getPassword2());
                 }
-                // TODO validate and update password
+                return $this->redirectToRoute('gt.catalog.users_list');
             }
-
 
             return $this->render('@Catalog/users/edit.html.twig', [
                 'id' => $id,
@@ -76,12 +74,27 @@ class UsersController extends AbstractController
         }
     }
 
-    public function addFormAction() {
-        return new Response('TODO add form');
-    }
+    public function addFormAction(Request  $request, UsersService  $usersService) {
 
-    public function addAction() {
-        return new Response('TODO add');
+        try {
+            $userAddFormType = new UserAddFormType();
+            $form = $this->createForm(UserAddFormType::class, $userAddFormType);
+
+            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                $usersService->addUser($userAddFormType->getEmail());
+
+                return $this->redirectToRoute('gt.catalog.users_list');
+            }
+
+            return $this->render('@Catalog/users/add.html.twig', [
+                'form' => $form->createView(),
+            ]);
+        } catch (CatalogValidateException $e ) {
+            return $this->render('@Catalog/error/error.html.twig', [
+            'error' => $e->getMessage(),
+        ]);
+}
     }
 
 }
