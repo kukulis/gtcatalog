@@ -4,6 +4,7 @@ namespace Gt\Catalog\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Gt\Catalog\Data\IUsersFilter;
 use Gt\Catalog\Entity\User;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
@@ -28,12 +29,29 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function upgradePassword(UserInterface $user, string $newEncodedPassword): void
     {
         if (!$user instanceof User) {
-            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', \get_class($user)));
+            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', get_class($user)));
         }
 
         $user->setPassword($newEncodedPassword);
         $this->_em->persist($user);
         $this->_em->flush();
+    }
+
+    /**
+     * @param IUsersFilter $filter
+     * @return User[]
+     */
+    public function findByFilter(IUsersFilter $filter) {
+        $builder = $this->createQueryBuilder('u');
+        $builder->setMaxResults($filter->getLimit());
+        if ( !empty($filter->getLikeName())) {
+            $builder->andWhere('u.email like :likeName');
+            $builder->setParameter('likeName', '%'.$filter->getLikeName(). '%');
+        }
+
+        /** @var User[] $users */
+        $users = $builder->getQuery()->getResult();
+        return $users;
     }
 
     // /**
@@ -64,4 +82,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         ;
     }
     */
+
+    public function getAll($limit) {
+
+    }
 }

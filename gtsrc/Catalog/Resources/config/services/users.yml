@@ -1,0 +1,11 @@
+services:
+  # ---------------- users ---------------------------------------------
+    gt.catalog.users_service:
+        class: 'Gt\Catalog\Services\UsersService'
+        arguments:
+            - '@logger'
+            - '@doctrine.orm.entity_manager'
+
+
+
+

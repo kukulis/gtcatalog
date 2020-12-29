@@ -9,16 +9,38 @@
 namespace Gt\Catalog\Controller;
 
 
+use Gt\Catalog\Form\UsersFilterFormType;
+use Gt\Catalog\Services\UsersService;
+use Psr\Log\LoggerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class UsersController
+class UsersController extends AbstractController
 {
-    public function listAction() {
-        return new Response('TODO list');
+    public function listAction( Request  $request, LoggerInterface  $logger, UsersService  $usersService ) {
+
+
+        $logger->debug('listAction called' );
+
+        $filter = new UsersFilterFormType();
+
+        $form = $this->createForm( UsersFilterFormType::class, $filter );
+        $form->handleRequest($request);
+
+        $users = $usersService->getFilteredUsers($filter);
+
+        return $this->render('@Catalog/users/list.html.twig', [
+            'users' => $users,
+            'filterForm' => $form->createView(),
+        ]);
     }
 
-    public function editFormAction() {
-        return new Response('TODO edit form');
+    public function editFormAction($id) {
+        return $this->render('@Catalog/users/edit.html.twig', [
+            'id' => $id,
+//            'filterForm' => $form->createView(),
+        ]);
     }
 
     public function updateAction() {

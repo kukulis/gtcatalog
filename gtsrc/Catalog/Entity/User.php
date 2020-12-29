@@ -34,6 +34,12 @@ class User implements UserInterface
      */
     private $password;
 
+    /**
+     * @var bool
+     * @ORM\Column(type="boolean", name="enabled", nullable=true, options={"default":1})
+     */
+    private $enabled=true;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -110,5 +116,25 @@ class User implements UserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnabled(): bool
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * @param bool $enabled
+     */
+    public function setEnabled(bool $enabled): void
+    {
+        $this->enabled = $enabled;
+    }
+
+    public function getRolesStr() {
+        return join ( ',', $this->roles );
     }
 }

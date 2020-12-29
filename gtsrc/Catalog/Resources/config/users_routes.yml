@@ -2,3 +2,23 @@ gt.catalog.users_list:
     path: "/users"
     controller:  Gt\Catalog\Controller\UsersController::listAction
     methods: GET
+
+gt.catalog.users_add_form:
+    path: "/user/add_form"
+    controller:  Gt\Catalog\Controller\UsersController::addFormAction
+    methods: GET
+
+gt.catalog.users_add:
+    path: "/user/add"
+    controller:  Gt\Catalog\Controller\UsersController::addAction
+    methods: GET,POST
+
+gt.catalog.users_edit_form:
+    path: "/user/edit/{id}"
+    controller:  Gt\Catalog\Controller\UsersController::editFormAction
+    methods: GET
+
+gt.catalog.users_update:
+    path: "/user/update/{id}"
+    controller:  Gt\Catalog\Controller\UsersController::updateAction
+    methods: POST

@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Users list{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                {{ form(filterForm) }}
+            </div>
+            <div class="col-md-12">
+                <div>
+                    <a href="{{ path('gt.catalog.users_add_form') }}">Add</a>
+                </div>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>login/email</th>
+                            <th>roles</th>
+                            <th>enabled</th>
+                            <th>actions</th>
+                        </tr>
+                    </thead>
+                    {% for u in users %}
+                        <tr>
+                            <td>{{ u.id }}</td>
+                            <td>{{ u.email }}</td>
+                            <td>{{ u.rolesstr }}</td>
+                            <td>{{ u.enabled }}</td>
+                            <td><a href="{{ path( 'gt.catalog.users_edit_form', {id:u.id}) }}">Edit</a></td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
