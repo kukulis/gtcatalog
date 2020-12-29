@@ -13,12 +13,8 @@ gt.catalog.users_add:
     controller:  Gt\Catalog\Controller\UsersController::addAction
     methods: GET,POST
 
-gt.catalog.users_edit_form:
+gt.catalog.users_edit:
     path: "/user/edit/{id}"
-    controller:  Gt\Catalog\Controller\UsersController::editFormAction
+    controller:  Gt\Catalog\Controller\UsersController::editAction
     methods: GET
 
-gt.catalog.users_update:
-    path: "/user/update/{id}"
-    controller:  Gt\Catalog\Controller\UsersController::updateAction
-    methods: POST

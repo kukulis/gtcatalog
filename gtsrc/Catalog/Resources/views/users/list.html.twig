@@ -28,7 +28,7 @@
                             <td>{{ u.email }}</td>
                             <td>{{ u.rolesstr }}</td>
                             <td>{{ u.enabled }}</td>
-                            <td><a href="{{ path( 'gt.catalog.users_edit_form', {id:u.id}) }}">Edit</a></td>
+                            <td><a href="{{ path( 'gt.catalog.users_edit', {id:u.id}) }}">Edit</a></td>
                         </tr>
                     {% endfor %}
                 </table>

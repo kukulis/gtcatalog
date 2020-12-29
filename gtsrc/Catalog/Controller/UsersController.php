@@ -9,6 +9,8 @@
 namespace Gt\Catalog\Controller;
 
 
+use Gt\Catalog\Exception\CatalogValidateException;
+use Gt\Catalog\Form\UserEditFormType;
 use Gt\Catalog\Form\UsersFilterFormType;
 use Gt\Catalog\Services\UsersService;
 use Psr\Log\LoggerInterface;
@@ -36,15 +38,42 @@ class UsersController extends AbstractController
         ]);
     }
 
-    public function editFormAction($id) {
-        return $this->render('@Catalog/users/edit.html.twig', [
-            'id' => $id,
-//            'filterForm' => $form->createView(),
-        ]);
-    }
+    public function editAction( Request $request, $id, UsersService  $usersService) {
+        // TODO validate user rights, as user may edit himself, and only admin may edit other users
+        $user = $usersService->getUser($id);
+        if ( $user == null ) {
+            return $this->render('@Catalog/error/error.html.twig', [
+                'error' => 'There is no user with id',
+            ]);
+        }
 
-    public function updateAction() {
-        return new Response('TODO update');
+        try {
+            $userFormType = new UserEditFormType();
+            $userFormType->setUser($user);
+
+            $form = $this->createForm(UserEditFormType::class, $userFormType);
+
+            $form->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                $usersService->storeUser($user);
+
+                if (!empty($userFormType->getPassword())) {
+                    $usersService->storePassword($user, $userFormType->getPassword(), $userFormType->getPassword2());
+                }
+                // TODO validate and update password
+            }
+
+
+            return $this->render('@Catalog/users/edit.html.twig', [
+                'id' => $id,
+                'form' => $form->createView(),
+            ]);
+        } catch (CatalogValidateException $e ) {
+            return $this->render('@Catalog/error/error.html.twig', [
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function addFormAction() {
