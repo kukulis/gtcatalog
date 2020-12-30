@@ -45,4 +45,8 @@ class ImportPicturesService
 
         return $jobs;
     }
+
+    public function handleJobs() {
+        $this->logger->debug('ImportPicturesService.handleJobs called' );
+    }
 }

@@ -4,3 +4,12 @@ services:
         arguments:
             - '@logger'
             - '@doctrine.orm.entity_manager'
+
+    gt.catalog.process_pictures_import_command:
+        class: 'Gt\Catalog\Command\ProcessPicturesImportCommand'
+        arguments:
+            - '@logger'
+            - '@gt.catalog.import_pictures_service'
+        tags:
+            - { name: 'console.command', command: 'catalog:process_pictures_import_jobs' }
+
