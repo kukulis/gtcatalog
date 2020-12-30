@@ -249,3 +249,13 @@ services:
         bind:
             $logger: '@logger'
             $usersService: '@gt.catalog.users_service'
+
+    Gt\Catalog\Repository\ImportPicturesJobRepository:
+        tags: [ 'doctrine.repository_service' ]
+
+    Gt\Catalog\Controller\ImagesImportController:
+        tags:
+            - "controller.service_arguments"
+        bind:
+            $logger: '@logger'
+            $importPicturesService: '@gt.catalog.import_pictures_service'

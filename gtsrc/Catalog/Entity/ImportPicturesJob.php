@@ -9,10 +9,11 @@
 namespace Gt\Catalog\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
+use Gt\Catalog\Repository\ImportPicturesJobRepository;
+use \DateTime;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass=ImportPicturesJobRepository::class)
  * @ORM\Table(name="import_pictures_job")
  */
 class ImportPicturesJob
@@ -34,14 +35,14 @@ class ImportPicturesJob
     private $id;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      * @ORM\Column(type="datetime", name="created_time")
      *
      */
     private $createdTime;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      * @ORM\Column(type="datetime", name="finished_time")
      *
      */
@@ -166,33 +167,33 @@ class ImportPicturesJob
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getCreatedTime(): \DateTime
+    public function getCreatedTime(): DateTime
     {
         return $this->createdTime;
     }
 
     /**
-     * @param \DateTime $createdTime
+     * @param DateTime $createdTime
      */
-    public function setCreatedTime(\DateTime $createdTime): void
+    public function setCreatedTime(DateTime $createdTime): void
     {
         $this->createdTime = $createdTime;
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getFinishedTime(): \DateTime
+    public function getFinishedTime(): DateTime
     {
         return $this->finishedTime;
     }
 
     /**
-     * @param \DateTime $finishedTime
+     * @param DateTime $finishedTime
      */
-    public function setFinishedTime(\DateTime $finishedTime): void
+    public function setFinishedTime(DateTime $finishedTime): void
     {
         $this->finishedTime = $finishedTime;
     }

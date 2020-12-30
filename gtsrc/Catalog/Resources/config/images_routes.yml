@@ -1,0 +1,4 @@
+gt.catalog.languages:
+    path: "/job_list"
+    controller: Gt\Catalog\Controller\ImagesImportController::jobList
+    methods: GET

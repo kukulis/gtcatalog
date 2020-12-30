@@ -87,8 +87,4 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         ;
     }
     */
-
-    public function getAll($limit) {
-
-    }
 }

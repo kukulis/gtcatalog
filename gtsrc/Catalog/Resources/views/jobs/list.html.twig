@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Pictures jobs list{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                {{ form(filterForm) }}
+            </div>
+            <div class="col-md-12">
+                <div>
+                    <a href="#">Add</a>
+                </div>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>id</th>
+                        </tr>
+                    </thead>
+                    {% for j in jobs %}
+                        <tr>
+                            <td>{{ j.id }}</td>
+                            <td><a href="#">Edit</a></td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -29,3 +29,6 @@ users_routes:
     resource: '@CatalogBundle/Resources/config/users_routes.yml'
     prefix: '/admin'
 
+images_routes:
+    resource: '@CatalogBundle/Resources/config/images_routes.yml'
+    prefix: '/admin'

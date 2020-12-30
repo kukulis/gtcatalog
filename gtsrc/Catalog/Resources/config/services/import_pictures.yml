@@ -1,0 +1,6 @@
+services:
+    gt.catalog.import_pictures_service:
+        class: 'Gt\Catalog\Services\ImportPicturesService'
+        arguments:
+            - '@logger'
+            - '@doctrine.orm.entity_manager'
