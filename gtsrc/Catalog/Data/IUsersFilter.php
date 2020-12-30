@@ -12,5 +12,6 @@ namespace Gt\Catalog\Data;
 interface IUsersFilter
 {
     public function getLimit();
+    public function getLikeEmail();
     public function getLikeName();
 }

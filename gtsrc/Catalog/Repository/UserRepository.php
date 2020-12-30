@@ -44,8 +44,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function findByFilter(IUsersFilter $filter) {
         $builder = $this->createQueryBuilder('u');
         $builder->setMaxResults($filter->getLimit());
-        if ( !empty($filter->getLikeName())) {
-            $builder->andWhere('u.email like :likeName');
+        if ( !empty($filter->getLikeEmail())) {
+            $builder->andWhere('u.email like :likeEmail');
+            $builder->setParameter('likeEmail', '%'.$filter->getLikeEmail(). '%');
+        }
+
+        if (!empty($filter->getLikeName())) {
+            $builder->andWhere('u.name like :likeName');
             $builder->setParameter('likeName', '%'.$filter->getLikeName(). '%');
         }
 

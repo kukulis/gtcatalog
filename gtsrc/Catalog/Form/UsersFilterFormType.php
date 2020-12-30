@@ -19,11 +19,14 @@ use Symfony\Component\Form\FormBuilderInterface;
 class UsersFilterFormType extends AbstractType implements IUsersFilter
 {
     private $limit=20;
+    private $likeEmail;
     private $likeName;
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('likeName', TextType::class, ['required'=>false] )
+        $builder
+            ->add('likeEmail', TextType::class, ['required'=>false] )
+            ->add('likeName', TextType::class, ['required'=>false] )
             ->add('limit', IntegerType::class)
             ->add('search', SubmitType::class );
 
@@ -35,9 +38,9 @@ class UsersFilterFormType extends AbstractType implements IUsersFilter
         return $this->limit;
     }
 
-    public function getLikeName()
+    public function getLikeEmail()
     {
-        return $this->likeName;
+        return $this->likeEmail;
     }
 
     /**
@@ -46,6 +49,22 @@ class UsersFilterFormType extends AbstractType implements IUsersFilter
     public function setLimit($limit): void
     {
         $this->limit = $limit;
+    }
+
+    /**
+     * @param mixed $likeEmail
+     */
+    public function setLikeEmail($likeEmail): void
+    {
+        $this->likeEmail = $likeEmail;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLikeName()
+    {
+        return $this->likeName;
     }
 
     /**

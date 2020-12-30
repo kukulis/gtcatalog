@@ -1,0 +1,54 @@
+gt.catalog.product_list:
+    path: "/products"
+    controller: Gt\Catalog\Controller\ProductsController::listAction
+    methods: GET
+
+gt.catalog.product_edit:
+    path: "/product/edit/{sku}/l/{languageCode}"
+    controller: Gt\Catalog\Controller\ProductsController::editAction
+    methods: [GET, POST]
+
+gt.catalog.product_delete:
+    path: "/product/delete/{sku}"
+    controller: Gt\Catalog\Controller\ProductsController::deleteAction
+    methods: DELETE
+
+gt.catalog.import_products_form:
+    path: "/products/import_form"
+    controller: Gt\Catalog\Controller\ProductsController::importProductsFormAction
+    methods: GET
+
+gt.catalog.import_products:
+    path: "/products/import"
+    controller: Gt\Catalog\Controller\ProductsController::importProductsAction
+    methods: POST
+
+gt.catalog.product_pictures_add_form:
+    path: "/product/{sku}/pictures/add_form"
+    controller: Gt\Catalog\Controller\ProductsController::addPictureForm
+    methods: GET
+
+gt.catalog.upload_picture:
+    path: "/product/{sku}/pictures/upload"
+    controller: Gt\Catalog\Controller\PicturesController::uploadPicture
+    methods: POST
+
+gt.catalog.product_pictures:
+    path: "/product/{sku}/pictures/"
+    controller: Gt\Catalog\Controller\PicturesController::picturesList
+    methods: GET
+
+gt.catalog.product_picture_delete:
+    path: "/product/{sku}/picture/{id_picture}/delete"
+    controller: Gt\Catalog\Controller\PicturesController::deletePicture
+    methods: GET
+
+gt.catalog.product_categories_edit_form:
+    path: "/product/{sku}/categories_edit_form"
+    controller: Gt\Catalog\Controller\ProductsController::editProductCategoriesFormAction
+    methods: GET
+
+gt.catalog.product_categories:
+  path: "/product/{sku}/update_categories"
+  controller: Gt\Catalog\Controller\ProductsController::updateProductCategoriesAction
+  methods: POST

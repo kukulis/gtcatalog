@@ -25,16 +25,25 @@ class UserEditFormType extends AbstractType
      */
     private $user;
 
+    private $enabled;
+    private $rolesstr;
+
     private $password;
     private $password2;
 
+    private $editorAdmin=false;
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        /** @var UserEditFormType $data */
+        $data = $options['data'];
+
         $builder
             ->add( 'id', TextType::class, ['disabled'=>true] )
             ->add( 'email', TextType::class, ['disabled'=>true] )
-            ->add( 'rolesstr', TextType::class )
-            ->add( 'enabled', CheckboxType::class, ['required'=>false] )
+            ->add( 'rolesstr', TextType::class, ['disabled'=> ! $data->isEditorAdmin()] )
+            ->add( 'enabled', CheckboxType::class, ['required'=>false, 'disabled'=> ! $data->isEditorAdmin()] )
+            ->add( 'name', TextType::class, ['label'=>'Vardas (ir Pavardė)'] )
             ->add( 'password', PasswordType::class, ['required'=>false] )
             ->add( 'password2', PasswordType::class, ['required'=>false] )
 
@@ -49,7 +58,6 @@ class UserEditFormType extends AbstractType
         $this->user = $user;
     }
 
-
     public function getId() {
         return $this->user->getId();
     }
@@ -58,32 +66,36 @@ class UserEditFormType extends AbstractType
         return $this->user->getEmail();
     }
 
-    public function getRolesstr() {
-        return $this->user->getRolesStr();
+    /**
+     * @return mixed
+     */
+    public function getEnabled()
+    {
+        return $this->enabled;
     }
 
-    public function isEnabled() {
-        return $this->user->isEnabled();
+    /**
+     * @param mixed $enabled
+     */
+    public function setEnabled($enabled): void
+    {
+        $this->enabled = $enabled;
     }
 
-
-//    public function setId( $id ) {
-//        $this->user->setId($id);
-//    }
-//
-//    public function setEmail($email) {
-//        $this->user->setEmail($email);
-//    }
-
-    public function setRolesstr($str) {
-        $roles = explode ( ',', $str );
-        $rolesClean = array_map ( 'trim', $roles );
-        $rolesFiltered = array_filter($rolesClean, function($role) {return !empty($role);});
-        $this->user->setRoles($rolesFiltered);
+    /**
+     * @param mixed $rolesstr
+     */
+    public function setRolesstr($rolesstr): void
+    {
+        $this->rolesstr = $rolesstr;
     }
 
-    public function setEnabled($enabled) {
-        $this->user->setEnabled($enabled);
+    /**
+     * @return mixed
+     */
+    public function getRolesstr()
+    {
+        return $this->rolesstr;
     }
 
     /**
@@ -116,5 +128,29 @@ class UserEditFormType extends AbstractType
     public function setPassword2($password2): void
     {
         $this->password2 = $password2;
+    }
+
+    public function getName() {
+        return $this->user->getName();
+    }
+
+    public function setName ( $name ) {
+        $this->user->setName($name);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEditorAdmin(): bool
+    {
+        return $this->editorAdmin;
+    }
+
+    /**
+     * @param bool $editorAdmin
+     */
+    public function setEditorAdmin(bool $editorAdmin): void
+    {
+        $this->editorAdmin = $editorAdmin;
     }
 }

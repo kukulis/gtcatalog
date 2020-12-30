@@ -2,21 +2,28 @@
 #    path: /
 #    controller: App\Controller\DefaultController::index
 
-
 catalog_routes:
     resource: '@CatalogBundle/Resources/config/routes.yml'
 
+products_routes:
+    resource: '@CatalogBundle/Resources/config/products_routes.yml'
+    prefix: '/admin'
+
 languages_routes:
     resource: '@CatalogBundle/Resources/config/languages_routes.yml'
+    prefix: '/admin'
 
 classificator_groups_routes:
     resource: '@CatalogBundle/Resources/config/classificator_groups_routes.yml'
+    prefix: '/admin'
 
 classificators_routes:
     resource: '@CatalogBundle/Resources/config/classificators_routes.yml'
+    prefix: '/admin'
 
 categories_routes:
     resource: '@CatalogBundle/Resources/config/categories_routes.yml'
+    prefix: '/admin'
 
 users_routes:
     resource: '@CatalogBundle/Resources/config/users_routes.yml'

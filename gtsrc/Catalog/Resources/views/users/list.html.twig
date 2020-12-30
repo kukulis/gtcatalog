@@ -17,6 +17,7 @@
                         <tr>
                             <th>id</th>
                             <th>login/email</th>
+                            <th>name</th>
                             <th>roles</th>
                             <th>enabled</th>
                             <th>actions</th>
@@ -26,6 +27,7 @@
                         <tr>
                             <td>{{ u.id }}</td>
                             <td>{{ u.email }}</td>
+                            <td>{{ u.name }}</td>
                             <td>{{ u.rolesstr }}</td>
                             <td>{{ u.enabled }}</td>
                             <td><a href="{{ path( 'gt.catalog.users_edit', {id:u.id}) }}">Edit</a></td>

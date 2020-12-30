@@ -11,6 +11,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class User implements UserInterface
 {
+    const ROLE_ADMIN = 'ROLE_ADMIN';
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -39,6 +41,14 @@ class User implements UserInterface
      * @ORM\Column(type="boolean", name="enabled", nullable=true, options={"default":1})
      */
     private $enabled=true;
+
+
+    /**
+     * @var string The hashed password
+     * @ORM\Column(type="string")
+     */
+    private $name;
+
 
     public function getId(): ?int
     {
@@ -136,5 +146,25 @@ class User implements UserInterface
 
     public function getRolesStr() {
         return join ( ',', $this->roles );
+    }
+
+    public function isAdmin() {
+         return array_search( self::ROLE_ADMIN, $this->roles) !== false;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName(string $name): void
+    {
+        $this->name = $name;
     }
 }

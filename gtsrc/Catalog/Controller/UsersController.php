@@ -8,6 +8,7 @@
 
 namespace Gt\Catalog\Controller;
 
+use Gt\Catalog\Entity\User;
 use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Form\UserAddFormType;
 use Gt\Catalog\Form\UserEditFormType;
@@ -38,7 +39,7 @@ class UsersController extends AbstractController
     }
 
     public function editAction( Request $request, $id, UsersService  $usersService) {
-        // TODO validate user rights, as user may edit himself, and only admin may edit other users
+
         $user = $usersService->getUser($id);
         if ( $user == null ) {
             return $this->render('@Catalog/error/error.html.twig', [
@@ -47,14 +48,31 @@ class UsersController extends AbstractController
         }
 
         try {
+            /** @var User $currentUser */
+            $currentUser = $this->getUser();
+            if ( !$currentUser->isAdmin() && $currentUser->getId() != $user->getId() ) {
+                throw new CatalogValidateException('Only admin may edit other users' );
+            }
+
             $userFormType = new UserEditFormType();
             $userFormType->setUser($user);
+            $userFormType->setEditorAdmin($currentUser->isAdmin());
+            $userFormType->setEnabled($user->isEnabled());
+            $userFormType->setRolesstr($user->getRolesStr());
 
-            $form = $this->createForm(UserEditFormType::class, $userFormType);
+            $form = $this->createForm(UserEditFormType::class, $userFormType );
 
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
+                if ( $currentUser->isAdmin()) {
+                    $user->setEnabled($userFormType->getEnabled());
+
+                    $roles = explode ( ',', $userFormType->getRolesstr());
+                    $rolesClean = array_map ( 'trim', $roles );
+                    $rolesFiltered = array_filter($rolesClean, function($role) {return !empty($role);});
+                    $user->setRoles($rolesFiltered);
+                }
                 $usersService->storeUser($user);
 
                 if (!empty($userFormType->getPassword())) {
