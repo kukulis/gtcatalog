@@ -20,4 +20,10 @@ class PicturesHelperTest extends TestCase
         $this->assertEquals ( 'Vi_nas_Du.jpg', PicturesHelper::canonizePictureName('Viėnasąęėįšųūž„Du.jpg'));
         $this->assertEquals ( 'Vienas_Du.jpg', PicturesHelper::canonizePictureName('Vienasąęėįšųūž„Du.jpg'));
     }
+
+    public function testPrefixWithSlash() {
+        $this->assertEquals('/aaa', PicturesHelper::prefixWithSlash('aaa'));
+        $this->assertEquals('/aaa', PicturesHelper::prefixWithSlash('/aaa'));
+        $this->assertEquals(null, PicturesHelper::prefixWithSlash(null));
+    }
 }

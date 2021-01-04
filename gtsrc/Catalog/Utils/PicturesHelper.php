@@ -38,4 +38,14 @@ class PicturesHelper
         }
         return join($pathSeparator, $pathElems);
     }
+
+    public static function prefixWithSlash ($str) {
+        if ( $str == null ) {
+            return $str;
+        }
+        if (!(strpos($str, '/') === 0) ) {
+            return  '/'.$str;
+        }
+        return $str;
+    }
 }

@@ -16,7 +16,9 @@ use Gt\Catalog\Entity\CategoryLanguage;
 use Gt\Catalog\Entity\ClassificatorLanguage;
 use Gt\Catalog\Entity\ProductLanguage;
 use Gt\Catalog\Entity\ProductPicture;
+use Gt\Catalog\Utils\PicturesHelper;
 use Gt\Catalog\Utils\PropertiesHelper;
+use phpDocumentor\Reflection\Utils;
 
 class ProductToKatalogasPrekeMapper
 {
@@ -139,9 +141,7 @@ class ProductToKatalogasPrekeMapper
                 $nuotrauka->id = $pp->getPicture()->getId();
 
                 if ($nuotrauka->uri != null) {
-                    if (!strpos($nuotrauka->uri, '/') === 0 ) {
-                        $nuotrauka->uri = '/'.$nuotrauka->uri;
-                    }
+                    $nuotrauka->uri = PicturesHelper::prefixWithSlash($nuotrauka->uri);
                 }
 
                 $kp->Nuotraukos->{$property} = $nuotrauka;
