@@ -138,6 +138,12 @@ class ProductToKatalogasPrekeMapper
                 $nuotrauka->imageId = $pp->getPicture()->getId();
                 $nuotrauka->id = $pp->getPicture()->getId();
 
+                if ($nuotrauka->uri != null) {
+                    if (!strpos($nuotrauka->uri, '/') === 0 ) {
+                        $nuotrauka->uri = '/'.$nuotrauka->uri;
+                    }
+                }
+
                 $kp->Nuotraukos->{$property} = $nuotrauka;
             }
         }
