@@ -9,7 +9,8 @@
 namespace Gt\Catalog\Services\Rest;
 
 
-use Catalog\B2b\Common\Data\Catalog\KatalogasPreke;
+//use Catalog\B2b\Common\Data\Catalog\KatalogasPreke;
+use Catalog\B2b\Common\Data\Legacy\Catalog\KatalogasPreke;
 use Gt\Catalog\Dao\CatalogDao;
 use Gt\Catalog\Dao\CategoryDao;
 use Gt\Catalog\Dao\PicturesDao;

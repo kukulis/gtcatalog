@@ -3,12 +3,12 @@ insert ignore into classificators_groups ( code, name)
 select distinct group_code, group_code from tmp_classificators;
 
 -- 2 classificators
-insert ignore into classificators (code, group_code) select classificator_code, group_code from tmp_classificators;
+insert ignore into classificators (code, `group`) select classificator_code, group_code from tmp_classificators;
 
 
 -- select * from classificators where code='-'
 -- 3 classificators languages
-insert ignore into classificator_lang (language_code, classificator_code, value) SELECT language_code, classificator_code, value from tmp_classificators;
+insert ignore into classificator_lang (language, classificator, name) SELECT language_code, classificator_code, value from tmp_classificators;
 
 -- 4 products
 insert ignore into products (
@@ -155,8 +155,9 @@ update tmp_products_categories set depth=0 where parent is null;
 -- set c_child.depth=c_parent.depth+1
 -- where c_parent.depth is not null;
 
-insert into tmp_categories ( category, parent, depth)
-select category, parent, null from tmp_products_categories
+truncate tmp_categories;
+insert ignore into tmp_categories ( category, parent, depth)
+select category, parent, null from tmp_products_categories;
 
 update tmp_categories set depth=0 where parent is null;
 
@@ -250,7 +251,7 @@ set tp.picture_id = p.id;
 
 -- select * from tmp_products_pictures where picture_id is null;
 -- 10 product images ?
-insert into products_pictures (
+insert ignore into products_pictures (
 priority,
 sku,
 picture_id)

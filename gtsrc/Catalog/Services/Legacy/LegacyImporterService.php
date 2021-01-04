@@ -156,7 +156,7 @@ class LegacyImporterService
         $pics = $this->tmpDao->getAllUnuploadedTmpPictures();
         $count = 0;
         for ( $i=0; $i <= count($pics); $i+= self::STEP ) {
-            $this->logger->debug ( 'from '.$i.' and url '.$url );
+            $this->logger->debug ( 'from '.$i.' (of '.count($pics). ') and url '.$url );
             $part = array_slice($pics, $i, self::STEP);
             $count += $this->downloadPartPictures($url, $part);
         }

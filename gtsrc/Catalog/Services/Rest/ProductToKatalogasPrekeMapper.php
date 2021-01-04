@@ -87,8 +87,8 @@ class ProductToKatalogasPrekeMapper
             $categoriesClassificators[]  = $categoryClassificator;
         }
 
-        $kp->Atributai->kategorijos =  join ( ',', $categoriesCodes);
-        $kp->Atributai->kategorijos_titles =  join (',', $categoriesTitles);
+        $kp->Atributai->kategorijos = $categoriesCodes; // join ( ',', $categoriesCodes);
+        $kp->Atributai->kategorijos_titles = $categoriesTitles; // join (',', $categoriesTitles);
         $kp->categories = $categoriesClassificators;
 
         $kp->Aprasymas->pavadinimas            = $pl->getName();
