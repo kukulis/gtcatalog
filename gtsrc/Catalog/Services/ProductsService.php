@@ -421,7 +421,7 @@ class ProductsService extends ProductsBaseService
                     }
                 }
 
-                $this->catalogDao->importClassificators($classificators);
+                $this->catalogDao->importClassificators($classificators, $head);
                 // langs too without update ?
             }
 
