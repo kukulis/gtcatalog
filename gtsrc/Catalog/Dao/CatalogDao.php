@@ -14,7 +14,6 @@ use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMException;
 use Gt\Catalog\Data\ProductsFilter;
-use Gt\Catalog\Entity\CategoryLanguage;
 use Gt\Catalog\Entity\Classificator;
 use Gt\Catalog\Entity\ClassificatorLanguage;
 use Gt\Catalog\Entity\Product;
@@ -431,8 +430,9 @@ class CatalogDao extends BaseDao
      * @return int
      */
     public function importClassificatorsLangs ( $cls, $givenFieldsSet ) {
+        $givenFieldsSet['language'] = 1;
         $givenFields = array_keys($givenFieldsSet);
-        $givenFields = array_merge ( $givenFields, ['classificator', 'language'] );
+        $givenFields = array_merge ( $givenFields, ['classificator'] );
         $importingFields = array_intersect($givenFields, ClassificatorLanguage::ALLOWED_FIELDS );
         // skip updates
         $skipUpdates = ['classificator', 'language' ];
