@@ -155,7 +155,7 @@ class User implements UserInterface
     /**
      * @return string
      */
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -163,7 +163,7 @@ class User implements UserInterface
     /**
      * @param string $name
      */
-    public function setName(string $name): void
+    public function setName(string $name=null): void
     {
         $this->name = $name;
     }
