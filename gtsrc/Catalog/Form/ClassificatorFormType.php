@@ -25,7 +25,7 @@ class ClassificatorFormType extends AbstractType
                 'choice_label' => 'name'
             ])
             ->add('value', TextType::class )
-            ->add('customscode', TextType::class )
+            ->add('customscode', TextType::class, ['required'=>false] )
             ->add('save', SubmitType::class, ['label'=>'Saugoti'])
         ;
     }
