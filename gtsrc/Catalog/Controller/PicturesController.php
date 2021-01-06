@@ -92,4 +92,9 @@ class PicturesController  extends AbstractController
             ]);
         }
     }
+
+    public function editPicture ( $sku, $id_picture, PicturesService $picturesService) {
+        // TODO
+        return new Response('TODO edit picture' );
+    }
 }

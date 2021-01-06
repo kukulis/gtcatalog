@@ -20,6 +20,7 @@
                                   alt="{{ pp.picture.name }}"
                                   src="{{ pp.picture.configuredPath }}"
                             /></td>
+                        <td><a href="{{ path('gt.catalog.product_picture_edit', {sku: pp.product.sku, id_picture: pp.picture.id }) }}">Edit</a></td>
                         <td><a href="{{ path('gt.catalog.product_picture_delete', {sku: pp.product.sku, id_picture: pp.picture.id }) }}">X</a></td>
                     </tr>
                 {% endfor %}

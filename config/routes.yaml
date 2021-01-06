@@ -9,6 +9,10 @@ products_routes:
     resource: '@CatalogBundle/Resources/config/products_routes.yml'
     prefix: '/admin'
 
+pictures_routes:
+    resource: '@CatalogBundle/Resources/config/pictures_routes.yml'
+    prefix: '/admin'
+
 languages_routes:
     resource: '@CatalogBundle/Resources/config/languages_routes.yml'
     prefix: '/admin'

@@ -44,7 +44,7 @@ class ImportCustomsNumbersCommand extends Command
 
     protected function configure()
     {
-        $this->setDescription('Imports tmp data from the legacy rest' );
+        $this->setDescription('Imports global customs numbers from csv to catalog ...' );
         $this->addArgument(self::FILE, InputArgument::REQUIRED, 'Iš kokio failo importuoti kodus' );
     }
 

@@ -36,6 +36,25 @@ class Picture
      */
     private $reference;
 
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true, length=64)
+     */
+    private $info_provider;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true, length=16)
+     */
+    private $version;
+
+    /**
+     * @var int
+     * @ORM\Column(type="integer", length=16, options={"default":1})
+     */
+    private $sequenceNumber=1;
+
+
     // -- not stored to db
     private $configuredPath;
 
@@ -101,5 +120,53 @@ class Picture
     public function setReference(string $reference): void
     {
         $this->reference = $reference;
+    }
+
+    /**
+     * @return string
+     */
+    public function getInfoProvider(): ?string
+    {
+        return $this->info_provider;
+    }
+
+    /**
+     * @param string $info_provider
+     */
+    public function setInfoProvider(string $info_provider=null): void
+    {
+        $this->info_provider = $info_provider;
+    }
+
+    /**
+     * @return string
+     */
+    public function getVersion(): ?string
+    {
+        return $this->version;
+    }
+
+    /**
+     * @param string $version
+     */
+    public function setVersion(string $version=null): void
+    {
+        $this->version = $version;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSequenceNumber(): int
+    {
+        return $this->sequenceNumber;
+    }
+
+    /**
+     * @param int $sequenceNumber
+     */
+    public function setSequenceNumber(int $sequenceNumber): void
+    {
+        $this->sequenceNumber = $sequenceNumber;
     }
 }

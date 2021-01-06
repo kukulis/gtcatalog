@@ -1,0 +1,25 @@
+gt.catalog.product_pictures_add_form:
+  path: "/product/{sku}/pictures/add_form"
+  controller: Gt\Catalog\Controller\ProductsController::addPictureForm
+  methods: GET
+
+gt.catalog.upload_picture:
+  path: "/product/{sku}/pictures/upload"
+  controller: Gt\Catalog\Controller\PicturesController::uploadPicture
+  methods: POST
+
+gt.catalog.product_pictures:
+  path: "/product/{sku}/pictures/"
+  controller: Gt\Catalog\Controller\PicturesController::picturesList
+  methods: GET
+
+gt.catalog.product_picture_delete:
+  path: "/product/{sku}/picture/{id_picture}/delete"
+  controller: Gt\Catalog\Controller\PicturesController::deletePicture
+  methods: GET
+
+
+gt.catalog.product_picture_edit:
+  path: "/product/{sku}/picture/{id_picture}/edit"
+  controller: Gt\Catalog\Controller\PicturesController::editPicture
+  methods: [GET,POST]
