@@ -96,6 +96,8 @@ class TmpDao
          'legacy_id',
          'url',
          'name',
+         'info_provider',
+         'statusas',
     ];
 
     /** @var LoggerInterface */

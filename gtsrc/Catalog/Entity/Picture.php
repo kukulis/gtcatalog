@@ -46,7 +46,7 @@ class Picture
      * @var string
      * @ORM\Column(type="string", nullable=true, length=16)
      */
-    private $version;
+    private $statusas;
 
 
 
@@ -136,17 +136,17 @@ class Picture
     /**
      * @return string
      */
-    public function getVersion(): ?string
+    public function getStatusas(): ?string
     {
-        return $this->version;
+        return $this->statusas;
     }
 
     /**
-     * @param string $version
+     * @param string $statusas
      */
-    public function setVersion(string $version=null): void
+    public function setStatusas(string $statusas=null): void
     {
-        $this->version = $version;
+        $this->statusas = $statusas;
     }
 
 }

@@ -61,7 +61,9 @@ create table tmp_products_pictures
 	picture_id int null,
 	legacy_id varchar(64) primary key ,
 	url varchar(255),
-	name varchar (255)
+	name varchar (255),
+    info_provider varchar(64),
+    statusas varchar(16)
 );
 
 

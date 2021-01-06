@@ -17,7 +17,8 @@
                     <th>picture id</th>
                     <th>picture name</th>
                     <th>image</th>
-                    <th>version</th>
+                    <th>status</th>
+                    <th>info provider</th>
                     <th>reference</th>
                     <th>priority</th>
                     <th>actions</th>
@@ -33,7 +34,10 @@
                                   src="{{ pp.picture.configuredPath }}"
                             /></td>
                         <td>
-                            {{ pp.picture.version }}
+                            {{ pp.picture.statusas }}
+                        </td>
+                        <td>
+                            {{ pp.picture.infoProvider }}
                         </td>
                         <td>
                             {{ pp.picture.reference }}

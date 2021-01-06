@@ -24,7 +24,7 @@ class PictureFormType  extends AbstractType
         $builder
             ->add('reference'    , TextType::class, ['required'=>false])
             ->add('infoProvider' , TextType::class, ['required'=>false] )
-            ->add('version'      , TextType::class, ['required'=>false] )
+            ->add('statusas'     , TextType::class, ['required'=>false] )
             ->add('priority'     , TextType::class)
             ->add('save'         , SubmitType::class, ['label'=>'Saugoti'])
         ;
@@ -65,17 +65,17 @@ class PictureFormType  extends AbstractType
     /**
      * @return mixed
      */
-    public function getVersion()
+    public function getStatusas()
     {
-        return $this->productPicture->getPicture()->getVersion();
+        return $this->productPicture->getPicture()->getStatusas();
     }
 
     /**
      * @param mixed $version
      */
-    public function setVersion($version): void
+    public function setStatusas($version): void
     {
-        $this->productPicture->getPicture()->setVersion($version);
+        $this->productPicture->getPicture()->setStatusas($version);
     }
 
     /**

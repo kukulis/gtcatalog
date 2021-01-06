@@ -11,11 +11,13 @@ namespace Gt\Catalog\Services\Legacy;
 
 class TmpProductPicture
 {
-    public $priority;
+    public $priority;   // priority ??
     public $sku;
     public $picture_id;
-    public $legacy_id; // key
+    public $legacy_id; // key, reference
     public $url;
     public $name;
     public $is_downloaded;
+    public $info_provider;
+    public $statusas;
 }

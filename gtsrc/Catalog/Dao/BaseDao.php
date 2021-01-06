@@ -45,7 +45,7 @@ class BaseDao
      * @param $subobjectProperty
      * @return string
      */
-    public function buildImportSql( $dataArray, $fields, $updatedFields, Closure $quoter, $subobjectProperty, $tableName) {
+    public static function buildImportSql( $dataArray, $fields, $updatedFields, Closure $quoter, $subobjectProperty, $tableName) {
         $rows = [];
         foreach ($dataArray as $dataObj ) {
             $values = PropertiesHelper::getValuesArray($dataObj, $fields, $subobjectProperty);

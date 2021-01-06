@@ -200,6 +200,8 @@ class TmpProductMapper
                 $tmpProductPicture->legacy_id        = $nuotrauka->imageId;
                 $tmpProductPicture->url              = $nuotrauka->uri;
                 $tmpProductPicture->name             = $nuotrauka->fileName;
+                $tmpProductPicture->statusas          = $kp->Nuotraukos->statusas;
+                $tmpProductPicture->info_provider    = $kp->Nuotraukos->info_provider;
 
                 $tmpProductPictures[] = $tmpProductPicture;
             }
