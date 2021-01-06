@@ -1,0 +1,26 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block title %}{% trans %}Picture edit{% endtrans %}{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        {# picture itself #}
+        <div class="row">
+            <div class="col-md-12">
+            <img  alt="{{ productPicture.picture.name }}"
+                  src="{{ productPicture.picture.configuredPath }}" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                sku: {{ productPicture.product.sku }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                {{ form(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

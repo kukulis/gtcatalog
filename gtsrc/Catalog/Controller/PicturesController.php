@@ -10,6 +10,8 @@ namespace Gt\Catalog\Controller;
 
 
 use Gt\Catalog\Exception\CatalogErrorException;
+use Gt\Catalog\Exception\CatalogValidateException;
+use Gt\Catalog\Form\PictureFormType;
 use Gt\Catalog\Services\PicturesService;
 use Gt\Catalog\Services\ProductsService;
 use Psr\Log\LoggerInterface;
@@ -93,8 +95,54 @@ class PicturesController  extends AbstractController
         }
     }
 
-    public function editPicture ( $sku, $id_picture, PicturesService $picturesService) {
-        // TODO
-        return new Response('TODO edit picture' );
+    /**
+     * @param Request $request
+     * @param $sku
+     * @param $id_picture
+     * @param PicturesService $picturesService
+     * @return Response
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function editPicture ( Request $request, $sku, $id_picture, PicturesService $picturesService) {
+        // 1 load product picture
+        $productPicture = $picturesService->getProductPicture($sku, $id_picture );
+
+        if ( $productPicture == null ) {
+            return $this->render('@Catalog/error/error.html.twig', [
+                'error' => 'can\'t find '.$id_picture.' for product '.$sku,
+            ]);
+        }
+
+        try {
+            // 2 form
+            $formType = new PictureFormType();
+            $formType->setProductPicture($productPicture);
+
+            $form = $this->createForm(PictureFormType::class, $formType);
+            $form->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                // 3 save
+                $picturesService->storeProductPictureWithPicture($productPicture);
+                // redirect?
+            }
+
+            // 4 view
+            // calculate picture path
+            $picture = $productPicture->getPicture();
+            $path = '/'. $picturesService->calculatePicturePath($picture->getId(), $picture->getName(), '/');
+            $picture->setConfiguredPath($path);
+
+            return $this->render('@Catalog/pictures/edit.html.twig',
+                [
+                    'productPicture' => $productPicture,
+                    'form' => $form->createView(),
+                ]);
+        } catch (CatalogValidateException $e ) {
+            return $this->render('@Catalog/error/error.html.twig', [
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }

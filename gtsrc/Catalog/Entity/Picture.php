@@ -40,7 +40,7 @@ class Picture
      * @var string
      * @ORM\Column(type="string", nullable=true, length=64)
      */
-    private $info_provider;
+    private $infoProvider;
 
     /**
      * @var string
@@ -48,11 +48,6 @@ class Picture
      */
     private $version;
 
-    /**
-     * @var int
-     * @ORM\Column(type="integer", length=16, options={"default":1})
-     */
-    private $sequenceNumber=1;
 
 
     // -- not stored to db
@@ -109,7 +104,7 @@ class Picture
     /**
      * @return string
      */
-    public function getReference(): string
+    public function getReference(): ?string
     {
         return $this->reference;
     }
@@ -117,7 +112,7 @@ class Picture
     /**
      * @param string $reference
      */
-    public function setReference(string $reference): void
+    public function setReference(string $reference=null): void
     {
         $this->reference = $reference;
     }
@@ -127,7 +122,7 @@ class Picture
      */
     public function getInfoProvider(): ?string
     {
-        return $this->info_provider;
+        return $this->infoProvider;
     }
 
     /**
@@ -135,7 +130,7 @@ class Picture
      */
     public function setInfoProvider(string $info_provider=null): void
     {
-        $this->info_provider = $info_provider;
+        $this->infoProvider = $info_provider;
     }
 
     /**
@@ -154,19 +149,4 @@ class Picture
         $this->version = $version;
     }
 
-    /**
-     * @return int
-     */
-    public function getSequenceNumber(): int
-    {
-        return $this->sequenceNumber;
-    }
-
-    /**
-     * @param int $sequenceNumber
-     */
-    public function setSequenceNumber(int $sequenceNumber): void
-    {
-        $this->sequenceNumber = $sequenceNumber;
-    }
 }

@@ -143,4 +143,10 @@ class PicturesDao
         $em->remove($productPicture);
         $em->flush();
     }
+
+    public function storeProductPicture(ProductPicture $productPicture) {
+        $em = $this->doctrine->getManager();
+        $em->persist($productPicture);
+        $em->flush();
+    }
 }

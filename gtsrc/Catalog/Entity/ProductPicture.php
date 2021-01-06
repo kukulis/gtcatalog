@@ -76,7 +76,7 @@ class ProductPicture
     /**
      * @return int
      */
-    public function getPriority(): int
+    public function getPriority(): ?int
     {
         return $this->priority;
     }
@@ -84,7 +84,7 @@ class ProductPicture
     /**
      * @param int $priority
      */
-    public function setPriority(int $priority): void
+    public function setPriority(int $priority=null): void
     {
         $this->priority = $priority;
     }

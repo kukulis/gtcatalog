@@ -184,4 +184,24 @@ class PicturesService
         }
     }
 
+    /**
+     * @param string $sku
+     * @param int $id_picture
+     * @return ProductPicture
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function getProductPicture ($sku, $id_picture) {
+        $pp = $this->picturesDao->findPictureAssignement($sku, $id_picture);
+        return $pp;
+    }
+
+    /**
+     * @param ProductPicture $productPicture
+     */
+    public function storeProductPictureWithPicture (ProductPicture $productPicture) {
+        $this->picturesDao->storeProductPicture($productPicture);
+    }
+
+
 }
