@@ -1,14 +1,10 @@
-{% extends 'base.html.twig' %}
+{% extends 'admin_base.html.twig' %}
 {% block title %}{% trans %}Catalog{% endtrans %}{% endblock %}
 {% block body %}
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                Katalogas
-
-                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                    <a href="{{ path('gt.catalog.admin_home') }}">Admin</a>
-                {% endif %}
+                Katalogo administravimas.
             </div>
         </div>
     </div>

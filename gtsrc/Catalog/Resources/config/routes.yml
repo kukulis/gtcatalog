@@ -3,6 +3,11 @@ gt.catalog.home:
     controller: Gt\Catalog\Controller\HomeController::homeAction
     methods: GET
 
+gt.catalog.admin_home:
+    path: "/admin"
+    controller: Gt\Catalog\Controller\AdminHomeController::homeAction
+    methods: GET
+
 _gt.catalog.rest:
     resource: "rest-routing.yml"
     prefix: '/api/ezp/v2'

@@ -37,12 +37,12 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/admin, roles: [ROLE_EDITOR, ROLE_ADMIN] }
         - { path: ^/admin/language/edit, roles: ROLE_ADMIN }
         - { path: ^/admin/language/new, roles: ROLE_ADMIN }
         - { path: ^/admin/classificator_group/edit, roles: ROLE_ADMIN }
         - { path: ^/admin/classificator_group/new, roles: ROLE_ADMIN }
         - { path: ^/admin/users, roles: ROLE_ADMIN }
+        - { path: ^/admin, roles: [ROLE_EDITOR, ROLE_ADMIN] }
 #        - { path: ^/product, roles: [ROLE_EDITOR, ROLE_ADMIN] }
 #        - { path: ^/classificator_groups, roles: [ROLE_ADMIN, ROLE_EDITOR] }
 #        - { path: ^/classificators, roles: [ROLE_EDITOR, ROLE_ADMIN] }
