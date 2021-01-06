@@ -78,7 +78,7 @@ class UsersController extends AbstractController
                 if (!empty($userFormType->getPassword())) {
                     $usersService->storePassword($user, $userFormType->getPassword(), $userFormType->getPassword2());
                 }
-                return $this->redirectToRoute('gt.catalog.users_list');
+                return $this->redirectToRoute('gt.catalog.admin_home');
             }
 
             return $this->render('@Catalog/users/edit.html.twig', [
