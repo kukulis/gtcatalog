@@ -136,4 +136,15 @@ class PropertiesHelper
         }
         return null;
     }
+
+    public static function truncate($str, $length) {
+        if ( $str == null ) {
+            return null;
+        }
+
+        if ( strlen($str) <= $length ) {
+            return $str;
+        }
+        return substr($str,  0, $length);
+    }
 }

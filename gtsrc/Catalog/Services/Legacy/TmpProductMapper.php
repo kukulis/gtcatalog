@@ -5,6 +5,7 @@ namespace Gt\Catalog\Services\Legacy;
 use Catalog\B2b\Common\Data\Legacy\Catalog\KatalogasPreke;
 use Catalog\B2b\Common\Data\Legacy\Catalog\Nuotrauka;
 use Gt\Catalog\Utils\ProductsHelper;
+use Gt\Catalog\Utils\PropertiesHelper;
 
 class TmpProductMapper
 {
@@ -200,7 +201,7 @@ class TmpProductMapper
                 $tmpProductPicture->legacy_id        = $nuotrauka->imageId;
                 $tmpProductPicture->url              = $nuotrauka->uri;
                 $tmpProductPicture->name             = $nuotrauka->fileName;
-                $tmpProductPicture->statusas          = $kp->Nuotraukos->statusas;
+                $tmpProductPicture->statusas         = PropertiesHelper::truncate($kp->Nuotraukos->statusas, 16 );
                 $tmpProductPicture->info_provider    = $kp->Nuotraukos->info_provider;
 
                 $tmpProductPictures[] = $tmpProductPicture;
