@@ -21,6 +21,7 @@ class ProductLanguage
         'name',
         'description',
         'label',
+        'label_size',
         'variant_name',
         'info_provider',
         'tags'

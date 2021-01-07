@@ -52,7 +52,10 @@ class Product
         'length',
         'height',
         'width',
-        'delivery_time'
+        'delivery_time',
+        'priority',
+        'google_product_category_id',
+        'info_provider',
     ];
 
 
@@ -251,7 +254,7 @@ class Product
      * @var string
      * @ORM\Column(type="string", length=32, name="priority", nullable=true)
      */
-    private $prority;
+    private $priority;
 
     /**
      * @var int
@@ -798,17 +801,17 @@ class Product
     /**
      * @return string
      */
-    public function getPrority(): ?string
+    public function getPriority(): ?string
     {
-        return $this->prority;
+        return $this->priority;
     }
 
     /**
-     * @param string $prority
+     * @param string $priority
      */
-    public function setPrority(string $prority=null): void
+    public function setPriority(string $priority=null): void
     {
-        $this->prority = $prority;
+        $this->priority = $priority;
     }
 
     /**

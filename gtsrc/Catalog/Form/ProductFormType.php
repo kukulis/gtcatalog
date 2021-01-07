@@ -48,9 +48,10 @@ class ProductFormType extends AbstractType
             ->add('p_parent_sku'            , TextType::class, ['required'=>false, 'label'=> 'Parent'] )
             ->add('p_info_provider'         , TextType::class, ['disabled'=>true, 'label'=> 'Info provider'] )
             ->add('p_origin_country_code'   , TextType::class, ['required'=>false, 'label'=> 'Origin country code'] )
-            ->add('p_vendor_code'                , TextType::class, ['required'=>false, 'label'=> 'Vendor code'] )
+            ->add('p_vendor_code'           , TextType::class, ['required'=>false, 'label'=> 'Vendor code'] )
             ->add('p_manufacturer'          , TextType::class, ['required'=>false, 'label'=> 'Manufacturer code'] )
             ->add('p_type'                  , TextType::class, ['required'=>false, 'label'=> 'Type code'] )
+            ->add('p_purpose'               , TextType::class, ['required'=>false, 'label'=> 'Purpose code'] )
             ->add('p_measure'               , TextType::class, ['required'=>false, 'label'=> 'Measure code'] )
             ->add('p_color'                 , TextType::class, ['required'=>false, 'label'=> 'Color code'] )
             ->add('p_for_male'              , CheckboxType::class, ['required'=>false, 'label'=> 'For male'] )
@@ -63,10 +64,13 @@ class ProductFormType extends AbstractType
             ->add('p_height'                , NumberType::class, ['required'=>false, 'label'=> 'Height'] )
             ->add('p_width'                 , NumberType::class, ['required'=>false, 'label'=> 'Width'] )
             ->add('p_delivery_time'         , TextType::class, ['required'=>false, 'label'=> 'Delivery time'] )
-            ->add( 'pl_language'            , TextType::class, ['disabled'=>true, 'label'=> 'Language'])
+            ->add('p_google_category_id'    , TextType::class, ['required'=>false, 'label'=> 'Google category id'] )
+            ->add('p_priority'                   , TextType::class, ['required'=>false, 'label'=> 'Priority'] )
+            ->add('pl_language'            , TextType::class, ['disabled'=>true, 'label'=> 'Language'])
             ->add('pl_name'                 , TextType::class, ['label'=> 'Name'] )
             ->add('pl_description'          , TextType::class, ['required'=>false, 'label'=> 'Description'] )
             ->add('pl_label'                , TextType::class, ['required'=>false, 'label'=> 'Label'] )
+            ->add('pl_label_size'           , TextType::class, ['required'=>false, 'label'=> 'Label size'] )
             ->add('pl_variant_name'         , TextType::class, ['required'=>false, 'label'=> 'Variant name'] )
             ->add('pl_info_provider'        , TextType::class, ['required'=>false, 'label'=> 'Info provider'] )
             ->add('pl_tags'                 , TextType::class, ['required'=>false, 'label'=> 'Tags'] );
@@ -528,6 +532,29 @@ class ProductFormType extends AbstractType
         $this->product->setDeliveryTime( $deliveryTime );
     }
 
+    /**
+     * @return int
+     */
+    public function getPGoogleCategoryId(): ?int
+    {
+        return $this->product->getGoogleProductCategoryId();
+    }
+
+    /**
+     * @param int $googleProductCategoryId
+     */
+    public function setPGoogleCategoryId(int $googleProductCategoryId): void
+    {
+        $this->product->setGoogleProductCategoryId($googleProductCategoryId);
+    }
+
+    public function getPPriority() {
+        return $this->product->getPriority();
+    }
+
+    public function setPPriority($priority) {
+        $this->product->setPriority($priority);
+    }
 
     // delegating language
 
@@ -577,6 +604,22 @@ class ProductFormType extends AbstractType
     public function setPLLabel(string $label=null): void
     {
         $this->productLanguage->setLabel( $label );
+    }
+
+    /**
+     * @return string
+     */
+    public function getPLLabelSize(): ?string
+    {
+        return $this->productLanguage->getLabelSize();
+    }
+
+    /**
+     * @param string $label
+     */
+    public function setPLLabelSize(string $labelSize=null): void
+    {
+        $this->productLanguage->setLabelSize( $labelSize );
     }
 
     /**

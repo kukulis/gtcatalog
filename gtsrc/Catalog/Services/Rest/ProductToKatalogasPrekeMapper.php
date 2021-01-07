@@ -18,7 +18,6 @@ use Gt\Catalog\Entity\ProductLanguage;
 use Gt\Catalog\Entity\ProductPicture;
 use Gt\Catalog\Utils\PicturesHelper;
 use Gt\Catalog\Utils\PropertiesHelper;
-use phpDocumentor\Reflection\Utils;
 
 class ProductToKatalogasPrekeMapper
 {
@@ -67,7 +66,7 @@ class ProductToKatalogasPrekeMapper
         $kp->Atributai->pack_size                            = $pl->getProduct()->getPackSize();
         $kp->Atributai->prekiu_grupe                         = PropertiesHelper::getPropertyOrNull($pl->getProduct()->getProductGroup(), 'code');
         $kp->Atributai->prekiu_grupe_title                   = PropertiesHelper::getPropertyFromMap($clMap, 'productgroup', 'name' );
-        $kp->Atributai->priority                             = $pl->getProduct()->getPrority();
+        $kp->Atributai->priority                             = $pl->getProduct()->getPriority();
         $kp->Atributai->google_product_category              = $pl->getProduct()->getGoogleProductCategoryId();
 //        $kp->Atributai->google_product_category_title        =        ; // TODO kažkada vėliau šitą
 
