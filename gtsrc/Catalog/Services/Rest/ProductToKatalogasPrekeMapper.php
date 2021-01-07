@@ -129,6 +129,8 @@ class ProductToKatalogasPrekeMapper
                 'nuotrauka8',
                 'nuotrauka9',
             ];
+
+            // TODO sort pictures by priority
             for ( $i=0; $i < count($productPictures); $i++) {
                 $pp = $productPictures[$i];
                 $property = $nuotraukosProperties[$i];

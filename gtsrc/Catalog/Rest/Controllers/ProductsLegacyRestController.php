@@ -29,7 +29,7 @@ class ProductsLegacyRestController extends AbstractController{
         $data = json_decode($content);
 
         if( !is_array( $data ) ) {
-            throw new CatalogErrorException('Given json data is not an array' ); // TODO handle this in a diffirent way
+            return new JsonResponse( new ErrorResponse(ErrorResponse::TYPE_VALIDATION, 'Given json data is not an array', Response::HTTP_BAD_REQUEST) );
         }
         try {
             $logger->debug('getPrekesAction called ' . var_export($data, true));

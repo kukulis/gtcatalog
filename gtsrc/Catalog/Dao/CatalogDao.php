@@ -106,7 +106,10 @@ class CatalogDao extends BaseDao
     public function getProductsLangsWithSubobjects($skus, $languageCode) {
         $class = ProductLanguage::class;
         // kodėl nėra vendor, brand, line, manufacturer ???
-        $dql = /** @lang DQL */  "SELECT pl, p, bra, lin, ven, man, ty, pur, me, pg from $class pl join pl.product p join pl.language l
+        $dql = /** @lang DQL */  "SELECT pl, p, bra, lin, ven, man, ty, pur, me, pg 
+        from $class pl 
+        join pl.product p 
+        join pl.language l
         left join p.brand bra
         left join p.line lin
         left join p.vendor ven
