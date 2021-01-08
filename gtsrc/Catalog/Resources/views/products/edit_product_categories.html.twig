@@ -16,7 +16,7 @@
             <form method="post" action="{{ path('gt.catalog.update_product_categories', {sku:sku}) }}">
                 <label for="categories">Categories codes, separated with spaces:</label>
                 <br/>
-                <textarea id="categories" name="categories"
+                <textarea id="categories" name="categories" cols="40" rows="5"
                 >{{ categoriesCodesStr }}</textarea>
                 <br/>
                 <button type="submit" >Update</button>

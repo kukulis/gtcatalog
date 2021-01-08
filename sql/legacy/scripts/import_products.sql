@@ -3,7 +3,7 @@ insert ignore into classificators_groups ( code, name)
 select distinct group_code, group_code from tmp_classificators;
 
 -- 2 classificators
-insert ignore into classificators (code, `group`) select classificator_code, group_code from tmp_classificators;
+insert ignore into classificators (code, `classificator_group`) select classificator_code, group_code from tmp_classificators;
 
 
 -- select * from classificators where code='-'
@@ -113,12 +113,12 @@ from tmp_full_products_languages;
 
 -- 6 categories
 
-update tmp_products_categories set parent=null
-where parent = '';
-
-select count(1) from tmp_products_categories where parent is null;
-
-update tmp_products_categories set depth=0 where parent is null;
+# update tmp_products_categories set parent=null
+# where parent = '';
+#
+# select count(1) from tmp_products_categories where parent is null;
+#
+# update tmp_products_categories set depth=0 where parent is null;
 
 -- one time
 -- update tmp_products_categories
@@ -171,6 +171,7 @@ update tmp_categories c_child join tmp_categories c_parent
 set c_child.depth=c_parent.depth+1
 where c_parent.depth is not null;
 
+-- select * from tmp_categories;
 
 
 -- insert ignore into categories (
@@ -239,15 +240,20 @@ from tmp_products_categories;
 
 -- 9 images ?
 insert ignore into pictures
-    (name, reference)
-    select name, legacy_id
+    (name, reference, info_provider, statusas)
+    select name, legacy_id, info_provider, statusas
 from tmp_products_pictures
 where legacy_id is not null;
 
--- update images ids from the
+-- update images ids from the live pictures
 update tmp_products_pictures tp join pictures p
 on tp.legacy_id = p.reference
 set tp.picture_id = p.id;
+
+-- also update live pictures data from live pictures
+update pictures p join tmp_products_pictures tp on tp.legacy_id = p.reference
+set p.info_provider = tp.info_provider, p.statusas = tp.statusas;
+
 
 -- select * from tmp_products_pictures where picture_id is null;
 -- 10 product images ?
@@ -259,3 +265,4 @@ select tpp.priority, tpp.sku, tpp.picture_id
 from tmp_products_pictures tpp join products p on tpp.sku = p.sku
 where picture_id is not null;
 
+-- select * from tmp_products_pictures;

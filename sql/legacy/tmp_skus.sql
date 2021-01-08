@@ -4,5 +4,11 @@ create table tmp_skus
 		primary key
 );
 
+create or replace table tmp_skus1
+(
+    sku varchar(32) not null
+        primary key
+);
 
-insert into tmp_skus select nomnr from tmp_preke where nomnr is not null;
+
+insert ignore into tmp_skus1 select sku from tmp_skus where sku REGEXP  '^[[:alnum:]-]+$'
