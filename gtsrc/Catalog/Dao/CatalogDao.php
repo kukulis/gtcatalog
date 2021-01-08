@@ -530,7 +530,7 @@ class CatalogDao extends BaseDao
      */
     public function findClassificators ( $group, $codes ) {
         $class = Classificator::class;
-        $dql = /** @lang DQL */ "SELECT c from  $class c join c.group g where g.code=:groupCode and c.code in (:codes)";
+        $dql = /** @lang DQL */ "SELECT c from  $class c join c.classificatorGroup g where g.code=:groupCode and c.code in (:codes)";
 
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
