@@ -32,11 +32,11 @@ class TmpProductMapper
         $tmpProduct->height                         = $kp->Atributai->aukstis;
         $tmpProduct->width                          = $kp->Atributai->plotis;
         $tmpProduct->delivery_time                  = $kp->Atributai->pristatymo_laikas;
-        $tmpProduct->info_provider                  = $kp->Atributai->info_provider;
-        $tmpProduct->brand                          = ProductsHelper::fixCode( $kp->brandas );
-        $tmpProduct->line                           = ProductsHelper::fixCode($kp->linija );
+        $tmpProduct->info_provider                  = $kp->info_provider;
+        $tmpProduct->brand                          = PropertiesHelper::truncate($kp->brandas, 64 );
+        $tmpProduct->line                           = PropertiesHelper::truncate($kp->linija, 64 );
         $tmpProduct->vendor                         = null; // blogi duomenys kataloge
-        $tmpProduct->manufacturer                   = ProductsHelper::fixCode( $kp->Atributai->gamintojo_kodas );
+        $tmpProduct->manufacturer                   = PropertiesHelper::truncate ($kp->Aprasymas->gamintojas, 64 );
         $tmpProduct->type                           = ProductsHelper::fixCode($kp->Atributai->tipas);
         $tmpProduct->purpose                        = ProductsHelper::fixCode($kp->Atributai->paskirtis);
         $tmpProduct->measure                        = ProductsHelper::fixCode($kp->Atributai->matas);
@@ -107,19 +107,20 @@ class TmpProductMapper
         /** @var TmpClassificator[] $tmpClassificators */
         $tmpClassificators = [];
 
-        $brandC = new TmpClassificator();
-        $brandC->group_code = 'brand';
-        $brandC->language_code = $langCode;
-        $brandC->classificator_code = ProductsHelper::fixCode($kp->brandas);
-        $brandC->value = $kp->brandas;
-        $tmpClassificators[] = $brandC;
-
-        $lineC = new TmpClassificator();
-        $lineC->group_code = 'line';
-        $lineC->language_code = $langCode;
-        $lineC->classificator_code = ProductsHelper::fixCode($kp->linija);
-        $lineC->value = $kp->linija;
-        $tmpClassificators[] = $lineC;
+        // nereikia šitų
+//        $brandC = new TmpClassificator();
+//        $brandC->group_code = 'brand';
+//        $brandC->language_code = $langCode;
+//        $brandC->classificator_code = ProductsHelper::fixCode($kp->brandas);
+//        $brandC->value = $kp->brandas;
+//        $tmpClassificators[] = $brandC;
+//
+//        $lineC = new TmpClassificator();
+//        $lineC->group_code = 'line';
+//        $lineC->language_code = $langCode;
+//        $lineC->classificator_code = ProductsHelper::fixCode($kp->linija);
+//        $lineC->value = $kp->linija;
+//        $tmpClassificators[] = $lineC;
 
         // blogi duomenys kataloge
 //        $vendorC = new TmpClassificator();
@@ -129,12 +130,12 @@ class TmpProductMapper
 //        $vendorC->language_code = $langCode;
 //        $tmpClassificators[] = $vendorC;
 
-        $manufacturerC = new TmpClassificator();
-        $manufacturerC->language_code = $langCode;
-        $manufacturerC->group_code = 'manufacturer';
-        $manufacturerC->classificator_code = ProductsHelper::fixCode($kp->Atributai->gamintojo_kodas);
-        $manufacturerC->value = $kp->Atributai->gamintojo_kodas;
-        $tmpClassificators[] = $manufacturerC;
+//        $manufacturerC = new TmpClassificator();
+//        $manufacturerC->language_code = $langCode;
+//        $manufacturerC->group_code = 'manufacturer';
+//        $manufacturerC->classificator_code = ProductsHelper::fixCode($kp->Atributai->gamintojo_kodas);
+//        $manufacturerC->value = $kp->Atributai->gamintojo_kodas;
+//        $tmpClassificators[] = $manufacturerC;
 
         $typeC = new TmpClassificator();
         $typeC->language_code = $langCode;
