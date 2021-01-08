@@ -107,7 +107,6 @@ class ProductToKatalogasPrekeMapper
         $kp->Aprasymas->modificationTimestamp  = $pl->getProduct()->getLastUpdate();
         $kp->Aprasymas->var_name               = $pl->getVariantName();
 
-
         if ( count($productPictures ) > 0 ) {
             $productPictures = array_slice($productPictures, 0, 9); // taking only first 9 pictures
 
@@ -130,7 +129,7 @@ class ProductToKatalogasPrekeMapper
                 'nuotrauka9',
             ];
 
-            // TODO sort pictures by priority
+            // pictures are sorted by priority 18 lines above with "usort"
             for ( $i=0; $i < count($productPictures); $i++) {
                 $pp = $productPictures[$i];
                 $property = $nuotraukosProperties[$i];
