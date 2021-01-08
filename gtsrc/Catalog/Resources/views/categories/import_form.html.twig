@@ -5,21 +5,30 @@
 {% endblock %}
 
 {% block body %}
-<div>
-    <p>Stulpeliai:</p>
-    <ul>
-        <li><b>code</b></li>
-        <li>parent</li>
-        <li><b>language</b></li>
-        <li>name</li>
-        <li>description</li>
-        <li>customs_code</li>
-    </ul>
-</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>{% trans %}Import categories{% endtrans %}</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <p>Stulpeliai:</p>
+            <ul>
+                <li><b>code</b></li>
+                <li>parent</li>
+                <li><b>language</b></li>
+                <li>name</li>
+                <li>description</li>
+                <li>customs_code</li>
+            </ul>
 
-<form method="post" enctype="multipart/form-data" action="{{ path('gt.catalog.import_categories') }}">
-    <input type="file" name="csvfile" /><br/>
-    <label for="update_only">Tik atnaujinti(neįterpti naujų)</label><input  id="update_only" type="checkbox" name="update_only" value="1" /> <br/>
-    <input type="submit" name="import" value="Importuoti" /><br/>
-</form>
+            <form method="post" enctype="multipart/form-data" action="{{ path('gt.catalog.import_categories') }}">
+                <input type="file" name="csvfile" /><br/>
+                <label for="update_only">Tik atnaujinti(neįterpti naujų)</label><input  id="update_only" type="checkbox" name="update_only" value="1" /> <br/>
+                <input type="submit" name="import" value="Importuoti" /><br/>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

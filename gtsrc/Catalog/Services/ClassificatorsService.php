@@ -107,18 +107,11 @@ class ClassificatorsService
 
     /**
      * @param string $file
-     * @param string $languageCode
      * @throws CatalogErrorException
      * @throws CatalogValidateException
      * @return int
      */
-    public function importClassificators ( $file, string $languageCode ) {
-        $language = $this->languageDao->getLanguage ( $languageCode );
-
-        if ( empty($language)) {
-            throw new CatalogErrorException('Failed to load language by code '.$languageCode );
-        }
-
+    public function importClassificators ( $file ) {
         $f = fopen($file, 'r');
         try {
             $header = fgetcsv($f);
@@ -137,9 +130,8 @@ class ClassificatorsService
 
                 $l = array_map ( 'trim', $l );
                 $line = CsvUtils::arrayToAssoc($headMap, $l);
-                $line['language'] = $languageCode;
 
-                $cl = self::mapCsvLineToClassificatorLanguage($line, $language);
+                $cl = self::mapCsvLineToClassificatorLanguage($line);
                 if ( $cl->getName() != null ) {
                     $cls[] = $cl;
                 }
@@ -198,7 +190,7 @@ class ClassificatorsService
      */
     public static function mapCsvLineToClassificatorLanguage ($line, Language $language=null) {
         $code = $line['code'];
-        $group = $line['group'];
+        $group = $line['classificator_group'];
 
         $customsCode = null;
         if ( array_key_exists('customs_code', $line )) {
@@ -251,7 +243,7 @@ class ClassificatorsService
             throw new CatalogValidateException('Non valid fields:'.join(',', $nonValidFields));
         }
 
-        $requiredFields = ['code', 'group' ];
+        $requiredFields = ['code', 'classificator_group', 'language' ];
 
         $missingFields = array_diff($requiredFields, $head );
         if ( count($missingFields) > 0 ) {
@@ -318,6 +310,7 @@ class ClassificatorsService
     public function storeClassificatorLanguage(ClassificatorLanguage $cl ) {
         $this->classificatorDao->storeClassificator($cl->getClassificator()); // ar tikrai reikia šito?
         $this->classificatorDao->storeClassificatorLanguage($cl);
+
     }
 
     /**

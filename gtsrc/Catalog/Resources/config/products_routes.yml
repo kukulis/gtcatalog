@@ -28,7 +28,7 @@ gt.catalog.product_categories_edit_form:
     controller: Gt\Catalog\Controller\ProductsController::editProductCategoriesFormAction
     methods: GET
 
-gt.catalog.product_categories:
+gt.catalog.update_product_categories:
   path: "/product/{sku}/update_categories"
   controller: Gt\Catalog\Controller\ProductsController::updateProductCategoriesAction
   methods: POST

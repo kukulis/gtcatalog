@@ -1,47 +1,63 @@
-<div>
-    <p>Stulpeliai:</p>
-    <ul>
-        <li><b>sku</b></li>
-        <li>last_update</li>
-        <li>version</li>
-        <li>brand</li>
-        <li>line</li>
-        <li>parent_sku</li>
-        <li>origin_country_code</li>
-        <li>vendor</li>
-        <li>manufacturer</li>
-        <li>type</li>
-        <li>purpose</li>
-        <li>measure</li>
-        <li>color</li>
-        <li>for_male</li>
-        <li>for_female</li>
-        <li>size</li>
-        <li>pack_size</li>
-        <li>pack_amount</li>
-        <li>weight</li>
-        <li>length</li>
-        <li>height</li>
-        <li>width</li>
-        <li>delivery_time</li>
-        <li>delivery_time</li>
-        <li>google_product_category_id</li>
-        <li>priority</li>
-        <li><b>language</b></li>
-        <li>name</li>
-        <li>description</li>
-        <li>label</li>
-        <li>label_size</li>
-        <li>variant_name</li>
-        <li>info_provider</li>
-        <li>tags</li>
-        <li>categories (codes separated with spaces)</li>
+{% extends 'admin_base.html.twig' %}
 
-    </ul>
-</div>
+{% block title %}
+    Import products
+{% endblock %}
 
-<form method="post" enctype="multipart/form-data" action="{{ path('gt.catalog.import_products') }}">
-    <input type="file" name="csvfile" /><br/>
-    <input type="submit" name="import" value="Importuoti" /><br/>
-    <input type="submit" name="import_classificators" value="Importuoti klasifikatorius" /><br/>
-</form>
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>{% trans %}Import products{% endtrans %}</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <p>Stulpeliai:</p>
+                <ul>
+                    <li><b>sku</b></li>
+                    <li>last_update</li>
+                    <li>version</li>
+                    <li>brand</li>
+                    <li>line</li>
+                    <li>parent_sku</li>
+                    <li>origin_country_code</li>
+                    <li>vendor</li>
+                    <li>manufacturer</li>
+                    <li>type</li>
+                    <li>purpose</li>
+                    <li>measure</li>
+                    <li>color</li>
+                    <li>for_male</li>
+                    <li>for_female</li>
+                    <li>size</li>
+                    <li>pack_size</li>
+                    <li>pack_amount</li>
+                    <li>weight</li>
+                    <li>length</li>
+                    <li>height</li>
+                    <li>width</li>
+                    <li>delivery_time</li>
+                    <li>delivery_time</li>
+                    <li>google_product_category_id</li>
+                    <li>priority</li>
+                    <li><b>language</b></li>
+                    <li>name</li>
+                    <li>description</li>
+                    <li>label</li>
+                    <li>label_size</li>
+                    <li>variant_name</li>
+                    <li>info_provider</li>
+                    <li>tags</li>
+                    <li>categories (codes separated with spaces)</li>
+                </ul>
+                <form method="post" enctype="multipart/form-data" action="{{ path('gt.catalog.import_products') }}">
+                    <input type="file" name="csvfile" /><br/>
+                    <input type="submit" name="import" value="Importuoti" /><br/>
+                    <input type="submit" name="import_classificators" value="Importuoti klasifikatorius" /><br/>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

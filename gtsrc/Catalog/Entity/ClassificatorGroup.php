@@ -61,4 +61,10 @@ class ClassificatorGroup
         $this->name = $name;
     }
 
+    public static function create($code) {
+        $g = new ClassificatorGroup();
+        $g->setCode($code);
+        return $g;
+    }
+
 }

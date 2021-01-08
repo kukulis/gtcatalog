@@ -70,23 +70,17 @@ class ClassificatorsController extends AbstractController
         /** @var UploadedFile $file */
         $file = $request->files->get('csvfile' );
 
-        $languageCode =  $request->get('language');
         try {
-            if ( empty($languageCode)) {
-                throw new CatalogErrorException('languageCode not given' );
-            }
-
             if ( empty($file) ) {
                 return $this->render('@Catalog/error/error.html.twig', [
                     'error'=> 'Nepaduotas csv failas',
                 ]);
             }
 
-            $count = $classificatorsService->importClassificators($file->getRealPath(), $languageCode);
+            $count = $classificatorsService->importClassificators($file->getRealPath());
             return $this->render('@Catalog/classificators/import_results.html.twig',
                 [
                     'count' => $count,
-                    'languageCode' => $languageCode,
                 ]
             );
         } catch (CatalogErrorException $e ) {
@@ -117,6 +111,8 @@ class ClassificatorsController extends AbstractController
             $classificatorLanguage = $classificatorsService->loadClassificatorLanguage($code, $languageCode);
 
             $classificatorFormType = new ClassificatorFormType();
+            $groups = $classificatorsService->getAllGroups();
+            $classificatorFormType->setAvailableGroups($groups);
             $classificatorFormType->setClassificatorLanguage($classificatorLanguage);
 
             $form = $this->createForm(ClassificatorFormType::class, $classificatorFormType);

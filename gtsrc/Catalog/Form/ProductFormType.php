@@ -43,17 +43,17 @@ class ProductFormType extends AbstractType
             ->add('p_sku'                   , TextType::class, ['disabled'=>true, 'label'=> 'sku' ] )
             ->add('p_last_update'           , DateTimeType::class, ['disabled'=>true,  'label'=> 'updated' ])
             ->add('p_version'               , TextType::class, ['required'=>false, 'disabled'=>true, 'label'=> 'version'] )
-            ->add('p_brand_code'            , TextType::class, ['label'=> 'Brand code'] )
-            ->add('p_line_code'             , TextType::class, ['label'=> 'Line code'] )
+            ->add('p_brand'                 , TextType::class, ['label'=> 'Brand'] )
+            ->add('p_line'                  , TextType::class, ['label'=> 'Line'] )
             ->add('p_parent_sku'            , TextType::class, ['required'=>false, 'label'=> 'Parent'] )
             ->add('p_info_provider'         , TextType::class, ['disabled'=>true, 'label'=> 'Info provider'] )
             ->add('p_origin_country_code'   , TextType::class, ['required'=>false, 'label'=> 'Origin country code'] )
-            ->add('p_vendor_code'           , TextType::class, ['required'=>false, 'label'=> 'Vendor code'] )
-            ->add('p_manufacturer'          , TextType::class, ['required'=>false, 'label'=> 'Manufacturer code'] )
+            ->add('p_vendor'                , TextType::class, ['required'=>false, 'label'=> 'Vendor'] )
+            ->add('p_manufacturer'          , TextType::class, ['required'=>false, 'label'=> 'Manufacturer'] )
             ->add('p_type'                  , TextType::class, ['required'=>false, 'label'=> 'Type code'] )
             ->add('p_purpose'               , TextType::class, ['required'=>false, 'label'=> 'Purpose code'] )
             ->add('p_measure'               , TextType::class, ['required'=>false, 'label'=> 'Measure code'] )
-            ->add('p_color'                 , TextType::class, ['required'=>false, 'label'=> 'Color code'] )
+            ->add('p_color'                 , TextType::class, ['required'=>false, 'label'=> 'Color'] )
             ->add('p_for_male'              , CheckboxType::class, ['required'=>false, 'label'=> 'For male'] )
             ->add('p_for_female'            , CheckboxType::class, ['required'=>false, 'label'=> 'For female'] )
             ->add('p_size'                  , TextType::class, ['required'=>false, 'label'=> 'Size'] )
@@ -168,47 +168,33 @@ class ProductFormType extends AbstractType
     /**
      * @return string
      */
-    public function getPBrandCode(): ?string
+    public function getPBrand(): ?string
     {
-        if ( $this->product->getBrand() == null ) {
-            return null;
-        }
-        return $this->product->getBrand()->getCode();
+        return $this->product->getBrand();
     }
 
     /**
      * @param string $brandCode
      */
-    public function setPBrandCode(string $brandCode=null): void
+    public function setPBrand(string $brandCode=null): void
     {
-        if ( empty($brandCode) ) {
-            $this->product->setBrand(null);
-            return;
-        }
-        $this->product->setBrand(Classificator::createClassificator($brandCode, 'brand'));
+        $this->product->setBrand($brandCode);
     }
 
     /**
      * @return string
      */
-    public function getPLineCode(): ?string
+    public function getPLine(): ?string
     {
-        if ( $this->product->getLine()== null ) {
-            return null;
-        }
-        return $this->product->getLine()->getCode();
+        return $this->product->getLine();
     }
 
     /**
      * @param string $lineCode
      */
-    public function setPLineCode(string $lineCode=null): void
+    public function setPLine(string $lineCode=null): void
     {
-        if ( empty($lineCode)) {
-            $this->product->setLine(null);
-            return ;
-        }
-        $this->product->setLine(Classificator::createClassificator($lineCode, 'line'));
+        $this->product->setLine($lineCode);
     }
 
     /**
@@ -259,21 +245,12 @@ class ProductFormType extends AbstractType
         $this->product->setOriginCountryCode( $originCountryCode );
     }
 
-    public function getPVendorCode() : ?string {
-        $vendor = $this->product->getVendor();
-        if ( $vendor != null ) {
-            return $this->product->getVendor()->getCode();
-        }
-        return null;
+    public function getPVendor() : ?string {
+        return $this->product->getVendor();
     }
 
-    public function setPVendorCode($code) {
-        if ( empty($code)) {
-            $this->product->setVendor(null);
-            return ;
-        }
-
-        $this->product->setVendor(Classificator::createClassificator($code, 'vendor'));
+    public function setPVendor($code) {
+        $this->product->setVendor($code);
     }
 
     /**
@@ -281,20 +258,12 @@ class ProductFormType extends AbstractType
      */
     public function getPManufacturer(): ?string
     {
-        if ( $this->product->getManufacturer() == null ) {
-            return null;
-        }
-
-        return $this->product->getManufacturer()->getCode();
+        return $this->product->getManufacturer();
     }
 
     public function setPManufacturer(string $code=null): void
     {
-        if ( $code == null ) {
-            $this->product->setManufacturer(null);
-            return;
-        }
-        $this->product->setManufacturer(Classificator::createClassificator('code', 'manufacturer'));
+        $this->product->setManufacturer($code);
     }
 
     public function getPType(): ?string

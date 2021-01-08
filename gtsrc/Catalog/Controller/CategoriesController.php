@@ -35,7 +35,7 @@ class CategoriesController extends AbstractController
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
                 $categoriesService->storeCategoryLanguage($categoryLanguage);
-                return $this->redirectToRoute('gt.catalog.categories', [ 'categories_filter[language]' => $languageCode]);
+                return $this->redirectToRoute('gt.catalog.categories');
             }
 
             $allLanguages = $categoriesService->getAllLanguages();

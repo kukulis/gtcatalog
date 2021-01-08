@@ -8,18 +8,18 @@
         {# picture itself #}
         <div class="row">
             <div class="col-md-12">
-            <img  alt="{{ productPicture.picture.name }}"
-                  src="{{ productPicture.picture.configuredPath }}" />
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                sku: {{ productPicture.product.sku }}
+                <h1>Edit Product <a href="{{ path('gt.catalog.product_edit', {sku:productPicture.product.sku, languageCode:'en'}) }}">{{ productPicture.product.sku }}</a> picture metadata</h1>
             </div>
         </div>
         <div class="row">
             <div class="col-md-12">
                 {{ form(form) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <img  alt="{{ productPicture.picture.name }}"
+                      src="{{ productPicture.picture.configuredPath }}" />
             </div>
         </div>
     </div>

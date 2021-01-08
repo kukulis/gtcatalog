@@ -41,7 +41,8 @@ class ClassificatorsListFilterType extends AbstractType implements Classificator
 
         $choices = [''=>0];
         foreach ($data->getAvailableGroups() as $g ) {
-            $choices[ $g->getName() ] = $g->getCode();
+            $label = $g->getName().' ('.$g->getCode().')';
+            $choices[ $label ] = $g->getCode();
         }
 
         $builder

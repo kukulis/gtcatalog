@@ -5,18 +5,22 @@
 {% endblock %}
 
 {% block body %}
-
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-Product categories.
-{{ sku }}
-
-<form method="post" action="{{ path('gt.catalog.product_categories', {sku:sku}) }}">
-    <label for="categories">Categories:</label><textarea id="categories" name="categories"
-    >{{ categoriesCodesStr }}</textarea>
-    <button type="submit" >Update</button>
-</form>
+            <h2>Edit product <a href="{{ path('gt.catalog.product_edit', {sku:sku, languageCode:'en'}) }}">{{ sku }}</a> categories</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <form method="post" action="{{ path('gt.catalog.update_product_categories', {sku:sku}) }}">
+                <label for="categories">Categories codes, separated with spaces:</label>
+                <br/>
+                <textarea id="categories" name="categories"
+                >{{ categoriesCodesStr }}</textarea>
+                <br/>
+                <button type="submit" >Update</button>
+            </form>
         </div>
     </div>
 </div>

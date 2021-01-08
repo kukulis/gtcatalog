@@ -1,8 +1,8 @@
-code,name,group
-firstbrand,First Brand,brand
-firstline,First Line,line
-firstmanufacturer,First Manufacturer,manufacturer
-firstmeasure,First Measure,measure
-firstpurpose,First Purpose,purpose
-firsttype,First Type,type
-firstvendor,First Vendor,vendor
+language,code,name,classificator_group
+en,firstbrand,First Brand,brand
+en,firstline,First Line,line
+en,firstmanufacturer,First Manufacturer,manufacturer
+en,firstmeasure,First Measure,measure
+en,firstpurpose,First Purpose,purpose
+en,firsttype,First Type,type
+en,tarakonas,Tarakonas,vendor

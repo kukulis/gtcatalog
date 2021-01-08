@@ -2,32 +2,38 @@
 {% block title %}{% trans %}Classificators{% endtrans %}{% endblock %}
 {% block body %}
     <div class="container">
-    <div class="row">
-    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>{% trans %}Classificators{% endtrans %}</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <p><a href="{{ path('gt.catalog.classificators.import_form') }}">Import</a></p>
+            </div>
+        </div>
 
-<p><a href="{{ path('gt.catalog.classificators.import_form') }}">Import</a></p>
-
-{{ form(form) }}
-
-<table class="table table-bordered">
-{% for c in classificators %}
-    <tr>
-        <td>{{ c.code }}</td>
-        <td>{{ c.group.name }}</td>
-        <td>{{ c.assignedValue }}</td>
-        <td>{{ c.customsCode }}</td>
-        <td>
-            {% if c.code is not empty %}
-            <a href="{{ path('gt.catalog.classificator_edit', {code: c.code, languageCode: languageCode }) }}" class="btn btn-primary">
-                {% trans %}Edit{% endtrans %}
-            </a>
-            {% endif %}
-        </td>
-    </tr>
-{% endfor %}
-</table>
-
-    </div>
-    </div>
+        <div class="row">
+            <div class="col-md-12">
+                {{ form(form) }}
+                <table class="table table-bordered">
+                {% for c in classificators %}
+                    <tr>
+                        <td>{{ c.code }}</td>
+                        <td>{{ c.classificatorGroup.name }}</td>
+                        <td>{{ c.assignedValue }}</td>
+                        <td>{{ c.customsCode }}</td>
+                        <td>
+                            {% if c.code is not empty %}
+                            <a href="{{ path('gt.catalog.classificator_edit', {code: c.code, languageCode: languageCode }) }}" class="btn btn-primary">
+                                {% trans %}Edit{% endtrans %}
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </table>
+            </div>
+        </div>
     </div>
 {% endblock %}

@@ -18,7 +18,7 @@ use \DateTime;
  */
 class Classificator
 {
-    const ALLOWED_FIELDS = ['code', 'group', 'customs_code' ];
+    const ALLOWED_FIELDS = ['code', 'classificator_group', 'customs_code' ];
 
     /**
      * @var string
@@ -30,9 +30,9 @@ class Classificator
     /**
      * @var ClassificatorGroup
      * @ORM\ManyToOne(targetEntity="ClassificatorGroup" )
-     * @ORM\JoinColumn(name="group", referencedColumnName="code")
+     * @ORM\JoinColumn(name="classificator_group", referencedColumnName="code")
      */
-    private $group;
+    private $classificatorGroup;
 
     /**
      * @var bool
@@ -59,17 +59,17 @@ class Classificator
     /**
      * @return ClassificatorGroup
      */
-    public function getGroup(): ?ClassificatorGroup
+    public function getClassificatorGroup(): ?ClassificatorGroup
     {
-        return $this->group;
+        return $this->classificatorGroup;
     }
 
     /**
-     * @param ClassificatorGroup $group
+     * @param ClassificatorGroup $classificator_group
      */
-    public function setGroup(ClassificatorGroup $group): void
+    public function setClassificatorGroup(ClassificatorGroup $classificator_group): void
     {
-        $this->group = $group;
+        $this->classificatorGroup = $classificator_group;
     }
 
     /**
@@ -97,11 +97,11 @@ class Classificator
     }
 
     public function getGroupCode() {
-        if ( $this->group == null ) {
+        if ( $this->classificatorGroup == null ) {
             return null;
         }
         else {
-            return $this->group->getCode();
+            return $this->classificatorGroup->getCode();
         }
     }
 
@@ -115,7 +115,7 @@ class Classificator
         $classificator->setCode($code);
         $group = new ClassificatorGroup();
         $group->setCode($groupCode);
-        $classificator->setGroup($group);
+        $classificator->setClassificatorGroup($group);
         return $classificator;
     }
 

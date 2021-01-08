@@ -19,13 +19,13 @@ use \DateTime;
 class Product
 {
     const CLASSIFICATORS_GROUPS = [
-        'brand',
-        'line',
-        'manufacturer',
+//        'brand',
+//        'line',
+//        'manufacturer',
         'measure',
         'purpose',
         'type',
-        'vendor',
+//        'vendor',
         'productgroup',
     ];
 
@@ -59,7 +59,6 @@ class Product
 
 
 
-
     /**
      * @var string
      * @ORM\Id
@@ -81,16 +80,14 @@ class Product
     private $version=0;
 
     /**
-     * @var Classificator
-     * @ORM\ManyToOne(targetEntity="Classificator" )
-     * @ORM\JoinColumn(name="brand", referencedColumnName="code")
+     * @var string
+     * @ORM\Column(type="string", length=64, name="brand", nullable=true)
      */
-    private $brand='';
+    private $brand;
 
     /**
-     * @var Classificator
-     * @ORM\ManyToOne(targetEntity="Classificator" )
-     * @ORM\JoinColumn(name="line", referencedColumnName="code")
+     * @var string
+     * @ORM\Column(type="string", length=64, name="line", nullable=true)
      */
     private $line;
 
@@ -107,16 +104,14 @@ class Product
     private $originCountryCode;
 
     /**
-     * @var Classificator
-     * @ORM\ManyToOne(targetEntity="Classificator" )
-     * @ORM\JoinColumn(name="vendor", referencedColumnName="code")
+     * @var string
+     * @ORM\Column(type="string", length=64, name="vendor", nullable=true)
      */
     private $vendor;
 
     /**
-     * @var Classificator
-     * @ORM\ManyToOne(targetEntity="Classificator" )
-     * @ORM\JoinColumn(name="manufacturer", referencedColumnName="code")
+     * @var string
+     * @ORM\Column(type="string", length=64, name="manufacturer", nullable=true)
      */
     private $manufacturer;
 
@@ -365,38 +360,6 @@ class Product
     /**
      * @return Classificator
      */
-    public function getVendor(): ?Classificator
-    {
-        return $this->vendor;
-    }
-
-    /**
-     * @param Classificator $vendor
-     */
-    public function setVendor(Classificator $vendor=null): void
-    {
-        $this->vendor = $vendor;
-    }
-
-    /**
-     * @return Classificator
-     */
-    public function getManufacturer(): ?Classificator
-    {
-        return $this->manufacturer;
-    }
-
-    /**
-     * @param Classificator $manufacturer
-     */
-    public function setManufacturer(Classificator $manufacturer=null): void
-    {
-        $this->manufacturer = $manufacturer;
-    }
-
-    /**
-     * @return Classificator
-     */
     public function getType(): ?Classificator
     {
         return $this->type;
@@ -635,43 +598,11 @@ class Product
     }
 
     /**
-     * @return Classificator
-     */
-    public function getBrand(): ?Classificator
-    {
-        return $this->brand;
-    }
-
-    /**
-     * @param Classificator $brand
-     */
-    public function setBrand(Classificator $brand=null): void
-    {
-        $this->brand = $brand;
-    }
-
-    /**
-     * @return Classificator
-     */
-    public function getLine(): ?Classificator
-    {
-        return $this->line;
-    }
-
-    /**
-     * @param Classificator $line
-     */
-    public function setLine(Classificator $line): void
-    {
-        $this->line = $line;
-    }
-
-    /**
      * @param Classificator $classificator
      * @throws CatalogErrorException
      */
     public function setClassificator ( Classificator $classificator ) {
-        $groupCode = $classificator->getGroup()->getCode();
+        $groupCode = $classificator->getClassificatorGroup()->getCode();
         if ( array_search( $groupCode, self::CLASSIFICATORS_GROUPS) !== false ) {
             $setter = 'set'.$groupCode;
             $this->{$setter}($classificator);
@@ -827,5 +758,69 @@ class Product
     public function setGoogleProductCategoryId(int $googleProductCategoryId): void
     {
         $this->googleProductCategoryId = $googleProductCategoryId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBrand(): ?string
+    {
+        return $this->brand;
+    }
+
+    /**
+     * @param string $brand
+     */
+    public function setBrand(string $brand=null): void
+    {
+        $this->brand = $brand;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLine(): ?string
+    {
+        return $this->line;
+    }
+
+    /**
+     * @param string $line
+     */
+    public function setLine(string $line=null): void
+    {
+        $this->line = $line;
+    }
+
+    /**
+     * @return string
+     */
+    public function getVendor(): ?string
+    {
+        return $this->vendor;
+    }
+
+    /**
+     * @param string $vendor
+     */
+    public function setVendor(string $vendor=null): void
+    {
+        $this->vendor = $vendor;
+    }
+
+    /**
+     * @return string
+     */
+    public function getManufacturer(): ?string
+    {
+        return $this->manufacturer;
+    }
+
+    /**
+     * @param string $manufacturer
+     */
+    public function setManufacturer(string $manufacturer=null): void
+    {
+        $this->manufacturer = $manufacturer;
     }
 }

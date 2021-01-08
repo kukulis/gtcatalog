@@ -106,14 +106,10 @@ class CatalogDao extends BaseDao
     public function getProductsLangsWithSubobjects($skus, $languageCode) {
         $class = ProductLanguage::class;
         // kodėl nėra vendor, brand, line, manufacturer ???
-        $dql = /** @lang DQL */  "SELECT pl, p, bra, lin, ven, man, ty, pur, me, pg 
+        $dql = /** @lang DQL */  "SELECT pl, p, ty, pur, me, pg 
         from $class pl 
         join pl.product p 
         join pl.language l
-        left join p.brand bra
-        left join p.line lin
-        left join p.vendor ven
-        left join p.manufacturer man
         left join p.type ty 
         left join p.purpose pur
         left join p.measure me 
@@ -205,13 +201,14 @@ class CatalogDao extends BaseDao
         /** @var Classificator[] $classificatorsToFind */
         $classificatorsToFind = [];
 
-        $classificatorsToFind[] = $product->getBrand();
-        $classificatorsToFind[] = $product->getLine();
-        $classificatorsToFind[] = $product->getManufacturer();
+//        $classificatorsToFind[] = $product->getBrand();
+//        $classificatorsToFind[] = $product->getLine();
+//        $classificatorsToFind[] = $product->getManufacturer();
         $classificatorsToFind[] = $product->getMeasure();
         $classificatorsToFind[] = $product->getPurpose();
         $classificatorsToFind[] = $product->getType();
-        $classificatorsToFind[] = $product->getVendor();
+//        $classificatorsToFind[] = $product->getVendor();
+        $classificatorsToFind[] = $product->getProductGroup();
 
         $classificatorsToFind = array_filter ( $classificatorsToFind, [$this, 'lambdaNonEmpty'] );
 
@@ -340,7 +337,7 @@ class CatalogDao extends BaseDao
         $builder =  $em->createQueryBuilder();
         $builder->select('c')
             ->from(Classificator::class, 'c')
-            ->join( 'c.group', 'g');
+            ->join( 'c.classificatorGroup', 'g');
 
 
         if ( !empty($groupCode)) {

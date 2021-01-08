@@ -4,11 +4,15 @@
 {% endblock %}
 
 {% block body %}
-
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            {{ product.sku }}
+            <h1>Product <a href="{{ path('gt.catalog.product_edit', {sku:product.sku, languageCode:'en'}) }}">{{ product.sku }}</a> pictures list</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+
 
             <a href="{{ path( 'gt.catalog.product_pictures_add_form', {sku: product.sku} ) }}">add</a>
             <table class="table table-bordered">

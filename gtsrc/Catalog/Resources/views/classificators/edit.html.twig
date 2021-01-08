@@ -3,9 +3,12 @@
 {% block title %}{% trans %}Classificators edit{% endtrans %}{% endblock %}
 
 {% block body %}
-
     <div class="container">
         <div class="row">
+            <div class="col-md-12">
+                <h1>{% trans %}Edit Classificator{% endtrans %}</h1>
+            </div>
+        </div>        <div class="row">
             <div class="col-md-12">
                 {% for l in languages %}
                     {% if l.code==languageCode %}

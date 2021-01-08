@@ -5,8 +5,14 @@
 {% endblock %}
 
 {% block body %}
-
 <div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Product {{ sku }} Edit</h1>
+            <p><a href="{{ path('gt.catalog.product_categories_edit_form', {sku:sku}) }}">Categories</a>,
+            <a href="{{ path('gt.catalog.product_pictures', {sku:sku}) }}">Pictures</a></p>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-12">
             {% for l in languages %}
