@@ -149,6 +149,9 @@ class TmpProductMapper
         $purposeC->group_code = 'purpose';
         $purposeC->classificator_code = ProductsHelper::fixCode($kp->Atributai->paskirtis);
         $purposeC->value = $kp->Atributai->paskirtis_title;
+        if ( $purposeC->value = '-' ) {
+            $purposeC->value = $kp->Atributai->paskirtis;
+        }
         $tmpClassificators[] = $purposeC;
 
         $measureC = new TmpClassificator();

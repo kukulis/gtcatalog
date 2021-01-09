@@ -5,3 +5,5 @@ OLD legacy dir repository config:
             "type": "path",
             "url": "../gtcatalog-b2bcommon"
         },
+
+what products have purposes, why purpose titles was not imported?
