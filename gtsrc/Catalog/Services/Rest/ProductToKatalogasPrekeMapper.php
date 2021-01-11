@@ -33,8 +33,8 @@ class ProductToKatalogasPrekeMapper
 
         $kp->nomnr            = $pl->getProduct()->getSku();
         $kp->pavadinimas      = $pl->getName() ;
-        $kp->brandas          = PropertiesHelper::getPropertyOrNull( $pl->getProduct()->getBrand(),  'code' );
-        $kp->linija           = PropertiesHelper::getPropertyOrNull($pl->getProduct()->getLine(), 'code');
+        $kp->brandas          = $pl->getProduct()->getBrand();
+        $kp->linija           = $pl->getProduct()->getLine();
         $kp->depozito_kodas   = $pl->getProduct()->getDepositCode();
         $kp->muitines_kodas   = $pl->getProduct()->getCodeFromCustom();
         $kp->origin_country   = $pl->getProduct()->getOriginCountryCode();
@@ -97,7 +97,7 @@ class ProductToKatalogasPrekeMapper
         $kp->Aprasymas->ilgas_aprasymas        = $pl->getDescription();
         $kp->Aprasymas->etiketes_tekstas       = $pl->getLabel();
         $kp->Aprasymas->etiketes_dydis         = $pl->getLabelSize();
-        $kp->Aprasymas->gamintojas             = PropertiesHelper::getPropertyOrNull($pl->getProduct()->getVendor(), 'code');
+        $kp->Aprasymas->gamintojas             = $pl->getProduct()->getVendor();
         $kp->Aprasymas->platintojas            = $pl->getDistributor();
         $kp->Aprasymas->sudetis                = $pl->getComposition();
         $kp->Aprasymas->info_provider          = $pl->getInfoProvider();
