@@ -242,6 +242,19 @@ services:
         tags:
             - { name: 'console.command', command: 'catalog:import_customs_numbers' }
 
+    gt.catalog.auto_assign_customs_numbers_service:
+        class: 'Gt\Catalog\Services\AutoAssignCustomsNumbersService'
+        arguments:
+            - '@logger'
+            - '@doctrine'
+
+    gt.catalog.auto_assign_customs_numbers_command:
+        class: 'Gt\Catalog\Command\AutoAssignCustomsNumbersCommand'
+        arguments:
+            - '@logger'
+            - '@gt.catalog.auto_assign_customs_numbers_service'
+        tags:
+            - { name: 'console.command', command: 'catalog:auto_assign_customs_numbers' }
 
     Gt\Catalog\Controller\UsersController:
         tags:
