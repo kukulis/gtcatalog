@@ -4,7 +4,7 @@ set -e
 
 MAINTAINANCE_MODE_FILE="./var/locks/MAINTAINANCE_MODE"
 PID_FILE="./var/locks/$1"
-LOG_FILE="./var/logs/$1.log"
+LOG_FILE="./var/log/$1.log"
 SCRIPT_FILE="./bin/commands/$1.sh"
 
 touch "$LOG_FILE"
