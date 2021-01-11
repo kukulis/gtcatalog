@@ -294,7 +294,7 @@ class ProductsService extends ProductsBaseService
 
                         foreach ( $categoriesArr as $code ) {
                             $pc = new ProductCategory();
-                            $pc->setCategory(Category::createCategory($code));
+                            $pc->setCategory(Category::createCategory(strtolower($code)));
                             $pc->setProduct($product);
 
                             $productCategories[] = $pc;
