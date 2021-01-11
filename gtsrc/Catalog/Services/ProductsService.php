@@ -255,7 +255,7 @@ class ProductsService extends ProductsBaseService
 
                     foreach ($importingFieldsProductsClassificators as $f ) {
                         $setter = 'set'. PropertiesHelper::removeUnderScores($f);
-                        $product->$setter(Classificator::createClassificator( $line[$f], $f));
+                        $product->$setter(Classificator::createClassificator( strtolower($line[$f]), $f));
                     }
 
                     foreach ($importingFieldsProducts as $f ) {

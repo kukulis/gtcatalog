@@ -260,14 +260,14 @@ class CategoriesService extends ProductsBaseService
      */
     public static function mapCsvLine($line ) {
         $category = new Category();
-        $code = $line['code'];
+        $code = strtolower($line['code']);
 
         $parentCode = null;
         if ( isset($line['parent']) ) {
             if ( $line['parent'] == ''  or $line['parent'] == '-') {
                 $parentCode = null;
             } else {
-                $parentCode = $line['parent'];
+                $parentCode = strtolower($line['parent']);
             }
         }
 

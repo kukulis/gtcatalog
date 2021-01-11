@@ -189,7 +189,7 @@ class ClassificatorsService
      * @throws CatalogValidateException
      */
     public static function mapCsvLineToClassificatorLanguage ($line, Language $language=null) {
-        $code = $line['code'];
+        $code = strtolower($line['code']);
         $group = $line['classificator_group'];
 
         $customsCode = null;
