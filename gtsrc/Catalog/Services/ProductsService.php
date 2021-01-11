@@ -289,12 +289,13 @@ class ProductsService extends ProductsBaseService
                     if ( isset($line['categories'])) {
                         $categoriesStr = $line['categories'];
                         $categoriesArr = CategoriesHelper::splitCategoriesStr( $categoriesStr);
+                        $categoriesArr = array_map('strtolower', $categoriesArr);
 
                         $this->validateCategoriesCodes($categoriesArr, ' product sku '.$product->getSku());
 
                         foreach ( $categoriesArr as $code ) {
                             $pc = new ProductCategory();
-                            $pc->setCategory(Category::createCategory(strtolower($code)));
+                            $pc->setCategory(Category::createCategory($code));
                             $pc->setProduct($product);
 
                             $productCategories[] = $pc;
