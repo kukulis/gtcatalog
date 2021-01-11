@@ -272,3 +272,11 @@ services:
         bind:
             $logger: '@logger'
             $importPicturesService: '@gt.catalog.import_pictures_service'
+
+
+    gt.catalog.test:
+        class: 'Gt\Catalog\Command\TestCommand'
+        arguments:
+            - '@logger'
+        tags:
+            - { name: 'console.command', command: 'catalog:test' }
