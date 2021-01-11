@@ -445,7 +445,7 @@ class ProductsService extends ProductsBaseService
             throw new CatalogValidateException('Non valid fields:'.join(',', $nonValidFields));
         }
 
-        $requiredFields = ['sku','brand','line'];
+        $requiredFields = ['sku'];
         $missingFields = array_diff($requiredFields, $head);
 
         if ( count($missingFields) > 0 ) {
