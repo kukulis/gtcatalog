@@ -17,6 +17,16 @@
             <div class="col-md-12">
                 {{ form(form) }}
                 <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>{% trans %}Code{% endtrans %}</th>
+                            <th>{% trans %}Group{% endtrans %}</th>
+                            <th>{% trans %}Value{% endtrans %}</th>
+                            <th>{% trans %}Customs code{% endtrans %}</th>
+                            <th>{% trans %}Actions{% endtrans %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
                 {% for c in classificators %}
                     <tr>
                         <td>{{ c.code }}</td>
@@ -32,6 +42,7 @@
                         </td>
                     </tr>
                 {% endfor %}
+                    </tbody>
                 </table>
             </div>
         </div>

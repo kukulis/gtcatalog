@@ -16,6 +16,16 @@
         </div>
         <div class="col-md-12">
 <table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>{% trans %}SKU{% endtrans %}</th>
+            <th>{% trans %}Last update{% endtrans %}</th>
+            <th>{% trans %}version{% endtrans %}</th>
+            <th>{% trans %}Name{% endtrans %}</th>
+            <th colspan="3">{% trans %}Actions{% endtrans %}</th>
+        </tr>
+    </thead>
+    <tbody>
 {% for p in products %}
     <tr>
         <td>{{ p.sku }}</td>
@@ -27,6 +37,7 @@
         <td><a href="{{ path('gt.catalog.product_categories_edit_form', {sku: p.sku }) }}">Categories</a></td>
     </tr>
 {% endfor %}
+    </tbody>
 </table>
         </div>
     </div>
