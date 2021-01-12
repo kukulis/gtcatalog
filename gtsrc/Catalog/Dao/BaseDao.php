@@ -61,7 +61,7 @@ class BaseDao
 
         $updates=[];
         foreach ($updatedFields as $f) {
-            $updateStr = "$f=VALUES($f)";
+            $updateStr = "$f=ifnull(VALUES($f), $f)";
             $updates[] = $updateStr;
         }
 
