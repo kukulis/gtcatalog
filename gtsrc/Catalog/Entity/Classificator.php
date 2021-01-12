@@ -111,6 +111,9 @@ class Classificator
      * @return Classificator
      */
     public static function createClassificator ( $code, $groupCode ) {
+        if ( empty($code)) {
+            return null;
+        }
         $classificator = new Classificator();
         $classificator->setCode($code);
         $group = new ClassificatorGroup();

@@ -33,8 +33,8 @@ class ImagesImportController extends AbstractController
     }
 
     public function jobAddForm() {
-        // TODO
-        return new Response('TODO add import job' );
+        return $this->render('@Catalog/jobs/add.html.twig', [
+        ]);
     }
 
     public function jobAdd() {
