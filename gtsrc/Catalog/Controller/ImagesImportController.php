@@ -14,6 +14,7 @@ use Gt\Catalog\Services\ImportPicturesService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class ImagesImportController extends AbstractController
 {
@@ -33,6 +34,7 @@ class ImagesImportController extends AbstractController
 
     public function jobAddForm() {
         // TODO
+        return new Response('TODO add import job' );
     }
 
     public function jobAdd() {

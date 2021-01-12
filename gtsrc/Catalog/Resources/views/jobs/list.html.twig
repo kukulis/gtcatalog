@@ -10,12 +10,13 @@
             </div>
             <div class="col-md-12">
                 <div>
-                    <a href="#">Add</a>
+                    <a href="{{ path('gt.catalog.job_add') }}">Add</a>
                 </div>
                 <table class="table table-bordered">
                     <thead>
                         <tr>
                             <th>id</th>
+                            <th>actions</th>
                         </tr>
                     </thead>
                     {% for j in jobs %}

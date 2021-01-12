@@ -274,7 +274,7 @@ class CatalogDao extends BaseDao
      */
     public function loadClassificatorsList($codes) {
         $class = Classificator::class;
-        $dql =  /** @lang DQL */ "SELECT c,g FROM $class c join c.group g where c.code in (:codes)";
+        $dql =  /** @lang DQL */ "SELECT c,g FROM $class c join c.classificatorGroup g where c.code in (:codes)";
 
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
@@ -374,14 +374,14 @@ class CatalogDao extends BaseDao
         $builder->select('cl')
             ->from(ClassificatorLanguage::class, 'cl')
             ->join( 'cl.classificator', 'c')
-            ->join( 'c.group', 'g')
-            ->join( 'c.language', 'l');
+            ->join( 'c.classificatorGroup', 'g')
+            ->join( 'cl.language', 'l');
 
         $builder->andWhere('l.code=:languageCode' );
         $builder->setParameter('languageCode', $language );
 
         if ( !empty($likeName) ) {
-            $builder->andWhere('cl.value like :likeName');
+            $builder->andWhere('cl.name like :likeName');
             $builder->setParameter('likeName', '%'.$likeName.'%' );
         }
 
@@ -412,7 +412,7 @@ class CatalogDao extends BaseDao
         $givenFields = array_keys($givenFieldsSet);
         $importingFields = array_intersect($givenFields, Classificator::ALLOWED_FIELDS );
         // skip updates
-        $skipUpdates = ['code', 'group' ];
+        $skipUpdates = ['code', 'classificator_group' ];
         $updatingFields = array_diff($importingFields, $skipUpdates);
 
         /** @var EntityManager $em */
