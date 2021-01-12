@@ -14,6 +14,7 @@ use Gt\Catalog\Data\IPicturesJobsFilter;
 use Gt\Catalog\Entity\ImportPicturesJob;
 use Gt\Catalog\Repository\ImportPicturesJobRepository;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ImportPicturesService
 {
@@ -48,5 +49,17 @@ class ImportPicturesService
 
     public function handleJobs() {
         $this->logger->debug('ImportPicturesService.handleJobs called' );
+    }
+
+    public function registerJob(UploadedFile $zipfile=null, UploadedFile $csvfile=null ) {
+        /** @var ImportPicturesJobRepository $repository */
+        $repository = $this->entityManager->getRepository(ImportPicturesJob::class);
+
+        $job = $repository->createNewJob();
+
+        $this->logger->debug('created new job '.$job->getId() );
+        // TODO
+
+        return $job->getId();
     }
 }

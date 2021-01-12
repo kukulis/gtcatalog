@@ -7,12 +7,30 @@
     <div class="row">
         <div class="col-md-12">
             <h1>Add import job</h1>
+            <p>zip file (if given) must contain pictures with extensions jpg, jpeg or png</p>
+            <div>Csv file must contain:
+                <ul>
+                    <li>sku</li>
+                    <li>Picture file name, which is url or file name from the zip</li>
+                </ul>
+            </div>
+            <p>
+                If csv file is not given, then pictures names must be equal to product sku.
+            </p>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12">
-            <form>
+            <form action="{{ path('gt.catalog.job_add') }}" method="post" enctype="multipart/form-data">
+                <dl>
+                    <dt><label for="zipfile">Zip</label></dt>
+                        <dd><input id="zipfile" type="file" name="zipfile" /></dd>
+                    <dt><label for="csvfile">Csv</label></dt>
+                        <dd><input type="file" name="csvfile" /></dd>
 
+                    <dt></dt>
+                    <dd><button type="submit" name="register">Register import</button></dd>
+                </dl>
             </form>
         </div>
     </div>

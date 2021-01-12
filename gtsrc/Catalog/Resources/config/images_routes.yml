@@ -3,7 +3,13 @@ gt.catalog.job_list:
     controller: Gt\Catalog\Controller\ImagesImportController::jobList
     methods: GET
 
+gt.catalog.job_add_form:
+    path: "/add_job_form"
+    controller: Gt\Catalog\Controller\ImagesImportController::jobAddForm
+    methods: [GET]
+
+
 gt.catalog.job_add:
     path: "/add_job"
-    controller: Gt\Catalog\Controller\ImagesImportController::jobAddForm
-    methods: [GET, POST]
+    controller: Gt\Catalog\Controller\ImagesImportController::jobAdd
+    methods: [POST]

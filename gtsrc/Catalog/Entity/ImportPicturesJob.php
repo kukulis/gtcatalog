@@ -43,7 +43,7 @@ class ImportPicturesJob
 
     /**
      * @var DateTime
-     * @ORM\Column(type="datetime", name="finished_time")
+     * @ORM\Column(type="datetime", name="finished_time", nullable=true)
      *
      */
     private $finishedTime;

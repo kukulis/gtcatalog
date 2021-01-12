@@ -37,8 +37,13 @@ class ImagesImportController extends AbstractController
         ]);
     }
 
-    public function jobAdd() {
-        // TODO
+    public function jobAdd( Request $request, ImportPicturesService $importPicturesService ) {
+
+        $zipfile = $request->files->get('zipfile' );
+        $csvfile = $request->files->get('csvfile' );
+
+        $jobId = $importPicturesService->registerJob ($zipfile, $csvfile );
+        return new Response('job added '.$jobId );
     }
 
     public function jobView() {
