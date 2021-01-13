@@ -114,13 +114,16 @@ class PicturesService
     /**
      * @param Product $product
      * @param Picture $picture
+     * @return ProductPicture
      */
-    public function assignPictureToProduct ( Product $product, Picture $picture ) {
+    public function assignPictureToProduct ( Product $product, Picture $picture, $priority = 1 ) {
         $productPicture = new ProductPicture();
         $productPicture->setProduct($product);
         $productPicture->setPicture($picture);
+        $productPicture->setPriority($priority);
 
         $this->picturesDao->assignProductPicture($productPicture);
+        return $productPicture;
     }
 
 

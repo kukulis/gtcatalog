@@ -49,4 +49,36 @@ class ImportPicturesJobRepository extends ServiceEntityRepository
         $this->_em->flush();
         return $job;
     }
+
+    /**
+     * @param string $status
+     * @param int $limit
+     * @return ImportPicturesJob[]
+     */
+    public function getJobsInStatus($status, $limit) {
+        $class = ImportPicturesJob::class;
+        $dql = /** @lang DQL */ "SELECT j FROM $class j WHERE j.status=:status";
+        $query = $this->_em->createQuery($dql);
+        $query->setParameter('status', $status );
+        $query->setMaxResults($limit);
+
+        /** @var ImportPicturesJob[] $jobs */
+        $jobs = $query->getResult();
+
+        return $jobs;
+    }
+
+    /**
+     * @param ImportPicturesJob[] $jobs
+     * @param string $status
+     */
+    public function setStatuses ( $jobs, $status ) {
+        foreach ($jobs as $job ) {
+            $job->setStatus($status);
+            $this->_em->persist($job);
+        }
+
+        $this->_em->flush();
+    }
+
 }

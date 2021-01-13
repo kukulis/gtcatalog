@@ -43,7 +43,10 @@ class ProcessPicturesImportCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $output->writeln('process jobs called' );
+
         $this->importPicturesService->handleJobs();
+        $output->writeln('process jobs finished' );
         return 0;
     }
 }

@@ -115,7 +115,7 @@ class ProductsHelper
     public static function fixFileName($filename) {
         $nomralized = strtr($filename, self::CHAR_TABLE);
         $lowerCased = strtolower($nomralized);
-        $fixedName = preg_replace('/[^[:alnum:].]+/', '-', $lowerCased );
+        $fixedName = preg_replace('/[^[:alnum:]._]+/', '-', $lowerCased );
         return $fixedName;
     }
 }
