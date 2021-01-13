@@ -200,7 +200,7 @@ class ImportPicturesJob
     /**
      * @return DateTime
      */
-    public function getFinishedTime(): DateTime
+    public function getFinishedTime(): ?DateTime
     {
         return $this->finishedTime;
     }

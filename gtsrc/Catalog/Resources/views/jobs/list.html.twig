@@ -6,6 +6,12 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
+                <h1>{% trans %}Pictures import job{% endtrans %}</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
                 {{ form(filterForm) }}
             </div>
             <div class="col-md-12">
@@ -16,9 +22,11 @@
                     <thead>
                         <tr>
                             <th>id</th>
-                            <th>created at</th>
-                            <th>name</th>
-                            <th>actions</th>
+                            <th>{% trans %}created at{% endtrans %}</th>
+                            <th>{% trans %}name{% endtrans %}</th>
+                            <th>{% trans %}status{% endtrans %}</th>
+                            <th>{% trans %}finish time{% endtrans %}</th>
+                            <th>{% trans %}actions{% endtrans %}</th>
                         </tr>
                     </thead>
                     {% for j in jobs %}
@@ -26,6 +34,8 @@
                             <td>{{ j.id }}</td>
                             <td>{{ j.createdTime | date ('Y-m-d H:i' ) }}</td>
                             <td>{{ j.name }}</td>
+                            <td>{{ j.status }}</td>
+                            <td>{% if j.finishedTime is not empty %} {{ j.finishedTime | date ('Y-m-d H:i' ) }}{% else %}-{% endif %}</td>
                             <td><a href="#">Edit</a></td>
                         </tr>
                     {% endfor %}
