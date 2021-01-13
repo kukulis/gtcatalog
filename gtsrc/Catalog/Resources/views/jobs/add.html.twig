@@ -23,6 +23,8 @@
         <div class="col-md-12">
             <form action="{{ path('gt.catalog.job_add') }}" method="post" enctype="multipart/form-data">
                 <dl>
+                    <dt><label for="name">Name</label></dt>
+                        <dd><input id="name" type="text" name="name" /></dd>
                     <dt><label for="zipfile">Zip</label></dt>
                         <dd><input id="zipfile" type="file" name="zipfile" /></dd>
                     <dt><label for="csvfile">Csv</label></dt>

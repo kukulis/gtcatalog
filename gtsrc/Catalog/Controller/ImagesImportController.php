@@ -9,6 +9,7 @@
 namespace Gt\Catalog\Controller;
 
 
+use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Form\PicturesJobFilterFormType;
 use Gt\Catalog\Services\ImportPicturesService;
 use Psr\Log\LoggerInterface;
@@ -37,13 +38,21 @@ class ImagesImportController extends AbstractController
         ]);
     }
 
-    public function jobAdd( Request $request, ImportPicturesService $importPicturesService ) {
+    public function jobAdd( Request $request, ImportPicturesService $importPicturesService, LoggerInterface $logger ) {
+        try {
+            $name = $request->get('name');
+            $zipfile = $request->files->get('zipfile');
+            $csvfile = $request->files->get('csvfile');
 
-        $zipfile = $request->files->get('zipfile' );
-        $csvfile = $request->files->get('csvfile' );
+            $jobId = $importPicturesService->registerJob($name, $zipfile, $csvfile);
+            $logger->debug('Job added '.$jobId );
 
-        $jobId = $importPicturesService->registerJob ($zipfile, $csvfile );
-        return new Response('job added '.$jobId );
+            return $this->redirectToRoute('gt.catalog.job_list' );
+        } catch (CatalogValidateException $e ) {
+            return $this->render('@Catalog/error/error.html.twig', [
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function jobView() {

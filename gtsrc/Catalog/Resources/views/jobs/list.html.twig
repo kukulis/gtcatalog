@@ -16,12 +16,16 @@
                     <thead>
                         <tr>
                             <th>id</th>
+                            <th>created at</th>
+                            <th>name</th>
                             <th>actions</th>
                         </tr>
                     </thead>
                     {% for j in jobs %}
                         <tr>
                             <td>{{ j.id }}</td>
+                            <td>{{ j.createdTime | date ('Y-m-d H:i' ) }}</td>
+                            <td>{{ j.name }}</td>
                             <td><a href="#">Edit</a></td>
                         </tr>
                     {% endfor %}

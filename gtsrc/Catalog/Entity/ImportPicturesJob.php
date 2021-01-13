@@ -34,6 +34,13 @@ class ImportPicturesJob
      */
     private $id;
 
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=255, name="name", nullable=true)
+     */
+    private $name;
+
     /**
      * @var DateTime
      * @ORM\Column(type="datetime", name="created_time")
@@ -54,12 +61,6 @@ class ImportPicturesJob
      */
     private $status=self::STATUS_NONE;
 
-// nereikia, nes darysim pagal id
-//    private $workDir;
-//    private $zipFilePath; // in the same dir always same file
-//    private $csvFilePath; // in the same dir always same file
-
-    // statistics
     /**
      * @var int
      * @ORM\Column(type="integer", name="total_pictures", nullable=true)
@@ -81,7 +82,21 @@ class ImportPicturesJob
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=255, name="message", nullable=true)
+     * @ORM\Column(type="string", length=255, name="original_zip_file", nullable=true)
+     */
+    private $originalZipFile;
+
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=255, name="original_csv_file", nullable=true)
+     */
+    private $originalCsvFile;
+
+
+    /**
+     * @var string
+     * @ORM\Column(type="text", name="message", nullable=true)
      */
     private $message;
 
@@ -212,5 +227,53 @@ class ImportPicturesJob
     public function setMessage(string $message): void
     {
         $this->message = $message;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOriginalZipFile(): string
+    {
+        return $this->originalZipFile;
+    }
+
+    /**
+     * @param string $originalZipFile
+     */
+    public function setOriginalZipFile(string $originalZipFile): void
+    {
+        $this->originalZipFile = $originalZipFile;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOriginalCsvFile(): string
+    {
+        return $this->originalCsvFile;
+    }
+
+    /**
+     * @param string $originalCsvFile
+     */
+    public function setOriginalCsvFile(string $originalCsvFile): void
+    {
+        $this->originalCsvFile = $originalCsvFile;
     }
 }

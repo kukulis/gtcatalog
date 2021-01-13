@@ -4,6 +4,7 @@ services:
         arguments:
             - '@logger'
             - '@doctrine.orm.entity_manager'
+            - '%kernel.project_dir%/jobs'
 
     gt.catalog.process_pictures_import_command:
         class: 'Gt\Catalog\Command\ProcessPicturesImportCommand'

@@ -111,4 +111,11 @@ class ProductsHelper
         $fixedCode = preg_replace('/[^[:alnum:]+]+/', '-', $lowerCased );
         return substr($fixedCode, 0, self::MAX_CODE_LENGTH); // apribojam iki 64
     }
+
+    public static function fixFileName($filename) {
+        $nomralized = strtr($filename, self::CHAR_TABLE);
+        $lowerCased = strtolower($nomralized);
+        $fixedName = preg_replace('/[^[:alnum:].]+/', '-', $lowerCased );
+        return $fixedName;
+    }
 }

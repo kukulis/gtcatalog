@@ -89,4 +89,18 @@ class ValidateHelper
         return !empty($tag)
         && preg_match( '/^[[:alnum:]\\-._]{2,30}$/', $tag ) == 1;
     }
+
+    /**
+     * @param string $str
+     * @param string[] $substrs
+     * @return bool
+     */
+    public static function endsWithAnyOf ( $str, $substrs ) {
+        foreach ($substrs as $substr ) {
+            if ( str_ends_with($str, $substr)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

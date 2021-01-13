@@ -13,7 +13,6 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Gt\Catalog\Data\IPicturesJobsFilter;
 use Gt\Catalog\Entity\ImportPicturesJob;
-use \DateTime;
 
 class ImportPicturesJobRepository extends ServiceEntityRepository
 {
@@ -41,9 +40,11 @@ class ImportPicturesJobRepository extends ServiceEntityRepository
         return $jobs;
     }
 
-    public function createNewJob() {
+    public function createNewJob($name, $createdDate) {
         $job = new ImportPicturesJob();
-        $job->setCreatedTime(new DateTime());
+        $job->setName($name);
+        $job->setCreatedTime($createdDate);
+        $job->setStatus(ImportPicturesJob::STATUS_NONE );
         $this->_em->persist($job);
         $this->_em->flush();
         return $job;
