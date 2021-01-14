@@ -26,6 +26,8 @@
                             <th>{% trans %}name{% endtrans %}</th>
                             <th>{% trans %}status{% endtrans %}</th>
                             <th>{% trans %}finish time{% endtrans %}</th>
+                            <th>{% trans %}total pictures{% endtrans %}</th>
+                            <th>{% trans %}imported pictures{% endtrans %}</th>
                             <th>{% trans %}actions{% endtrans %}</th>
                         </tr>
                     </thead>
@@ -36,7 +38,9 @@
                             <td>{{ j.name }}</td>
                             <td>{{ j.status }}</td>
                             <td>{% if j.finishedTime is not empty %} {{ j.finishedTime | date ('Y-m-d H:i' ) }}{% else %}-{% endif %}</td>
-                            <td><a href="#">Edit</a></td>
+                            <td>{{ j.totalPictures }}</td>
+                            <td>{{ j.importedPictures }}</td>
+                            <td><a href="{{ path('gt.catalog.job_view', {id:j.id} ) }}">View (Edit?)</a></td>
                         </tr>
                     {% endfor %}
                 </table>

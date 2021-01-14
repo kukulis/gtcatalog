@@ -13,3 +13,9 @@ gt.catalog.job_add:
     path: "/add_job"
     controller: Gt\Catalog\Controller\ImagesImportController::jobAdd
     methods: [POST]
+
+gt.catalog.job_view:
+    path: "/job_view/{id}"
+    controller: Gt\Catalog\Controller\ImagesImportController::jobView
+    methods: [GET]
+

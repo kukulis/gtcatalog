@@ -55,8 +55,18 @@ class ImagesImportController extends AbstractController
         }
     }
 
-    public function jobView() {
-        // TODO
+    public function jobView($id, ImportPicturesService $importPicturesService) {
+        $job = $importPicturesService->getJob($id);
+
+        if ( $job == null ) {
+            return $this->render('@Catalog/error/error.html.twig', [
+                'error' => "Can't find job by id ".$id,
+            ]);
+        }
+        return $this->render('@Catalog/jobs/edit.html.twig', [
+            'job' => $job,
+        ]);
+
     }
 
     public function jobCancel() {

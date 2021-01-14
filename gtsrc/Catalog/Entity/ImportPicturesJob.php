@@ -93,7 +93,6 @@ class ImportPicturesJob
      */
     private $originalCsvFile;
 
-
     /**
      * @var string
      * @ORM\Column(type="text", name="message", nullable=true)
@@ -136,7 +135,7 @@ class ImportPicturesJob
     /**
      * @return int
      */
-    public function getTotalPictures(): int
+    public function getTotalPictures(): ?int
     {
         return $this->totalPictures;
     }
@@ -152,7 +151,7 @@ class ImportPicturesJob
     /**
      * @return int
      */
-    public function getImportedPictures(): int
+    public function getImportedPictures(): ?int
     {
         return $this->importedPictures;
     }
@@ -168,7 +167,7 @@ class ImportPicturesJob
     /**
      * @return string
      */
-    public function getLastSku(): string
+    public function getLastSku(): ?string
     {
         return $this->lastSku;
     }

@@ -166,7 +166,7 @@ class ImportPicturesService
         $picturesDir = $this->getPicturesDirectory($job);
         @mkdir($picturesDir);
 
-        // copy files from tmp tree to flat pictures dir
+        // copy files from tmp tree to a flat pictures dir
         $files = FileHelper::getFiles($tmpDir);
         foreach ($files as $file ) {
             if ( is_file($file) &&
@@ -222,6 +222,7 @@ class ImportPicturesService
                     $job->setMessage($message);
                 }
 
+                $job->setFinishedTime(new DateTime());
                 $job->setStatus(ImportPicturesJob::STATUS_FINISHED );
 
             } catch (Exception $e) {
@@ -247,7 +248,7 @@ class ImportPicturesService
 
     public function importPicturesByCsvFile ( ImportPicturesJob $job, $csvFile ) {
 
-        $errorMessages = [];
+        $messages = [];
 
         $f = fopen($csvFile, 'r' );
         $header = fgetcsv($f);
@@ -267,28 +268,61 @@ class ImportPicturesService
         $picturesDir = $this->getPicturesDirectory($job);
         $headMap = array_flip($header);
         $line = fgetcsv($f);
+        $count = 0;
+        $totalCount = 0;
         while ( $line != null ) {
+            $totalCount++;
             $lineMap = CsvUtils::arrayToAssoc( $headMap, $line);
             $line = fgetcsv($f); // iš kart kitą eilutę skaitom
             $sourceFile = $lineMap['file'];
             $sku = $lineMap['sku'];
+            $job->setLastSku($sku);
 
             $priority = 1;
             if ( isset($lineMap['priority']) ) {
                 $priority = $lineMap['priority'];
             }
-            $sourceFilePath = $picturesDir.DIRECTORY_SEPARATOR.$sourceFile;
+            // check if http
+            if ( str_starts_with( $sourceFile, 'http://' )
+            || str_starts_with( $sourceFile, 'https://' ) ) {
+                $sourceFilePath = $sourceFile;
+
+                $sourceFile = basename($sourceFile);
+            }
+            else {
+                $sourceFilePath = $picturesDir . DIRECTORY_SEPARATOR . $sourceFile;
+            }
 
             $product = $this->catalogDao->getProduct($sku);
             if ( $product == null ) {
-                $errorMessages[] = 'cant find product by sku '.$sku;
+                $messages[] = 'ERROR: cant find product by sku ['.$sku.']';
                 continue;
             }
             $picture = $this->picturesService->createPicture($sourceFilePath, $sourceFile);
             $this->picturesService->assignPictureToProduct($product, $picture, $priority);
+            $count++;
         }
 
-        return $errorMessages;
+        $job->setImportedPictures($count);
+        $job->setTotalPictures($totalCount);
+
+        $messages[] = "Imported pictures count ".$count;
+
+        return $messages;
+    }
+
+    /**
+     * @param int $id
+     * @return ImportPicturesJob
+     */
+    public function getJob ( $id ) {
+        /** @var ImportPicturesJobRepository $repository */
+        $repository = $this->entityManager->getRepository(ImportPicturesJob::class);
+
+        /** @var ImportPicturesJob $job */
+        $job  = $repository->find($id);
+
+        return $job;
     }
 
 }

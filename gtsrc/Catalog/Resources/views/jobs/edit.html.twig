@@ -1,0 +1,48 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block title %}Edit view Job {{ job.id }}{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Edit/view job</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <form>
+                    <dl>
+                        <dt><label for="id">Id</label></dt>
+                        <dd><input id="id" type="text" name="id" value="{{ job.id }}"/></dd>
+                        <dt><label for="name">Name</label></dt>
+                        <dd><input id="name" type="text" name="name" value="{{ job.name }}" /></dd>
+
+                        <dt><label for="createdTime">Created time</label></dt>
+                        <dd><input type="text" name="createdTime" id="createdTime" value="{{ job.createdTime | date('Y-m-d H:i:s') }}" /></dd>
+                        <dt><label for="finishedTime">Finished time</label></dt>
+                        <dd><input type="text" name="finishedTime" id="finishedTime" value="{{ job.finishedTime | date('Y-m-d H:i:s') }}" /></dd>
+                        <dt><label for="status">status</label></dt>
+                        <dd><input type="text" name="status" id="status" value="{{ job.status }}" /></dd>
+                        <dt><label for="message">message</label></dt>
+                        <dd><textarea type="text" name="message" id="message" cols="50" >{{ job.message }}</textarea></dd>
+
+                        <dt><label for="totalPictures">totalPictures</label></dt>
+                        <dd><input type="text" name="totalPictures" id="totalPictures" value="{{ job.totalPictures }}" /></dd>
+                        <dt><label for="importedPictures">importedPictures</label></dt>
+                        <dd><input type="text" name="importedPictures" id="importedPictures" value="{{ job.importedPictures }}" /></dd>
+                        <dt><label for="lastSku">lastSku</label></dt>
+                        <dd><input type="text" name="lastSku" id="lastSku" value="{{ job.lastSku }}" /></dd>
+
+
+                        <dt><label for="originalZipFile">originalZipFile</label></dt>
+                        <dd><input type="text" name="originalZipFile" id="originalZipFile" value="{{ job.originalZipFile }}" /></dd>
+                        <dt><label for="originalCsvFile">originalCsvFile</label></dt>
+                        <dd><input type="text" name="originalCsvFile" id="originalCsvFile" value="{{ job.originalCsvFile }}" /></dd>
+                    </dl>
+                    <p>Editing is not implemented because we did not decided yet which field we should be able to modify.</p>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

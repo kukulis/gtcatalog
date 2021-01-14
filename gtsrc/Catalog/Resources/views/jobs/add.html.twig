@@ -11,11 +11,18 @@
             <div>Csv file must contain:
                 <ul>
                     <li>sku</li>
-                    <li>Picture file name, which is url or file name from the zip</li>
+                    <li>file</li>
+                    <li>priority</li>
+                </ul>
+
+                <ul>
+                    <li>sku - a product sku to which picture is assigned</li>
+                    <li>file - picture file name in the given zip, or picture url</li>
+                    <li>priority - picture priority for the given product</li>
                 </ul>
             </div>
             <p>
-                If csv file is not given, then pictures names must be equal to product sku.
+                If csv file is not given, then pictures names must be equal to product sku. (not implemented yet)
             </p>
         </div>
     </div>
@@ -29,7 +36,6 @@
                         <dd><input id="zipfile" type="file" name="zipfile" /></dd>
                     <dt><label for="csvfile">Csv</label></dt>
                         <dd><input type="file" name="csvfile" /></dd>
-
                     <dt></dt>
                     <dd><button type="submit" name="register">Register import</button></dd>
                 </dl>
