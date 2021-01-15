@@ -222,7 +222,7 @@ class ImportPicturesJob
     /**
      * @return string
      */
-    public function getMessage(): string
+    public function getMessage(): ?string
     {
         return $this->message;
     }
@@ -230,7 +230,7 @@ class ImportPicturesJob
     /**
      * @param string $message
      */
-    public function setMessage(string $message): void
+    public function setMessage(string $message=null): void
     {
         $this->message = $message;
     }

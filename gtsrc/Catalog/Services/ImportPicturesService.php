@@ -235,6 +235,9 @@ class ImportPicturesService
                 $job->setStatus(ImportPicturesJob::STATUS_FAIL );
                 $job->setMessage($e->getMessage());
             } finally {
+                if ( $job->getStatus() == ImportPicturesJob::STATUS_PROCESSING ) {
+                    $job->setStatus(ImportPicturesJob::STATUS_FAIL);
+                }
                 $this->entityManager->persist($job);
                 $this->entityManager->flush();
             }
@@ -285,6 +288,20 @@ class ImportPicturesService
             if ( isset($lineMap['priority']) ) {
                 $priority = $lineMap['priority'];
             }
+
+            $statusas = null;
+            if ( isset($lineMap['statusas']) ) {
+                $statusas = $lineMap['statusas'];
+            }
+
+
+            $infoProvider = null;
+            if ( isset($lineMap['info_provider']) ) {
+                $infoProvider = $lineMap['info_provider'];
+            }
+
+
+
             // check if http
             if ( str_starts_with( $sourceFile, 'http://' )
             || str_starts_with( $sourceFile, 'https://' ) ) {
@@ -302,7 +319,8 @@ class ImportPicturesService
                 continue;
             }
             try {
-                $picture = $this->picturesService->createPicture($sourceFilePath, $sourceFile, true);
+                $picture = $this->picturesService->createPicture($sourceFilePath, $sourceFile, false, $statusas, $infoProvider);
+                $this->picturesService->unassignPictureByPriority($product->getSku(), $priority); // deleting (unassigning) old picture
                 $this->picturesService->assignPictureToProduct($product, $picture, $priority);
                 $count++;
             } catch ( CatalogValidateException $exception ) {

@@ -48,11 +48,13 @@ class PicturesService
      * @return Picture
      * @throws CatalogValidateException
      */
-    public function createPicture($sourcePath, $name, $checkHash=false) {
+    public function createPicture($sourcePath, $name, $checkHash=false, $statusas=null, $infoProvider=null) {
         // 1) sukurti pav objektą
         $canonizedName = PicturesHelper::canonizePictureName($name);
         $picture = new Picture();
         $picture->setName($canonizedName);
+        $picture->setStatusas($statusas);
+        $picture->setInfoProvider($infoProvider);
         $picture = $this->picturesDao->insertPicture($picture);
 
         // 2) paskaičiuoti jam kelią
@@ -145,7 +147,7 @@ class PicturesService
         $productPicture = new ProductPicture();
         $productPicture->setProduct($product);
         $productPicture->setPicture($picture);
-        $productPicture->setPriority($priority);
+        $productPicture->setPriority(intval($priority));
 
         $this->picturesDao->assignProductPicture($productPicture);
         return $productPicture;
@@ -229,6 +231,11 @@ class PicturesService
      */
     public function storeProductPictureWithPicture (ProductPicture $productPicture) {
         $this->picturesDao->storeProductPicture($productPicture);
+    }
+
+    public function unassignPictureByPriority($sku, $priority ) {
+        $pp = $this->picturesDao->findPictureAssignmentByPriority($sku, $priority);
+        $this->picturesDao->deletePictureAssignement($pp);
     }
 
 }

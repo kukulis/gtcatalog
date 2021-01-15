@@ -12,6 +12,7 @@ namespace Gt\Catalog\Dao;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
 use Gt\Catalog\Entity\Picture;
+use Gt\Catalog\Entity\Product;
 use Gt\Catalog\Entity\ProductPicture;
 use Psr\Log\LoggerInterface;
 
@@ -189,6 +190,31 @@ class PicturesDao
         $dql = "SELECT pp FROM $class pp JOIN pp.picture p WHERE p.id=:pictureID";
         $query = $em->createQuery($dql);
         $query->setParameter('pictureID', $pictureID);
+
+        /** @var ProductPicture[] $pps */
+        $pps = $query->getResult();
+
+        if ( count($pps) == 0 ) {
+            return null;
+        }
+
+        return $pps[0];
+    }
+
+    /**
+     * @param string $sku
+     * @param int $priority
+     * @return ProductPicture|null
+     */
+    public function findPictureAssignmentByPriority($sku, $priority) {
+        $class = ProductPicture::class;
+        $dql = /** @lang DQL */ "SELECT pp FROM $class pp JOIN pp.product p  WHERE p.sku=:sku and pp.priority=:priority";
+
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+        $query = $em->createQuery($dql);
+        $query->setParameter('sku', $sku );
+        $query->setParameter('priority', $priority );
 
         /** @var ProductPicture[] $pps */
         $pps = $query->getResult();
