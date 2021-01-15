@@ -71,6 +71,7 @@ class ImportPicturesJobRepository extends ServiceEntityRepository
     /**
      * @param ImportPicturesJob[] $jobs
      * @param string $status
+     * @throws \Doctrine\ORM\ORMException
      */
     public function setStatuses ( $jobs, $status ) {
         foreach ($jobs as $job ) {
@@ -81,4 +82,24 @@ class ImportPicturesJobRepository extends ServiceEntityRepository
         $this->_em->flush();
     }
 
+    /**
+     * @param ImportPicturesJob $job
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function deleteJob ( ImportPicturesJob $job ) {
+        $this->_em->remove($job);
+        $this->_em->flush();
+    }
+
+
+    /**
+     * @param ImportPicturesJob $job
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function update ( ImportPicturesJob $job ) {
+        $this->_em->persist($job);
+        $this->_em->flush();
+    }
 }

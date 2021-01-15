@@ -42,7 +42,10 @@
                             <td>{% if j.finishedTime is not empty %} {{ j.finishedTime | date ('Y-m-d H:i' ) }}{% else %}-{% endif %}</td>
                             <td>{{ j.totalPictures }}</td>
                             <td>{{ j.importedPictures }}</td>
-                            <td><a href="{{ path('gt.catalog.job_view', {id:j.id} ) }}">View (Edit?)</a></td>
+                            <td><a href="{{ path('gt.catalog.job_view', {id:j.id} ) }}">View (Edit?)</a>
+                                <a onclick="return confirm('Do you really want to delete job {{ j.id }}?')"
+                                        href="{{ path('gt.catalog.job_delete', {id:j.id} ) }}">Delete</a>
+                            </td>
                         </tr>
                     {% endfor %}
                 </table>

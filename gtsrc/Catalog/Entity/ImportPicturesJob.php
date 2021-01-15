@@ -286,7 +286,7 @@ class ImportPicturesJob
     /**
      * @return DateTime
      */
-    public function getStartTime(): DateTime
+    public function getStartTime(): ?DateTime
     {
         return $this->startTime;
     }

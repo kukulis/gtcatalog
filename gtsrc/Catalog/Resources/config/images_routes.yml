@@ -19,3 +19,12 @@ gt.catalog.job_view:
     controller: Gt\Catalog\Controller\ImagesImportController::jobView
     methods: [GET]
 
+gt.catalog.job_delete:
+    path: "/job_delete/{id}"
+    controller: Gt\Catalog\Controller\ImagesImportController::jobDelete
+    methods: [GET]
+
+gt.catalog.job_view_csv:
+    path: "/job_view_csv/{id}"
+    controller: Gt\Catalog\Controller\ImagesImportController::viewCsv
+    methods: [GET]

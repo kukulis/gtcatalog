@@ -187,7 +187,6 @@ class ImportPicturesService
         }
     }
 
-
     public function handleJobs() {
         /** @var ImportPicturesJobRepository $jobsRepository */
         $jobsRepository = $this->entityManager->getRepository(ImportPicturesJob::class );
@@ -214,7 +213,10 @@ class ImportPicturesService
                     continue;
                 }
 
-                $jobsRepository->setStatuses([$job], ImportPicturesJob::STATUS_PROCESSING);
+//                $jobsRepository->setStatuses([$job], ImportPicturesJob::STATUS_PROCESSING);
+                $job->setStatus(ImportPicturesJob::STATUS_PROCESSING);
+                $job->setStartTime(new DateTime());
+                $jobsRepository->update($job);
                 $messages = $this->importPicturesByCsvFile($job, $csvFile);
 
                 if( count($messages) > 0 ) {
@@ -323,6 +325,25 @@ class ImportPicturesService
         $job  = $repository->find($id);
 
         return $job;
+    }
+
+    public function deleteJob(ImportPicturesJob $job) {
+        $dir = $this->getJobDirectory($job);
+        system("rm -rf ".escapeshellarg($dir));
+        /** @var ImportPicturesJobRepository $jobRepository */
+        $jobRepository = $this->entityManager->getRepository(ImportPicturesJob::class);
+
+        $jobRepository->deleteJob($job);
+    }
+
+    /**
+     * @param ImportPicturesJob $job
+     * @return false|string
+     */
+    public function getCsvContent ( ImportPicturesJob $job) {
+        $csvFile = $this->getCsvFilePath($job);
+        $content = file_get_contents($csvFile);
+        return $content;
     }
 
 }

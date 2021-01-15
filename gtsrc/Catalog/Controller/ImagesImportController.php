@@ -9,6 +9,7 @@
 namespace Gt\Catalog\Controller;
 
 
+use Gt\Catalog\Entity\ImportPicturesJob;
 use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Form\PicturesJobFilterFormType;
 use Gt\Catalog\Services\ImportPicturesService;
@@ -68,6 +69,47 @@ class ImagesImportController extends AbstractController
         ]);
 
     }
+
+    public function jobDelete($id, ImportPicturesService $importPicturesService) {
+        $job = $importPicturesService->getJob($id);
+        if ( $job == null ) {
+            return $this->render('@Catalog/error/error.html.twig', [
+                'error' => "Can't find job by id ".$id,
+            ]);
+        }
+
+        if ( $job->getStatus() == ImportPicturesJob::STATUS_PROCESSING ||
+            $job->getStatus() == ImportPicturesJob::STATUS_IN_QUEUE
+        ) {
+            return $this->render('@Catalog/error/error.html.twig', [
+                'error' => "Can't delete job ".$id.' in status '.$job->getStatus(),
+            ]);
+        }
+
+        $importPicturesService->deleteJob ( $job );
+        return $this->redirectToRoute('gt.catalog.job_list');
+    }
+
+    public function viewCsv ($id, ImportPicturesService $importPicturesService) {
+        $job = $importPicturesService->getJob($id);
+        if ( $job == null ) {
+            return $this->render('@Catalog/error/error.html.twig', [
+                'error' => "Can't find job by id ".$id,
+            ]);
+        }
+
+        $csvContent = $importPicturesService->getCsvContent($job);
+
+        return new Response(
+            $csvContent,
+            200,
+            [
+                'Content-Type' => 'text/csv',
+                'Content-Disposition' => sprintf('attachment; filename="%s"', $job->getOriginalCsvFile()),
+            ]
+        );
+    }
+
 
     public function jobCancel() {
         // TODO
