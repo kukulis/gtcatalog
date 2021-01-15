@@ -50,6 +50,13 @@ class ImportPicturesJob
 
     /**
      * @var DateTime
+     * @ORM\Column(type="datetime", name="start_time", nullable=true)
+     *
+     */
+    private $startTime;
+
+    /**
+     * @var DateTime
      * @ORM\Column(type="datetime", name="finished_time", nullable=true)
      *
      */
@@ -274,5 +281,21 @@ class ImportPicturesJob
     public function setOriginalCsvFile(string $originalCsvFile): void
     {
         $this->originalCsvFile = $originalCsvFile;
+    }
+
+    /**
+     * @return DateTime
+     */
+    public function getStartTime(): DateTime
+    {
+        return $this->startTime;
+    }
+
+    /**
+     * @param DateTime $startTime
+     */
+    public function setStartTime(DateTime $startTime): void
+    {
+        $this->startTime = $startTime;
     }
 }

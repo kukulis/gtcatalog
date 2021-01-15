@@ -25,6 +25,7 @@
                             <th>{% trans %}created at{% endtrans %}</th>
                             <th>{% trans %}name{% endtrans %}</th>
                             <th>{% trans %}status{% endtrans %}</th>
+                            <th>{% trans %}start time{% endtrans %}</th>
                             <th>{% trans %}finish time{% endtrans %}</th>
                             <th>{% trans %}total pictures{% endtrans %}</th>
                             <th>{% trans %}imported pictures{% endtrans %}</th>
@@ -37,6 +38,7 @@
                             <td>{{ j.createdTime | date ('Y-m-d H:i' ) }}</td>
                             <td>{{ j.name }}</td>
                             <td>{{ j.status }}</td>
+                            <td>{% if j.startTime is not empty %} {{ j.startTime | date ('Y-m-d H:i' ) }}{% else %}-{% endif %}</td>
                             <td>{% if j.finishedTime is not empty %} {{ j.finishedTime | date ('Y-m-d H:i' ) }}{% else %}-{% endif %}</td>
                             <td>{{ j.totalPictures }}</td>
                             <td>{{ j.importedPictures }}</td>

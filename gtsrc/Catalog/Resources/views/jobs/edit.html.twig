@@ -20,6 +20,8 @@
 
                         <dt><label for="createdTime">Created time</label></dt>
                         <dd><input type="text" name="createdTime" id="createdTime" value="{{ job.createdTime | date('Y-m-d H:i:s') }}" /></dd>
+                        <dt><label for="startTime">Start time</label></dt>
+                        <dd><input type="text" name="startTime" id="startTime" value="{{ job.startTime | date('Y-m-d H:i:s') }}" /></dd>
                         <dt><label for="finishedTime">Finished time</label></dt>
                         <dd><input type="text" name="finishedTime" id="finishedTime" value="{{ job.finishedTime | date('Y-m-d H:i:s') }}" /></dd>
                         <dt><label for="status">status</label></dt>
