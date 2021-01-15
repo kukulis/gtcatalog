@@ -15,6 +15,7 @@ use Gt\Catalog\Entity\Picture;
 use Gt\Catalog\Entity\Product;
 use Gt\Catalog\Entity\ProductPicture;
 use Gt\Catalog\Exception\CatalogErrorException;
+use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Utils\PicturesHelper;
 
 class PicturesService
@@ -42,11 +43,12 @@ class PicturesService
     }
 
     /**
-     * @param string $path
+     * @param string $sourcePath
      * @param string $name
      * @return Picture
+     * @throws CatalogValidateException
      */
-    public function createPicture($path, $name) {
+    public function createPicture($sourcePath, $name, $checkHash=false) {
         // 1) sukurti pav objektą
         $canonizedName = PicturesHelper::canonizePictureName($name);
         $picture = new Picture();
@@ -61,10 +63,33 @@ class PicturesService
             @mkdir($fullDir, 0775, true);
         }
 
-        $fullPath = $fullDir.$this->pathSeparator.$picture->getName();
+        $destinationFullPath = $fullDir.$this->pathSeparator.$picture->getName();
+
+        // calculate picture hash before inserting into database
+        $content = file_get_contents($sourcePath);
+        $hash = hash("md5", $content);
+
+        if ( $checkHash) {
+            $duplicatePicture = $this->picturesDao->findByHash($hash);
+
+            if ( $duplicatePicture != null ) {
+                // find pictures products
+                $productPicture = $this->picturesDao->findPictureProduct ( $duplicatePicture->getId() );
+
+                $productInfo = '';
+                if ( $productPicture != null ) {
+                    $productInfo='  assigned to product '.$productPicture->getProduct()->getSku();
+                }
+
+                throw new CatalogValidateException('ERROR: For picture '. $name .' we found a duplicate picture with id '.$duplicatePicture->getId().$productInfo);
+            }
+        }
+
+        $picture->setContentHash($hash);
+        $this->picturesDao->updatePicture($picture);
 
         // 3) nukopijuoti paduotą pav į reikiamą vietą
-        copy ( $path, $fullPath );
+        file_put_contents($destinationFullPath, $content );
 
         return $picture;
     }
@@ -205,6 +230,5 @@ class PicturesService
     public function storeProductPictureWithPicture (ProductPicture $productPicture) {
         $this->picturesDao->storeProductPicture($productPicture);
     }
-
 
 }

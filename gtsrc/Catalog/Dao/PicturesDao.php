@@ -149,4 +149,54 @@ class PicturesDao
         $em->persist($productPicture);
         $em->flush();
     }
+
+    public function updatePicture(Picture $picture) {
+        $em = $this->doctrine->getManager();
+        $em->persist($picture);
+        $em->flush();
+    }
+
+
+    /**
+     * @param string $hash
+     * @return Picture|null
+     */
+    public function findByHash ( $hash ) {
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        $class = Picture::class;
+
+        $dql = "SELECT p FROM $class p WHERE p.contentHash=:contentHash";
+        $query = $em->createQuery($dql);
+        $query->setParameter('contentHash', $hash);
+
+        /** @var Picture[] $pictures */
+        $pictures = $query->getResult();
+
+        if ( count($pictures) == 0 ) {
+            return null;
+        }
+        return $pictures[0];
+    }
+
+    public function findPictureProduct ( $pictureID ) {
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        $class = ProductPicture::class;
+
+        $dql = "SELECT pp FROM $class pp JOIN pp.picture p WHERE p.id=:pictureID";
+        $query = $em->createQuery($dql);
+        $query->setParameter('pictureID', $pictureID);
+
+        /** @var ProductPicture[] $pps */
+        $pps = $query->getResult();
+
+        if ( count($pps) == 0 ) {
+            return null;
+        }
+
+        return $pps[0];
+    }
 }

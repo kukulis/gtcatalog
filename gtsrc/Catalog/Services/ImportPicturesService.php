@@ -22,6 +22,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use \DateTime;
 use \Exception;
+use \ZipArchive;
 
 class ImportPicturesService
 {
@@ -149,7 +150,7 @@ class ImportPicturesService
 
     // this will be called from command
     public function extractZipFile (ImportPicturesJob $job) {
-        $zipArchiveObj = new \ZipArchive();
+        $zipArchiveObj = new ZipArchive();
 
         $jobdir =  $this->getJobDirectory($job);
         $zipFile = $jobdir . DIRECTORY_SEPARATOR . self::STORED_ZIP_NAME;
@@ -300,9 +301,13 @@ class ImportPicturesService
                 $messages[] = 'ERROR: cant find product by sku ['.$sku.']';
                 continue;
             }
-            $picture = $this->picturesService->createPicture($sourceFilePath, $sourceFile);
-            $this->picturesService->assignPictureToProduct($product, $picture, $priority);
-            $count++;
+            try {
+                $picture = $this->picturesService->createPicture($sourceFilePath, $sourceFile, true);
+                $this->picturesService->assignPictureToProduct($product, $picture, $priority);
+                $count++;
+            } catch ( CatalogValidateException $exception ) {
+                $messages[] = $exception->getMessage();
+            }
         }
 
         $job->setImportedPictures($count);

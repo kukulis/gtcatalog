@@ -12,7 +12,10 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="pictures")
+ * @ORM\Table(name="pictures",
+ *            indexes={
+ *               @ORM\Index(name="picture_hash_idx", columns={"content_hash"})
+ *            })
  */
 class Picture
 {
@@ -48,6 +51,12 @@ class Picture
      */
     private $statusas;
 
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true, name="content_hash", length=32)
+     */
+    private $contentHash;
 
 
     // -- not stored to db
@@ -148,5 +157,23 @@ class Picture
     {
         $this->statusas = $statusas;
     }
+
+    /**
+     * @return string
+     */
+    public function getContentHash(): ?string
+    {
+        return $this->contentHash;
+    }
+
+    /**
+     * @param string $contentHash
+     */
+    public function setContentHash(string $contentHash): void
+    {
+        $this->contentHash = $contentHash;
+    }
+
+
 
 }
