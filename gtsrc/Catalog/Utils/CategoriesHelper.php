@@ -36,4 +36,12 @@ class CategoriesHelper
         }
         return preg_match ( '/^[0-9\\s]+$/', $customsCode) == 1;
     }
+
+    public static function splitTagsStr($str) {
+        if ( $str == null ) {
+            return [];
+        }
+        $rez = preg_split ( '/[\\s,]+/', $str, -1, PREG_SPLIT_NO_EMPTY );
+        return $rez;
+    }
 }

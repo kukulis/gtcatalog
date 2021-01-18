@@ -40,5 +40,12 @@ class CategoriesHelperTest extends TestCase
         $this->assertFalse(CategoriesHelper::validateCategoryCode('z,z'));
     }
 
+    public function testSplitTags() {
+        $this->assertEquals( ['vienas', 'du', 'trys'],  CategoriesHelper::splitTagsStr( 'vienas, du, trys' ) );
+        $this->assertEquals( ['vienas', 'du', 'trys'],  CategoriesHelper::splitTagsStr( 'vienas du trys' ) );
+        $this->assertEquals( ['vienas', 'du', 'trys'],  CategoriesHelper::splitTagsStr( 'vienas,du,trys' ) );
+        $this->assertEquals( [],  CategoriesHelper::splitTagsStr( null ) );
+
+    }
 
 }

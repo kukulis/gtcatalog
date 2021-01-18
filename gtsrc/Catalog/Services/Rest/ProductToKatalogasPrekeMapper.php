@@ -16,6 +16,7 @@ use Gt\Catalog\Entity\CategoryLanguage;
 use Gt\Catalog\Entity\ClassificatorLanguage;
 use Gt\Catalog\Entity\ProductLanguage;
 use Gt\Catalog\Entity\ProductPicture;
+use Gt\Catalog\Utils\CategoriesHelper;
 use Gt\Catalog\Utils\PicturesHelper;
 use Gt\Catalog\Utils\PropertiesHelper;
 
@@ -40,7 +41,14 @@ class ProductToKatalogasPrekeMapper
         $kp->origin_country   = $pl->getProduct()->getOriginCountryCode();
         $kp->parent           = $pl->getProduct()->getParentSku();
         $kp->info_provider    = $pl->getProduct()->getInfoProvider();
-        $kp->tags             = $pl->getTags() ;
+        $tagsStrs = CategoriesHelper::splitTagsStr( $pl->getTags() );
+
+        $kp->tags             = [];
+        foreach ($tagsStrs as $tagStr ) {
+            $tagClassificator = new Klasifikatorius();
+            $tagClassificator->identifikatorius=$tagStr;
+            $tagClassificator->title = $tagStr;
+        }
 
         $kp->Atributai->nomnr                                = $pl->getProduct()->getSku();
         $kp->Atributai->spalva                               = $pl->getProduct()->getColor();
