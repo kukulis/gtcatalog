@@ -276,12 +276,11 @@ class PicturesService
                     else {
                         $count++;
                         if ( $action == 'delete' ) {
-                            $this->picturesDao->deletePicture($picture, false );
+                            $this->picturesDao->deletePicture($picture, true );
                         }
                     }
                 }
             }
-            $this->picturesDao->flush();
         }
         return $count;
     }
