@@ -25,6 +25,8 @@ class CategoriesFilterType extends AbstractType implements CategoriesFilter
     private $language;
     private $likeCode;
     private $likeParent;
+    private $exactParent;
+
     private $limit=100;
 
     /**
@@ -39,6 +41,7 @@ class CategoriesFilterType extends AbstractType implements CategoriesFilter
             'choice_label' => 'name'])
             ->add('likeCode', TextType::class, ['required'=>false])
             ->add('likeParent', TextType::class, ['required'=>false])
+            ->add('exactParent', TextType::class, ['required'=>false])
             ->add( 'limit', IntegerType::class  )
             ->add('search', SubmitType::class );
 
@@ -118,5 +121,21 @@ class CategoriesFilterType extends AbstractType implements CategoriesFilter
             return $this->language->getCode();
         }
         return self::DEFAULT_LANGUAGE_CODE;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getExactParent()
+    {
+        return $this->exactParent;
+    }
+
+    /**
+     * @param mixed $exactParent
+     */
+    public function setExactParent($exactParent): void
+    {
+        $this->exactParent = $exactParent;
     }
 }

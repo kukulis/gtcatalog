@@ -17,7 +17,7 @@
             <div class="col-md-12">
                 <ul>
                     {% for item in treeItems %}
-                        <li style="padding-left: {{ item.level_depth }}cm">{{ item.nleft}} {{ item.id_category }} {{ item.name }}</li>
+                        <li style="margin-left: {{ item.level_depth }}cm"><a href="{{ path('gt.catalog.categories', {search_category: item.id_category}) }}">{{ item.id_category }} {{ item.name }}</a>  </li>
                     {% endfor %}
                 </ul>
             </div>

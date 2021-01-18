@@ -61,8 +61,20 @@ class CategoriesController extends AbstractController
     public function listAction(Request $request, LoggerInterface $logger, CategoriesService $categoriesService)
     {
         try {
+
             $logger->debug('Categories.listAction called');
             $categoriesFilter = new CategoriesFilterType();
+            $searchParent=$request->get('search_parent', null );
+            if ( $searchParent != null ) {
+                $categoriesFilter->setExactParent($searchParent);
+            }
+
+            $searchCategory=$request->get('search_category', null );
+            if ( $searchCategory != null ) {
+                $categoriesFilter->setLikeCode($searchCategory);
+            }
+
+
             $filterForm = $this->createForm(CategoriesFilterType::class, $categoriesFilter);
             $filterForm->handleRequest($request);
 
@@ -117,9 +129,12 @@ class CategoriesController extends AbstractController
     }
 
     public function assignedProductsAction( $code, CategoriesService $categoriesService) {
+
+        $pps = $categoriesService->getCategoriesProducts ( $code );
         return $this->render('@Catalog/categories/assigned_products.html.twig',
                 [
                     'code' => $code,
+                    'pps' => $pps,
                 ]
             );
     }

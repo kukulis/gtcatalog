@@ -15,7 +15,13 @@
 
         <div class="row">
             <div class="col-md-12">
-                TODO assigned products
+                <ul>
+                    {% set i=0 %}
+                    {% for pp in pps %}
+                        {% set i=i+1 %}
+                        <li>[{{ i }}] <a href="{{ path('gt.catalog.product_edit', {sku:pp.product.sku, languageCode:'en' }) }}">{{ pp.product.sku }}</a></li>
+                    {% endfor %}
+                </ul>
             </div>
         </div>
     </div>

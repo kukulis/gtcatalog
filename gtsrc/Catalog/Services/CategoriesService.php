@@ -25,10 +25,9 @@ use Psr\Log\LoggerInterface;
 class CategoriesService extends ProductsBaseService
 {
     const PAGE_SIZE = 10;
-
     const DEFAULT_LANGUAGE_CODE = 'en';
-
     const STEP = 100;
+    const PRODUCTS_LIMIT=1000;
 
     /** @var LoggerInterface */
     private $logger;
@@ -397,6 +396,17 @@ class CategoriesService extends ProductsBaseService
         $rootNode = CategoriesTree::generateTree($items, $this->logger);
         CategoriesTree::recollectItems($rootNode, $treeItems );
 
+        $rootNode->id_category = null;
+
         return $treeItems;
+    }
+
+    /**
+     * @param $categoryCode
+     * @return ProductCategory[]
+     */
+    public function getCategoriesProducts($categoryCode) {
+        $pps = $this->categoryDao->getCategoriesProducts($categoryCode, self::PRODUCTS_LIMIT);
+        return $pps;
     }
 }

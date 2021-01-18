@@ -16,6 +16,7 @@ interface CategoriesFilter
     public function getLimit();
     public function getLikeCode();
     public function getLikeParent();
+    public function getExactParent();
 
     /** @return Language */
     public function getLanguage();

@@ -65,6 +65,11 @@ class CategoryDao extends BaseDao
             $builder->setParameter('likeParent', '%'.$filter->getLikeParent().'%' );
         }
 
+        if (!empty($filter->getExactParent())) {
+            $builder->andWhere('p.code = :exactParent');
+            $builder->setParameter('exactParent', $filter->getExactParent() );
+        }
+
         $builder->orderBy('c.code');
 
         $builder->setMaxResults( $filter->getLimit() );
@@ -376,7 +381,8 @@ class CategoryDao extends BaseDao
      */
     public function getAll () {
         $class = Category::class;
-        $dql = /** @lang DQL */ "SELECT c FROM $class c WHERE c.confirmed = 1";
+//        $dql = /** @lang DQL */ "SELECT c FROM $class c WHERE c.confirmed = 1";
+        $dql = /** @lang DQL */ "SELECT c FROM $class c";
 
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
@@ -387,4 +393,29 @@ class CategoryDao extends BaseDao
         return $categories;
     }
 
+
+    /**
+     * @param string $categoryCode
+     * @param int $limit
+     * @return ProductCategory[]
+     */
+    public function getCategoriesProducts($categoryCode, $limit) {
+        $class = ProductCategory::class;
+        $dql = /** @lang DQL */
+            "SELECT pc, p from $class pc join pc.category c
+            JOIN pc.product p  
+            where c.code = :categoryCode";
+
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        $query = $em->createQuery($dql);
+        $query->setParameter('categoryCode', $categoryCode );
+        $query->setMaxResults($limit);
+
+        /** @var ProductCategory[] $productCategories */
+        $productCategories = $query->getResult();
+
+        return $productCategories;
+    }
 }
