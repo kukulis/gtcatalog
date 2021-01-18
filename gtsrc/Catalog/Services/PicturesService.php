@@ -17,9 +17,15 @@ use Gt\Catalog\Entity\ProductPicture;
 use Gt\Catalog\Exception\CatalogErrorException;
 use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Utils\PicturesHelper;
+use Psr\Log\LoggerInterface;
 
 class PicturesService
 {
+    const STEP = 100;
+
+    /** @var LoggerInterface */
+    private $logger;
+
     /** @var PicturesDao */
     private $picturesDao;
 
@@ -36,8 +42,9 @@ class PicturesService
      * PicturesService constructor.
      * @param PicturesDao $picturesDao
      */
-    public function __construct(PicturesDao $picturesDao)
+    public function __construct(LoggerInterface $logger, PicturesDao $picturesDao)
     {
+        $this->logger = $logger;
         $this->picturesDao = $picturesDao;
         $this->pathSeparator = DIRECTORY_SEPARATOR;
     }
@@ -238,4 +245,42 @@ class PicturesService
         $this->picturesDao->deletePictureAssignement($pp);
     }
 
+
+    /**
+     * @param string $action delete or show
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function searchUnexistingPictures ($action) {
+        $this->logger->error('Unimplemented searchUnexistingPictures' );
+
+        // 1) getting all pictures ids
+        $ids = $this->picturesDao->getAllPicturesIds();
+
+        $count = 0;
+        for ( $i = 0; $i < count($ids); $i+=self::STEP ) {
+            $this->logger->debug('Searching from '.$i . ' of '.count($ids));
+            $part = array_slice($ids, $i, self::STEP);
+            $pictures = $this->picturesDao->getPictures($part);
+
+            foreach ($pictures as $picture ) {
+                $path = $this->calculatePicturePath($picture->getId(), $picture->getName() );
+                $dir = dirname($path);
+
+                if ( !file_exists($path)) {
+                    $this->logger->info('Picture '.$path.' doesn\'t exist' );
+
+                    if ( file_exists($dir)) {
+                        $this->logger->info('Directory '.$dir.' exists. This means, that picture name is wrong' );
+                    }
+                    else {
+                        $count++;
+                        if ( $action == 'delete' ) {
+                            $this->picturesDao->deletePicture($picture, false );
+                        }
+                    }
+                }
+            }
+            $this->picturesDao->flush();
+        }
+    }
 }

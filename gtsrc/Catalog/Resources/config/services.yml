@@ -151,6 +151,7 @@ services:
     gt.catalog.pictures_service:
         class: 'Gt\Catalog\Services\PicturesService'
         arguments:
+            - '@logger'
             - '@gt.catalog.pictures_dao'
         calls:
             - [setRootPath, ['%kernel.project_dir%']]
@@ -280,3 +281,11 @@ services:
             - '@logger'
         tags:
             - { name: 'console.command', command: 'catalog:test' }
+
+    gt.catalog.health_search_unexisting_pictures_command:
+        class: 'Gt\Catalog\Command\HealthSearchUnexistingPicturesCommand'
+        arguments:
+            - '@logger'
+            - '@gt.catalog.pictures_service'
+        tags:
+            - { name: 'console.command', command: 'catalog:health_search_unexisting_pictures' }

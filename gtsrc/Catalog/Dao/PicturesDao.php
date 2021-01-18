@@ -10,6 +10,7 @@ namespace Gt\Catalog\Dao;
 
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\EntityManager;
 use Gt\Catalog\Entity\Picture;
 use Gt\Catalog\Entity\Product;
@@ -224,5 +225,58 @@ class PicturesDao
         }
 
         return $pps[0];
+    }
+
+    /**
+     * @return int[]
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function getAllPicturesIds () {
+        $idsSql = /** @lang MySQL */ "SELECT id from pictures";
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        $conn = $em->getConnection();
+
+        /** @var int[] $ids */
+        $ids = $conn->executeQuery($idsSql)->fetchAll(FetchMode::COLUMN);
+        return $ids;
+    }
+
+    /**
+     * @param int [] $ids
+     * @return Picture[]
+     */
+    public function getPictures ( $ids ) {
+        $class = Picture::class;
+        $dql = /** @lang DQL */ "SELECT p FROM $class p WHERE p.id in (:ids)";
+
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        $query = $em->createQuery($dql)->setParameter('ids', $ids );
+
+        /** @var Picture[] $pictures */
+        $pictures = $query->getResult();
+
+        return $pictures;
+    }
+
+    public function deletePicture ( Picture  $p, $doFlush ) {
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        $em->remove($p);
+
+        if ( $doFlush ) {
+            $em->flush();
+        }
+    }
+
+    public function flush() {
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        $em->flush();
     }
 }

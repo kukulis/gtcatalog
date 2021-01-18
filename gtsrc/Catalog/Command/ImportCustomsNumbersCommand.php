@@ -31,12 +31,12 @@ class ImportCustomsNumbersCommand extends Command
 
     /**
      * ImportCustomsNumbersCommand constructor.
-     * @param LoggerInterface $login
+     * @param LoggerInterface $logger
      * @param ImportCustomsNumbersService $importCustomsNumbersService
      */
-    public function __construct(LoggerInterface $login, ImportCustomsNumbersService $importCustomsNumbersService)
+    public function __construct(LoggerInterface $logger, ImportCustomsNumbersService $importCustomsNumbersService)
     {
-        $this->logger = $login;
+        $this->logger = $logger;
         $this->importCustomsNumbersService = $importCustomsNumbersService;
 
         parent::__construct();
