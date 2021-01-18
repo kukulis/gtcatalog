@@ -300,7 +300,7 @@ class CategoryDao extends BaseDao
             $line = [
                 $pc->getProduct()->getSku(),
                 $pc->getCategory()->getCode(),
-                0
+                $pc->getDeleted()
             ];
 
             $qLine = array_map ( $quoter, $line);

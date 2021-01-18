@@ -238,6 +238,8 @@ class ProductsService extends ProductsBaseService
 
                 $productCategories = [];
 
+                $delProductCategories = [];
+
                 // make array for importing product
 
                 // we transform to Product and ProductLanguage arrays, because
@@ -301,6 +303,22 @@ class ProductsService extends ProductsBaseService
                             $productCategories[] = $pc;
                         }
                     }
+
+                    if( isset($line['categories_del'])) {
+                        $categoriesStr = $line['categories_del'];
+                        $categoriesArr = CategoriesHelper::splitCategoriesStr( $categoriesStr);
+                        $categoriesArr = array_map('strtolower', $categoriesArr);
+
+                        $this->validateCategoriesCodes($categoriesArr, ' product sku '.$product->getSku());
+                        foreach ( $categoriesArr as $code ) {
+                            $pc = new ProductCategory();
+                            $pc->setCategory(Category::createCategory($code));
+                            $pc->setProduct($product);
+                            $pc->setDeleted(1);
+
+                            $delProductCategories[] = $pc;
+                        }
+                    }
                 }
                 $this->validateClassificators($products);
                 $productsCount += $this->catalogDao->importProducts($products, $headMapWithLastUpdate);
@@ -320,9 +338,11 @@ class ProductsService extends ProductsBaseService
 
                     $this->validateExistingCategories($catCodes);
 
-                    $this->categoryDao->markDeletedProductCategories($delSkus);
+//                    $this->categoryDao->markDeletedProductCategories($delSkus); // netrinam vis dėl to
                     $pcCount = $this->categoryDao->importProductCategories($productCategories);
                     $this->logger->debug('Imported '.$pcCount.' product categories assignments' );
+
+                    $delCount = $this->categoryDao->importProductCategories($delProductCategories);
                     $this->categoryDao->deleteMarkedProductCategories();
                 }
             }
@@ -438,7 +458,7 @@ class ProductsService extends ProductsBaseService
      * @throws CatalogValidateException
      */
     public function validateHead ( $head ) {
-        $productAndLanguageFields = array_merge ( ['sku', 'language', 'categories'], Product::ALLOWED_FIELDS, ProductLanguage::ALLOWED_FIELDS );
+        $productAndLanguageFields = array_merge ( ['sku', 'language', 'categories', 'categories_del'], Product::ALLOWED_FIELDS, ProductLanguage::ALLOWED_FIELDS );
         $nonValidFields = array_diff ( $head, $productAndLanguageFields );
 
         if ( count($nonValidFields) > 0 ) {
