@@ -258,7 +258,7 @@ class PicturesService
 
         $count = 0;
         for ( $i = 0; $i < count($ids); $i+=self::STEP ) {
-            $this->logger->debug('Searching from '.$i . ' of '.count($ids));
+            $this->logger->debug('Searching from '.$i . ' of '.count($ids).' found so far '.$count );
             $part = array_slice($ids, $i, self::STEP);
             $pictures = $this->picturesDao->getPictures($part);
 
