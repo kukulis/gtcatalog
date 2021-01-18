@@ -111,11 +111,16 @@ class CategoriesController extends AbstractController
     }
 
     public function displayTreeAction(CategoriesService $categoriesService) {
-
         $treeItems = $categoriesService->buildCategoriesTree();
-
-
         return $this->render('@Catalog/categories/tree.html.twig',
             ['treeItems'=>$treeItems]);
+    }
+
+    public function assignedProductsAction( $code, CategoriesService $categoriesService) {
+        return $this->render('@Catalog/categories/assigned_products.html.twig',
+                [
+                    'code' => $code,
+                ]
+            );
     }
 }

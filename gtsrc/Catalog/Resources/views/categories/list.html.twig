@@ -23,6 +23,7 @@
                         <th>Parent code</th>
                         <th>Name</th>
                         <th>Description</th>
+                        <th colspan="2">Actions</th>
                     </tr>
                     {% for cl in categoriesLanguages %}
                         <tr>
@@ -31,6 +32,7 @@
                             <td>{{ cl.name }}</td>
                             <td>{{ cl.description }}</td>
                             <td><a href="{{ path('gt.catalog.category_edit', {code: cl.category.code, languageCode: languageCode}) }}">Edit</a></td>
+                            <td><a href="{{ path('gt.catalog.categories_assigned_products', {code: cl.category.code}) }}">Products</a></td>
                         </tr>
                     {% endfor %}
 {#                    {% for p in products %}#}

@@ -23,9 +23,13 @@ gt.catalog.import_categories:
     controller:  Gt\Catalog\Controller\CategoriesController::importAction
     methods: POST
 
-
 gt.catalog.categories_tree:
   path: "/categories/tree"
   controller:  Gt\Catalog\Controller\CategoriesController::displayTreeAction
+  methods: GET
+
+gt.catalog.categories_assigned_products:
+  path: "/categories/assigned_products/{code}"
+  controller:  Gt\Catalog\Controller\CategoriesController::assignedProductsAction
   methods: GET
 
