@@ -248,6 +248,7 @@ class PicturesService
 
     /**
      * @param string $action delete or show
+     * @return int
      * @throws \Doctrine\DBAL\DBALException
      */
     public function searchUnexistingPictures ($action) {
@@ -282,5 +283,6 @@ class PicturesService
             }
             $this->picturesDao->flush();
         }
+        return $count;
     }
 }
