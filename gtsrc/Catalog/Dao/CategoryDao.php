@@ -361,6 +361,7 @@ class CategoryDao extends BaseDao
         $conn = $em->getConnection();
         return  $conn->exec($sql);
     }
+
     public function deleteUnfonfirmedCategories() {
 
         $sql = /** @lang MySQL */ "DELETE FROM categories WHERE confirmed != 1 or confirmed is null";
@@ -368,6 +369,22 @@ class CategoryDao extends BaseDao
         $em = $this->doctrine->getManager();
         $conn = $em->getConnection();
         return  $conn->exec($sql);
+    }
+
+    /**
+     * @return Category[]
+     */
+    public function getAll () {
+        $class = Category::class;
+        $dql = /** @lang DQL */ "SELECT c FROM $class c WHERE c.confirmed = 1";
+
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+        $query = $em->createQuery($dql);
+
+        /** @var Category[] $categories */
+        $categories = $query->getResult();
+        return $categories;
     }
 
 }

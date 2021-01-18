@@ -109,4 +109,13 @@ class CategoriesController extends AbstractController
             ]);
         }
     }
+
+    public function displayTreeAction(CategoriesService $categoriesService) {
+
+        $treeItems = $categoriesService->buildCategoriesTree();
+
+
+        return $this->render('@Catalog/categories/tree.html.twig',
+            ['treeItems'=>$treeItems]);
+    }
 }

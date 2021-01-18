@@ -22,3 +22,10 @@ gt.catalog.import_categories:
     path: "/categories/import"
     controller:  Gt\Catalog\Controller\CategoriesController::importAction
     methods: POST
+
+
+gt.catalog.categories_tree:
+  path: "/categories/tree"
+  controller:  Gt\Catalog\Controller\CategoriesController::displayTreeAction
+  methods: GET
+

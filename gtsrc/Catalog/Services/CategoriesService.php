@@ -9,6 +9,7 @@ use Doctrine\ORM\ORMException;
 use Gt\Catalog\Dao\CategoryDao;
 use Gt\Catalog\Dao\LanguageDao;
 use Gt\Catalog\Data\CategoriesFilter;
+use Gt\Catalog\Data\CategoryTreeItem;
 use Gt\Catalog\Entity\Category;
 use Gt\Catalog\Entity\CategoryLanguage;
 use Gt\Catalog\Entity\Language;
@@ -16,6 +17,7 @@ use Gt\Catalog\Entity\ProductCategory;
 use Gt\Catalog\Exception\CatalogErrorException;
 use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Utils\CategoriesHelper;
+use Gt\Catalog\Utils\CategoriesTree;
 use Gt\Catalog\Utils\CsvUtils;
 use Psr\Log\LoggerInterface;
 
@@ -375,5 +377,26 @@ class CategoriesService extends ProductsBaseService
         } catch ( DBALException $e ) {
             throw new CatalogErrorException( $e->getMessage() );
         }
+    }
+
+    public function buildCategoriesTree() {
+        $categories = $this->categoryDao->getAll();
+        // TRANSFORM TO TREE ITEMS
+        /** @var CategoryTreeItem[] $items */
+        $items = [];
+
+        foreach ($categories as $c ) {
+            $item = new CategoryTreeItem();
+            $item->id_category = $c->getCode();
+            $item->id_parent = $c->getParentCode();
+//            $item->name = ''; // TODO fetch from categories languages before the cycle
+            $items[] = $item;
+        }
+
+
+        $rootNode = CategoriesTree::generateTree($items, $this->logger);
+        CategoriesTree::recollectItems($rootNode, $treeItems );
+
+        return $treeItems;
     }
 }
