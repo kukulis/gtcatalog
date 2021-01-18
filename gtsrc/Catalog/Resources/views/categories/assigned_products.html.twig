@@ -9,7 +9,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <h1>{% trans %}Assigned products{% endtrans %} {{ code }}</h1>
+                <h1>{% trans %}Assigned products{% endtrans %} <a href="{{ path('gt.catalog.categories', {search_category: code}) }}">{{ code }}</a></h1>
             </div>
         </div>
 
