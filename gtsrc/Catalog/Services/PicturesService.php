@@ -261,6 +261,7 @@ class PicturesService
             $part = array_slice($ids, $i, self::STEP);
             $pictures = $this->picturesDao->getPictures($part);
 
+            $wasDelete = false;
             foreach ($pictures as $picture ) {
                 $path = $this->calculatePicturePath($picture->getId(), $picture->getName() );
                 $dir = dirname($path);
@@ -278,13 +279,18 @@ class PicturesService
                             $pps = $this->picturesDao->findPictureAssignementsById($picture->getId());
                             foreach ($pps as $pp ) {
                                 $this->logger->info ( 'deleting picture assignment to product '.$pp->getProduct()->getSku() );
-                                $this->picturesDao->deletePictureAssignement($pp);
+                                $this->picturesDao->deletePictureAssignement($pp, false );
                             }
 
-                            $this->picturesDao->deletePicture($picture, true );
+                            $this->picturesDao->deletePicture($picture, false );
+
+                            $wasDelete = true;
                         }
                     }
                 }
+            }
+            if ( $wasDelete ) {
+                $this->picturesDao->flush();
             }
         }
         return $count;

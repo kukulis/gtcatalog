@@ -140,10 +140,12 @@ class PicturesDao
     /**
      * @param ProductPicture $productPicture
      */
-    public function deletePictureAssignement ( ProductPicture $productPicture ) {
+    public function deletePictureAssignement ( ProductPicture $productPicture, $flush = true ) {
         $em = $this->doctrine->getManager();
         $em->remove($productPicture);
-        $em->flush();
+        if ( $flush ) {
+            $em->flush();
+        }
     }
 
     public function storeProductPicture(ProductPicture $productPicture) {
