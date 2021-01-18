@@ -279,4 +279,24 @@ class PicturesDao
 
         $em->flush();
     }
+
+    /**
+     * @param $pictureId
+     * @return ProductPicture[]
+     */
+    public function findPictureAssignementsById($pictureId) {
+        $class = ProductPicture::class;
+        $dql = /** @lang DQL */  "SELECT pp FROM $class pp JOIN pp.picture pic WHERE pic.id=:pictureId";
+
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        $query = $em->createQuery($dql);
+        $query->setParameter ('pictureId', $pictureId);
+
+        /** @var ProductPicture[] $pps */
+        $pps = $query->getResult();
+
+        return $pps;
+    }
 }

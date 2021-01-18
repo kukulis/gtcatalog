@@ -252,8 +252,6 @@ class PicturesService
      * @throws \Doctrine\DBAL\DBALException
      */
     public function searchUnexistingPictures ($action) {
-        $this->logger->error('Unimplemented searchUnexistingPictures' );
-
         // 1) getting all pictures ids
         $ids = $this->picturesDao->getAllPicturesIds();
 
@@ -276,6 +274,13 @@ class PicturesService
                     else {
                         $count++;
                         if ( $action == 'delete' ) {
+                            // delete assignment
+                            $pps = $this->picturesDao->findPictureAssignementsById($picture->getId());
+                            foreach ($pps as $pp ) {
+                                $this->logger->info ( 'deleting picture assignment to product '.$pp->getProduct()->getSku() );
+                                $this->picturesDao->deletePictureAssignement($pp);
+                            }
+
                             $this->picturesDao->deletePicture($picture, true );
                         }
                     }
