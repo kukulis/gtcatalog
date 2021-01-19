@@ -254,7 +254,7 @@ class ImportPicturesJob
     /**
      * @return string
      */
-    public function getOriginalZipFile(): string
+    public function getOriginalZipFile(): ?string
     {
         return $this->originalZipFile;
     }
@@ -262,7 +262,7 @@ class ImportPicturesJob
     /**
      * @param string $originalZipFile
      */
-    public function setOriginalZipFile(string $originalZipFile): void
+    public function setOriginalZipFile(string $originalZipFile=null): void
     {
         $this->originalZipFile = $originalZipFile;
     }
