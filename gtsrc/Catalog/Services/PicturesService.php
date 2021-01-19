@@ -242,7 +242,9 @@ class PicturesService
 
     public function unassignPictureByPriority($sku, $priority ) {
         $pp = $this->picturesDao->findPictureAssignmentByPriority($sku, $priority);
-        $this->picturesDao->deletePictureAssignement($pp);
+        if ( $pp != null ) {
+            $this->picturesDao->deletePictureAssignement($pp);
+        }
     }
 
 
