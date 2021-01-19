@@ -8,11 +8,10 @@
 
 namespace Gt\Catalog\Services\Rest;
 
-
-//use Catalog\B2b\Common\Data\Catalog\KatalogasPreke;
 use Catalog\B2b\Common\Data\Legacy\Catalog\KatalogasPreke;
 use Gt\Catalog\Dao\CatalogDao;
 use Gt\Catalog\Dao\CategoryDao;
+use Gt\Catalog\Dao\LanguageDao;
 use Gt\Catalog\Dao\PicturesDao;
 use Gt\Catalog\Entity\CategoryLanguage;
 use Gt\Catalog\Entity\Classificator;
@@ -46,8 +45,11 @@ class ProductsRestService
     /** @var PicturesService */
     private $picturesSevice;
 
-    /** @var array  */
-    private $languagesMap=[];
+    /** @var array   initialized dynamicaly */
+    private $languagesMap=null;
+
+    /** @var LanguageDao */
+    private $languageDao;
 
     /**
      * ProductsRestService constructor.
@@ -59,7 +61,8 @@ class ProductsRestService
                                 CatalogDao $catalogDao,
                                 CategoryDao $categoryDao,
                                 PicturesDao $picturesDao,
-                                PicturesService $picturesService
+                                PicturesService $picturesService,
+                                LanguageDao $languageDao
                                 )
     {
         $this->logger = $logger;
@@ -67,6 +70,7 @@ class ProductsRestService
         $this->categoryDao = $categoryDao;
         $this->picturesDao = $picturesDao;
         $this->picturesSevice = $picturesService;
+        $this->languageDao = $languageDao;
     }
 
 
@@ -77,6 +81,8 @@ class ProductsRestService
      * @throws CatalogValidateException
      */
     public function getLegacyPrekes ($skus, $language ) {
+        $this->getLanguagesMap();
+
         if ( count($skus) > self::MAX_PORTION ) {
             throw new CatalogValidateException('Maximum skus in request is limited to '.self::MAX_PORTION );
         }
@@ -186,12 +192,18 @@ class ProductsRestService
         return $prekes;
     }
 
-    /**
-     * Called from DI initializaotor (yml)
-     * @param array $languagesMap
-     */
-    public function setLanguagesMap(array $languagesMap): void
-    {
-        $this->languagesMap = $languagesMap;
+
+    public function getLanguagesMap() {
+        if ( $this->languagesMap != null ) {
+            return $this->languagesMap;
+        }
+
+        $languages = $this->languageDao->getLanguagesList(0, 10 );
+        $this->languagesMap = [];
+        foreach ($languages as $l ) {
+            $this->languagesMap[$l->getCode()] = $l->getCode();
+            $this->languagesMap[$l->getLocaleCode()] = $l->getCode();
+        }
+        return $this->languagesMap;
     }
 }

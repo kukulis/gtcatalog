@@ -13,7 +13,6 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\EntityManager;
 use Gt\Catalog\Entity\Picture;
-use Gt\Catalog\Entity\Product;
 use Gt\Catalog\Entity\ProductPicture;
 use Psr\Log\LoggerInterface;
 
