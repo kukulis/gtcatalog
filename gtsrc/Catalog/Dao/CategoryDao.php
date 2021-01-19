@@ -294,6 +294,9 @@ class CategoryDao extends BaseDao
      * @throws DBALException
      */
     public function importProductCategories($productCategories) {
+        if ( count($productCategories ) == 0 ) {
+            return 0;
+        }
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
 
