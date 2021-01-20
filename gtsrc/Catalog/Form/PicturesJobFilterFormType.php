@@ -27,6 +27,8 @@ class PicturesJobFilterFormType extends AbstractType implements IPicturesJobsFil
             ->add('status' , TextType::class, ['required'=>false] )
             ->add('show'         , SubmitType::class, ['label'=>'Rodyti'])
         ;
+
+        $builder->setMethod('get');
     }
 
 
