@@ -76,6 +76,7 @@ class ProductToKatalogasPrekeMapper
         $kp->Atributai->prekiu_grupe_title                   = PropertiesHelper::getPropertyFromMap($clMap, 'productgroup', 'name' );
         $kp->Atributai->priority                             = $pl->getProduct()->getPriority();
         $kp->Atributai->google_product_category              = $pl->getProduct()->getGoogleProductCategoryId();
+        $kp->Atributai->vendor = $pl->getProduct()->getVendor();
 //        $kp->Atributai->google_product_category_title        =        ; // TODO kažkada vėliau šitą
 
         $categoriesCodes = [];
