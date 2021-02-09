@@ -207,7 +207,13 @@ class ProductsRestService
         return $this->languagesMap;
     }
 
-    public function getProducts ($skus, $lang) {
+    /**
+     * @param string[] $skus
+     * @param string $lang
+     * @return ProductLanguage[]
+     */
+    public function getProductsLanguages ($skus, $lang) {
+        /** @var ProductLanguage[] $rez */
         $rez = [];
         for ( $i=0; $i < self::STEP; $i += self::STEP ) {
             $part = array_slice( $skus, $i, self::STEP);
@@ -217,10 +223,22 @@ class ProductsRestService
         return $rez;
     }
 
+    /**
+     * @param string[] $skus
+     * @param string $lang
+     * @return \Catalog\B2b\Common\Data\Catalog\Product[]
+     */
     public function getRestProducts($skus, $lang) {
-        $products = $this->getProducts($skus, $lang);
+        $productsLanguages = $this->getProductsLanguages($skus, $lang);
 
+        /** @var \Catalog\B2b\Common\Data\Catalog\Product[] $rez */
+        $rez = [];
 
+        foreach ($productsLanguages as $pl) {
+            $p = ProductsHelper::transformToRestProduct($pl);
+            $rez [] = $p;
+        }
+        return $rez;
     }
 
 }
