@@ -1,0 +1,5 @@
+gt.catalog.rest.products:
+    path: "/products/{language}"
+    controller: Gt\Catalog\Rest\Controllers\ProductsRestController::getProductsAction
+    methods: GET|POST
+

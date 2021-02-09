@@ -172,6 +172,14 @@ services:
             $logger: '@logger'
             $productsRestService: '@gt.catalog.products_rest_service'
 
+    Gt\Catalog\Rest\Controllers\ProductsRestController:
+        tags:
+            - "controller.service_arguments"
+        bind:
+            $logger: '@logger'
+            $productsRestService: '@gt.catalog.products_rest_service'
+
+
     # ------------------ rest -------------------------------------------
 
     gt.catalog.guzzle:

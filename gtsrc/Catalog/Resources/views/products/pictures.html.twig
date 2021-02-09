@@ -50,7 +50,7 @@
                             {{ pp.priority }}
                         </td>
                         <td><a href="{{ path('gt.catalog.product_picture_edit', {sku: pp.product.sku, id_picture: pp.picture.id }) }}">Edit</a></td>
-                        <td><a href="{{ path('gt.catalog.product_picture_delete', {sku: pp.product.sku, id_picture: pp.picture.id }) }}">X</a></td>
+                        <td><a onclick="return confirm('delete picture id={{ pp.picture.id }}?')" href="{{ path('gt.catalog.product_picture_delete', {sku: pp.product.sku, id_picture: pp.picture.id }) }}">X</a></td>
                     </tr>
                 {% endfor %}
             </table>

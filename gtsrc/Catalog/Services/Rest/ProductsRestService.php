@@ -206,4 +206,21 @@ class ProductsRestService
         }
         return $this->languagesMap;
     }
+
+    public function getProducts ($skus, $lang) {
+        $rez = [];
+        for ( $i=0; $i < self::STEP; $i += self::STEP ) {
+            $part = array_slice( $skus, $i, self::STEP);
+            $pls = $this->catalogDao->getProductsLangs($part, $lang);
+            $rez = array_merge($rez, $pls );
+        }
+        return $rez;
+    }
+
+    public function getRestProducts($skus, $lang) {
+        $products = $this->getProducts($skus, $lang);
+
+
+    }
+
 }

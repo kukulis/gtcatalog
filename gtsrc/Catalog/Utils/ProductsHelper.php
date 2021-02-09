@@ -118,4 +118,8 @@ class ProductsHelper
         $fixedName = preg_replace('/[^[:alnum:]._]+/', '-', $lowerCased );
         return $fixedName;
     }
+
+    public static function transformToRestProduct(Product  $product) {
+        // TODO
+    }
 }

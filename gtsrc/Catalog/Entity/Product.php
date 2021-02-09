@@ -256,6 +256,8 @@ class Product
      */
     private $googleProductCategoryId=0;
 
+    // TODO EAN ?
+
 
     /** @var string */
     private $extractedName; // not stored in database

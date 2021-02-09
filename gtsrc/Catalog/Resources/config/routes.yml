@@ -12,3 +12,6 @@ _gt.catalog.rest:
     resource: "rest-routing.yml"
     prefix: '/api/ezp/v2'
 
+_gt.catalog.rest_v3:
+    resource: "rest-routing-v3.yml"
+    prefix: '/api/v3'
