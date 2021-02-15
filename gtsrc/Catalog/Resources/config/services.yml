@@ -310,3 +310,20 @@ services:
             - { name: 'console.command', command: 'catalog:remove_duplicate_pictures' }
 
 
+
+    gt.catalog.remove_unassigned_pictures_service:
+        class: 'Gt\Catalog\Services\RemoveUnassignedPicturesService'
+        arguments:
+            - '@logger'
+            - '@gt.catalog.pictures_service'
+
+
+
+    gt.catalog.remove_unassigned_pictures_command:
+        class: 'Gt\Catalog\Command\RemoveUnassignedPicturesCommand'
+        arguments:
+            - '@logger'
+            - '@gt.catalog.remove_unassigned_pictures_service'
+        tags:
+            - { name: 'console.command', command: 'catalog:remove_unassigned_pictures' }
+

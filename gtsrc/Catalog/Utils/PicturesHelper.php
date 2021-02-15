@@ -48,4 +48,11 @@ class PicturesHelper
         }
         return $str;
     }
+
+    public static function getIdFromPictureDir($relativePath) {
+        $parts = explode(DIRECTORY_SEPARATOR, $relativePath );
+        $numberStr = join ($parts);
+        $id = intval($numberStr);
+        return $id;
+    }
 }

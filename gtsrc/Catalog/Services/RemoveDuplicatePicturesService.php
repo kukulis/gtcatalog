@@ -77,7 +77,10 @@ class RemoveDuplicatePicturesService
 
             $reviewedCount++;
             if ( $reviewedCount % 1000 == 0 ) {
-                $this->entityManager->flush();
+                if ( $count > 0 ) {
+                    $this->entityManager->flush();
+                }
+                $this->entityManager->clear();
                 $this->logger->notice('Reviewed products count '.$reviewedCount .' duplicates removed '.$count);
             }
         }

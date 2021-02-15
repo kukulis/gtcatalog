@@ -300,4 +300,26 @@ class PicturesDao
 
         return $pps;
     }
+
+    /**
+     * @param int $fromId
+     * @param int $limit
+     * @return Picture[]
+     */
+    public function getSomePictures ( $fromId, $limit ) {
+        $class = Picture::class;
+        $dql = /** @lang DQL */ "SELECT pic FROM $class pic WHERE pic.id > :fromId ORDER BY pic.id";
+
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        $query = $em->createQuery($dql);
+        $query->setParameter('fromId', $fromId );
+        $query->setMaxResults($limit);
+
+        /** @var Picture[] $pictures */
+        $pictures = $query->getResult();
+
+        return $pictures;
+    }
 }

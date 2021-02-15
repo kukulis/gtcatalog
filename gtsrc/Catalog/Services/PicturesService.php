@@ -297,4 +297,21 @@ class PicturesService
         }
         return $count;
     }
+
+    /**
+     * @param $fromId
+     * @param $limit
+     * @return Picture[]
+     */
+    public function getSomePictures($fromId, $limit ) {
+        return $this->picturesDao->getSomePictures ( $fromId, $limit );
+    }
+
+    /**
+     * @param $pictureId
+     * @return ProductPicture[]
+     */
+    public function findPictureAssignements ($pictureId) {
+        return $this->picturesDao->findPictureAssignementsById($pictureId);
+    }
 }
