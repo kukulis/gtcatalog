@@ -13,7 +13,7 @@ use Gt\Catalog\Exception\CatalogErrorException;
 use \DateTime;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass=Gt\Catalog\Repository\ProductsRepository::class)
  * @ORM\Table(name="products")
  */
 class Product

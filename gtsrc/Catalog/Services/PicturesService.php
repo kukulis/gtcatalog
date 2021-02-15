@@ -201,7 +201,7 @@ class PicturesService
      * @return bool
      * @throws CatalogErrorException
      */
-    public function unassignPicture ( $sku, $id ) {
+    public function unassignPicture ( $sku, $id, $flush=true ) {
         // pašalinam tik prisegimą prie produkto.
         // paveikslėlius pačius trinsime atskiru procesu.
         // Toks užmanymas dėl to, kad kai bus versijuojami produktai,
@@ -214,7 +214,7 @@ class PicturesService
                 throw new CatalogErrorException('The picture ' . $id . ' is not assigned to product ' . $sku);
             }
 
-            $this->picturesDao->deletePictureAssignement($pp);
+            $this->picturesDao->deletePictureAssignement($pp, $flush);
             return true;
         } catch (ORMException $e ) {
             throw new CatalogErrorException( $e->getMessage());

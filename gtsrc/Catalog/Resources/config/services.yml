@@ -292,3 +292,21 @@ services:
             - '@gt.catalog.pictures_service'
         tags:
             - { name: 'console.command', command: 'catalog:health_search_unexisting_pictures' }
+
+    gt.catalog.remove_duplicate_pictures_service:
+        class: 'Gt\Catalog\Services\RemoveDuplicatePicturesService'
+        arguments:
+            - '@logger'
+            - '@doctrine.orm.entity_manager'
+            - '@gt.catalog.pictures_service'
+
+
+    gt.catalog.remove_duplicate_pictures_command:
+        class: 'Gt\Catalog\Command\RemoveDuplicatePicturesCommand'
+        arguments:
+            - '@logger'
+            - '@gt.catalog.remove_duplicate_pictures_service'
+        tags:
+            - { name: 'console.command', command: 'catalog:remove_duplicate_pictures' }
+
+
