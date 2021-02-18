@@ -341,10 +341,13 @@ class ProductsService extends ProductsBaseService
 //                    $this->categoryDao->markDeletedProductCategories($delSkus); // netrinam vis dėl to
                     $pcCount = $this->categoryDao->importProductCategories($productCategories);
                     $this->logger->debug('Imported '.$pcCount.' product categories assignments' );
-
-                    $delCount = $this->categoryDao->importProductCategories($delProductCategories);
-                    $this->categoryDao->deleteMarkedProductCategories();
                 }
+
+                $delCount = $this->categoryDao->importProductCategories($delProductCategories);
+                $this->categoryDao->deleteMarkedProductCategories();
+
+                $this->logger->debug('Deleted categories from products '.$delCount );
+
             }
             return max ( $productsCount, $prodLangCount);
         } catch ( DBALException $e ) {
