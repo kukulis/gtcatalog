@@ -173,7 +173,7 @@ class ProductToKatalogasPrekeMapper
             }
 
             $kp->Nuotraukos->info_provider = $infoProvider;
-            $kp->Nuotraukos->versija = $versija;
+            $kp->Nuotraukos->versija = strval($versija);
             $kp->Nuotraukos->statusas = $statusas;
         }
 
