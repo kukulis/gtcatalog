@@ -139,6 +139,10 @@ class ProductToKatalogasPrekeMapper
             ];
 
             // pictures are sorted by priority 18 lines above with "usort"
+
+            $infoProvider = null;
+            $versija = null;
+            $statusas = null;
             for ( $i=0; $i < count($productPictures); $i++) {
                 $pp = $productPictures[$i];
                 $property = $nuotraukosProperties[$i];
@@ -153,8 +157,24 @@ class ProductToKatalogasPrekeMapper
                     $nuotrauka->uri = PicturesHelper::prefixWithSlash($nuotrauka->uri);
                 }
 
+                if ( $infoProvider == null ) {
+                    $infoProvider = $pp->getPicture()->getInfoProvider();
+                }
+
+                if ( $versija == null ) {
+                    $versija = $pp->getPicture()->getId();
+                }
+
+                if ( $statusas == null ) {
+                    $statusas = $pp->getPicture()->getStatusas();
+                }
+
                 $kp->Nuotraukos->{$property} = $nuotrauka;
             }
+
+            $kp->Nuotraukos->info_provider = $infoProvider;
+            $kp->Nuotraukos->versija = $versija;
+            $kp->Nuotraukos->statusas = $statusas;
         }
 
         $kp->kalba = $pl->getLanguage()->getCode();
