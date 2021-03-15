@@ -1,0 +1,36 @@
+{% extends 'admin_base.html.twig' %}
+{% block title %}
+    {% trans %}Brands list{% endtrans %}
+{% endblock %}
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>{% trans %}Brands{% endtrans %}</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                {{ form(filterForm) }}
+            </div>
+            <div class="col-md-12">
+                <table class="table table-bordered" >
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th colspan="2">Actions</th>
+                    </tr>
+                    {% for b in brands %}
+                        <tr>
+                            <td>{{ b.id }}</td>
+                            <td>{{ b.brand }}</td>
+                            <td><a href="#">Edit</a></td>
+                            <td><a href="#">Remove</a></td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

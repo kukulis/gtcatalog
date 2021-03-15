@@ -327,3 +327,10 @@ services:
         tags:
             - { name: 'console.command', command: 'catalog:remove_unassigned_pictures' }
 
+
+
+    Gt\Catalog\Controller\BrandsController:
+        tags:
+            - "controller.service_arguments"
+        bind:
+            $brandsService: '@gt.catalog.brands_service'

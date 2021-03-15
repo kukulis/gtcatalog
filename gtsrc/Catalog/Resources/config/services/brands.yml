@@ -1,0 +1,6 @@
+services:
+    gt.catalog.brands_service:
+        class: 'Gt\Catalog\Services\BrandsService'
+        arguments:
+            - '@logger'
+            - '@doctrine.orm.entity_manager'

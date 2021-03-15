@@ -1,0 +1,4 @@
+gt.catalog.brands:
+  path: "/brands"
+  controller: Gt\Catalog\Controller\BrandsController::listAction
+  methods: GET
