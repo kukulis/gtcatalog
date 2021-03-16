@@ -69,8 +69,29 @@ class BrandsController extends AbstractController
         }
     }
 
-    public function addAction() {
-        return new Response('TODO addAction' );
+    public function addAction(BrandsService $brandsService, Request $request) {
+        try {
+            $add = $request->get('add');
+
+            if ( !empty($add)) {
+                $brandName = $request->get('name');
+
+                $brandsService->addNewBrand($brandName);
+                return $this->redirectToRoute('gt.catalog.brands' );
+            }
+            return $this->render(
+                '@Catalog/brands/add.html.twig',
+                [
+                ]
+            );
+        } catch ( CatalogValidateException $e ) {
+            return $this->render(
+                '@Catalog/error/error.html.twig',
+                [
+                    'error' => $e->getMessage(),
+                ]
+            );
+        }
     }
 
     public function removeAction($id, BrandsService $brandsService) {

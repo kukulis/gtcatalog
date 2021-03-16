@@ -1,0 +1,20 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block title %}Pictures jobs list{% endblock %}
+
+{% block body %}
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-12">
+                <form action="{{ path('gt.catalog.brand_add') }}" method="post" >
+                    <dl>
+                        <dt><label for="name">Name</label></dt>
+                        <dd><input id="name" type="text" name="name" /></dd>
+                        <dd><button type="submit" name="add" value="1">{% trans %}Create brand{% endtrans %}</button></dd>
+                    </dl>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

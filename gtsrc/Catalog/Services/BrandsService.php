@@ -107,4 +107,25 @@ class BrandsService
         $this->entityManager->remove($brand);
         $this->entityManager->flush();
     }
+
+    /**
+     * @param string $name
+     * @return Brand
+     * @throws CatalogValidateException
+     */
+    public function addNewBrand($name) {
+        /** @var BrandsRepository $brandRepository */
+        $brandRepository = $this->entityManager->getRepository(Brand::class);
+        $otherBrands  = $brandRepository->findOtherBrands ( $name, 0);
+
+        if ( count($otherBrands) > 0 ) {
+            throw new CatalogValidateException('There is other brand id=['.$otherBrands[0]->getId().'] with name '.$name);
+        }
+
+        $brand = new Brand();
+        $brand->setBrand($name);
+        $this->entityManager->persist($brand);
+        $this->entityManager->flush();
+        return $brand;
+    }
 }
