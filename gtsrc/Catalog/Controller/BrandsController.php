@@ -14,7 +14,6 @@ use Gt\Catalog\Form\BrandsFilterFormType;
 use Gt\Catalog\Services\BrandsService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class BrandsController extends AbstractController
 {

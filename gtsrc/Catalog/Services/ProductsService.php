@@ -10,10 +10,13 @@ namespace Gt\Catalog\Services;
 
 
 use Doctrine\DBAL\DBALException;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use Gt\Catalog\Dao\CategoryDao;
+use Gt\Catalog\Entity\Brand;
 use Gt\Catalog\Entity\Category;
 use Gt\Catalog\Entity\ProductCategory;
+use Gt\Catalog\Repository\BrandsRepository;
 use Gt\Catalog\Utils\CategoriesHelper;
 use Gt\Catalog\Utils\CsvUtils;
 use Gt\Catalog\Dao\CatalogDao;
@@ -36,6 +39,8 @@ use \DateTime;
 class ProductsService extends ProductsBaseService
 {
     const PAGE_SIZE=10;
+    const STEP = 100;
+    const MAX_MESSAGE_LINES = 5;
 
     /** @var LoggerInterface */
     protected $logger;
@@ -48,6 +53,9 @@ class ProductsService extends ProductsBaseService
      */
     protected $languageDao;
 
+    /** @var EntityManagerInterface */
+    private $entityManager;
+
     /**
      * ProductsService constructor.
      * @param LoggerInterface $logger
@@ -58,12 +66,14 @@ class ProductsService extends ProductsBaseService
     public function __construct(LoggerInterface $logger,
                                 CatalogDao $catalogDao,
                                 LanguageDao $languageDao,
-                                CategoryDao $categoryDao)
+                                CategoryDao $categoryDao,
+                                EntityManagerInterface $entityManager )
     {
         $this->logger = $logger;
         $this->catalogDao = $catalogDao;
         $this->languageDao = $languageDao;
         $this->categoryDao = $categoryDao; // from base class
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -321,19 +331,20 @@ class ProductsService extends ProductsBaseService
                     }
                 }
                 $this->validateClassificators($products);
+                $this->validateBrands($products);
                 $productsCount += $this->catalogDao->importProducts($products, $headMapWithLastUpdate);
                 if ( count($productsLangs )) {
                     $prodLangCount += $this->catalogDao->importProductsLangs($productsLangs, $headMap);
                 }
 
                 if ( count($productCategories) > 0  ) {
-                    $delSkus = [];
+//                    $delSkus = [];
                     $catCodes = [];
                     foreach ($productCategories as $pc ) {
-                        $delSkus[] = $pc->getProduct()->getSku();
+//                        $delSkus[] = $pc->getProduct()->getSku();
                         $catCodes[] = $pc->getCategory()->getCode();
                     }
-                    $delSkus = array_unique($delSkus);
+//                    $delSkus = array_unique($delSkus);
                     $catCodes = array_unique($catCodes);
 
                     $this->validateExistingCategories($catCodes);
@@ -395,6 +406,64 @@ class ProductsService extends ProductsBaseService
             }
 
             throw new CatalogValidateException(join(";\n", $messages));
+        }
+    }
+
+    /**
+     * @param Product[] $products
+     * @throws CatalogValidateException
+     */
+    public function validateBrands($products) {
+        /** @var string[] $brandsMap values are products skus, keys - brands */
+        $brandsMap = [];
+        foreach ($products as $p ) {
+            $brand = strtolower( $p->getBrand() );
+            if ( !empty($brand)) {
+                // its possible to override already available value, but this is not an issue, as sku is used only for error messaging
+                $brandsMap[$brand] = $p->getSku();
+            }
+        }
+        if ( count($brandsMap) == 0 ) {
+            return;
+        }
+
+        /** @var BrandsRepository $brandsRepository */
+        $brandsRepository = $this->entityManager->getRepository(Brand::class);
+
+        $foundBrands = $brandsRepository->loadBrandsBatch(array_keys($brandsMap), self::STEP);
+
+        // 1) make brands map
+        /** @var Brand[] $foundBrandsMap */
+        $foundBrandsMap = [];
+        foreach ($foundBrands as $b ) {
+            $foundBrandsMap[strtolower($b->getBrand())] = $b;
+        }
+
+        // 2) for each validating brands
+        /** @var string[] $unfoundBrandsMap key - brand name, value - sku */
+        $unfoundBrandsMap = [];
+        foreach ($brandsMap as $brandName => $sku) {
+            if ( !array_key_exists($brandName, $foundBrandsMap ) ) {
+                $unfoundBrandsMap[$brandName] = $sku;
+            }
+        }
+
+        if ( count($unfoundBrandsMap) > 0 ) {
+            $count = count($unfoundBrandsMap);
+            // build message
+            $messageLines = [];
+            $curCount = 0;
+            foreach ($unfoundBrandsMap as $brandName => $sku ) {
+                $curCount++;
+                $line = '['.$brandName.'] - assigned to '.$sku;
+
+                $messageLines[] = $line;
+                if ( $curCount > self::MAX_MESSAGE_LINES ) {
+                    break;
+                }
+            }
+            $message = join ("\n", $messageLines );
+            throw new CatalogValidateException("$count brands was not found; some of them: ".$message );
         }
     }
 

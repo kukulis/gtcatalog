@@ -59,4 +59,36 @@ class BrandsRepository extends EntityRepository
 
         return $brands;
     }
+
+    /**
+     * @param $brandsNames
+     * @return Brand[]
+     */
+    public function loadBrands($brandsNames) {
+        $class = Brand::class;
+        $dql = /** @lang DQL  */ "SELECT b FROM $class b WHERE b.brand in (:brands)";
+        $query = $this->_em->createQuery($dql);
+        $query->setParameter('brands', $brandsNames );
+        /** @var Brand[] $brands */
+        $brands = $query->getResult();
+        return $brands;
+    }
+
+    /**
+     * @param string[] $brandsNames
+     * @param int $step
+     * @return Brand[]
+     */
+    public function loadBrandsBatch ( $brandsNames, $step ) {
+        /** @var Brand[] $allBrands */
+        $allBrands = [];
+        for ( $i=0; $i < count($brandsNames); $i+= $step ) {
+            $part = array_slice($brandsNames, $i, $step );
+
+            $brands = $this->loadBrands($part);
+            $allBrands = array_merge($allBrands, $brands);
+        }
+        return $allBrands;
+    }
+
 }
