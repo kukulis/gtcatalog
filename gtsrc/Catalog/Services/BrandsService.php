@@ -94,4 +94,17 @@ class BrandsService
 
         return $rez;
     }
+
+    /**
+     * @param int $id
+     * @throws CatalogValidateException
+     */
+    public function removeBrand($id) {
+        $brand = $this->loadBrand($id);
+        if ( $brand == null ) {
+            throw new CatalogValidateException('No brand found with id '.$id );
+        }
+        $this->entityManager->remove($brand);
+        $this->entityManager->flush();
+    }
 }

@@ -29,7 +29,9 @@
                             <td>{{ b.id }}</td>
                             <td>{{ b.brand }}</td>
                             <td><a href="{{ path('gt.catalog.brand_edit', {id: b.id}) }}">{% trans %}Edit{% endtrans %}</a></td>
-                            <td><a href="{{ path('gt.catalog.brand_delete', {id: b.id}) }}">{% trans %}Remove{% endtrans %}</a></td>
+                            <td><a
+                                onclick="return confirm('Do you really want to delete brand {{ b.id }}?')"
+                                href="{{ path('gt.catalog.brand_delete', {id: b.id}) }}">{% trans %}Remove{% endtrans %}</a></td>
                         </tr>
                     {% endfor %}
                 </table>

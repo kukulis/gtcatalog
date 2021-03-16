@@ -73,7 +73,17 @@ class BrandsController extends AbstractController
         return new Response('TODO addAction' );
     }
 
-    public function removeAction($id) {
-        return new Response('TODO removeAction '.$id );
+    public function removeAction($id, BrandsService $brandsService) {
+        try {
+            $brandsService->removeBrand($id);
+            return $this->redirectToRoute('gt.catalog.brands');
+        } catch ( CatalogValidateException $e ) {
+            return $this->render(
+                '@Catalog/error/error.html.twig',
+                [
+                    'error' => $e->getMessage(),
+                ]
+            );
+        }
     }
 }
