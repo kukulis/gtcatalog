@@ -15,6 +15,9 @@
                 {{ form(filterForm) }}
             </div>
             <div class="col-md-12">
+                <a href="{{ path('gt.catalog.brand_add') }}">{% trans %}New brand{% endtrans %}</a>
+            </div>
+            <div class="col-md-12">
                 <table class="table table-bordered" >
                     <tr>
                         <th>Id</th>
@@ -25,8 +28,8 @@
                         <tr>
                             <td>{{ b.id }}</td>
                             <td>{{ b.brand }}</td>
-                            <td><a href="#">Edit</a></td>
-                            <td><a href="#">Remove</a></td>
+                            <td><a href="{{ path('gt.catalog.brand_edit', {id: b.id}) }}">{% trans %}Edit{% endtrans %}</a></td>
+                            <td><a href="{{ path('gt.catalog.brand_delete', {id: b.id}) }}">{% trans %}Remove{% endtrans %}</a></td>
                         </tr>
                     {% endfor %}
                 </table>

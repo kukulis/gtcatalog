@@ -2,3 +2,18 @@ gt.catalog.brands:
   path: "/brands"
   controller: Gt\Catalog\Controller\BrandsController::listAction
   methods: GET
+
+gt.catalog.brand_edit:
+  path: "/brand/edit/{id}"
+  controller: Gt\Catalog\Controller\BrandsController::editAction
+  methods: [GET,POST]
+
+gt.catalog.brand_add:
+  path: "/brand/add"
+  controller: Gt\Catalog\Controller\BrandsController::addAction
+  methods: [GET,POST,PUT]
+
+gt.catalog.brand_delete:
+  path: "/brand/delete/{id}"
+  controller: Gt\Catalog\Controller\BrandsController::removeAction
+  methods: [GET,POST,DELETE]

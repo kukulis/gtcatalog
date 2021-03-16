@@ -9,6 +9,7 @@
 namespace Gt\Catalog\Controller;
 
 
+use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Form\BrandsFilterFormType;
 use Gt\Catalog\Services\BrandsService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -33,11 +34,46 @@ class BrandsController extends AbstractController
         );
     }
 
-    public function editAction() {
-        return new Response('TODO editAction' );
+    public function editAction($id, BrandsService $brandsService, Request $request) {
+        try {
+            $brand = $brandsService->loadBrand($id);
+            if ( $brand == null ) {
+                throw new CatalogValidateException('No brand found with id '.$id );
+            }
+
+            $saveButton = $request->get('save');
+            $updatedCount = 0;
+            if ( !empty($saveButton )) {
+                $newBrandName = $request->get('brandName' );
+                $updatedCount = $brandsService->storeBrand($brand, $newBrandName);
+            }
+
+            $count = $brandsService->getProductsCount($brand->getBrand());
+
+            return $this->render(
+                '@Catalog/brands/edit.html.twig',
+                [
+                    'brand' => $brand,
+                    'id' => $id,
+                    'count' => $count,
+                    'updatedCount' => $updatedCount,
+                ]
+            );
+        } catch ( CatalogValidateException $e ) {
+            return $this->render(
+                '@Catalog/error/error.html.twig',
+                [
+                    'error' => $e->getMessage(),
+                ]
+            );
+        }
     }
 
     public function addAction() {
         return new Response('TODO addAction' );
+    }
+
+    public function removeAction($id) {
+        return new Response('TODO removeAction '.$id );
     }
 }

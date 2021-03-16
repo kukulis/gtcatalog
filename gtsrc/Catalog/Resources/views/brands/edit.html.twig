@@ -1,0 +1,34 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block title %}
+    Brand Edit {{ id }}
+{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>{% trans %}Edit brand{% endtrans %}: {{ id }}</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <p>{% trans %}Associated products count{% endtrans%}: {{ count }}</p>
+                {% if updatedCount > 0 %}
+                    <p>{% trans %}Updated brands for products count{% endtrans%}: {{ updatedCount }}</p>
+                {% endif %}
+            </div>
+            <div class="col-md-12">
+                <form method="post">
+                    <dl>
+                        <dt><label for="brandName">{% trans %}Brand{% endtrans %}</label></dt>
+                        <dd><input type="text" name="brandName" id="brandName" value="{{ brand.brand }}" /></dd>
+                        <dd><button type="submit" name="save" value="1" >{% trans %}Save{% endtrans %}</button></dd>
+                    </dl>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

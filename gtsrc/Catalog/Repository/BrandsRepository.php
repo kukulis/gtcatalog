@@ -34,8 +34,29 @@ class BrandsRepository extends EntityRepository
             $builder->setParameter("startsLike", $filter->getStartsLike().'%' );
         }
 
+        $builder->orderBy('b.brand' );
+
         /** @var Brand[] $brands */
         $brands = $builder->getQuery()->getResult();
+        return $brands;
+    }
+
+    /**
+     * @param string $brandName
+     * @param int $notId
+     * @return Brand[]
+     */
+    public function findOtherBrands($brandName, $notId) {
+        $class = Brand::class;
+        $dql = /** @lang DQL */ "SELECT b FROM $class b WHERE b.brand=:brandName AND b.id != :notId";
+        $query = $this->_em->createQuery($dql);
+
+        $query->setParameter('brandName', $brandName);
+        $query->setParameter('notId', $notId );
+
+        /** @var Brand[] $brands */
+        $brands = $query->getResult();
+
         return $brands;
     }
 }
