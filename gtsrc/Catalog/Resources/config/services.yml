@@ -277,6 +277,8 @@ services:
         bind:
             $logger: '@logger'
             $importPicturesService: '@gt.catalog.import_pictures_service'
+            $picturesService: '@gt.catalog.pictures_service'
+
 
 
     gt.catalog.test:

@@ -16,12 +16,25 @@ use Gt\Catalog\Entity\Product;
 use Gt\Catalog\Entity\ProductPicture;
 use Gt\Catalog\Exception\CatalogErrorException;
 use Gt\Catalog\Exception\CatalogValidateException;
+use Gt\Catalog\Utils\CsvUtils;
 use Gt\Catalog\Utils\PicturesHelper;
 use Psr\Log\LoggerInterface;
 
 class PicturesService
 {
     const STEP = 100;
+
+    const COL_SKU='sku';
+    const COL_STATUSAS='statusas';
+    const COL_PRIORITY='priority';
+    const COL_INFO_PROVIDER='info_provider';
+
+    const META_COLUMNS= [
+        self::COL_SKU,
+        self::COL_STATUSAS,
+        self::COL_PRIORITY,
+        self::COL_INFO_PROVIDER,
+    ];
 
     /** @var LoggerInterface */
     private $logger;
@@ -314,4 +327,83 @@ class PicturesService
     public function findPictureAssignements ($pictureId) {
         return $this->picturesDao->findPictureAssignementsById($pictureId);
     }
+
+    /**
+     * @param string $filePath
+     * @param string $fileName
+     * @throws CatalogValidateException
+     * @throws \Doctrine\DBAL\DBALException
+     * @return int
+     */
+    public function importPicturesMeta($filePath, $fileName) {
+        $this->logger->debug('Updating pictures meta data from file '.$fileName );
+
+        $file = fopen ( $filePath, 'r' );
+        $header = fgetcsv($file);
+        $this->validateMetaHeader($header);
+
+        $allLines = [];
+
+        $line = fgetcsv($file);
+        while ( $line != null && count($line) > 0 ) {
+            $this->logger->debug('line:'.join ( '|', $line ));
+            $lineMap = CsvUtils::arrayToAssoc($header, $line);
+            $allLines[] = $lineMap;
+            $line = fgetcsv($file);
+        }
+        fclose($file);
+
+        // TODO catch DBAL exception and rethrow CatalogException
+        return $this->importPicturesMetaLines($header, $allLines);
+    }
+
+    /**
+     * @param $header
+     * @param $metaLines
+     * @return int
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function importPicturesMetaLines($header, $metaLines) {
+        // 1) load all images with assigned products by skus
+        // 2) create sql's using loaded images ids, connected with the csv lines by skus
+
+        $totalCount = 0;
+        for ( $i=0; $i < count($metaLines); $i+= self::STEP) {
+            $part = array_slice ($metaLines, $i, self::STEP);
+
+            $skus = array_map ( function($lineMap) {return $lineMap[self::COL_SKU];}, $part);
+            $productsPictures = $this->picturesDao->loadProductsPicturesBySkus($skus);
+
+            $linesMapsMap =[];
+            foreach ($part as $lineMap ) {
+                $sku = $lineMap[self::COL_SKU];
+                $linesMapsMap[$sku] = $lineMap;
+            }
+
+            $totalCount += $this->picturesDao->upsertPicturesMetas( $header, $linesMapsMap, $productsPictures);
+        }
+
+        return $totalCount;
+    }
+
+
+    /**
+     * @param $header
+     * @throws CatalogValidateException
+     */
+    public function validateMetaHeader($header) {
+        $headerSet = array_flip($header);
+
+        if ( !array_key_exists(self::COL_SKU, $headerSet) ) {
+            throw new CatalogValidateException('Column sku missing in the given csv file');
+        }
+
+        $metaColumnsSet = array_flip(self::META_COLUMNS);
+        foreach ($header as $col ) {
+            if ( !array_key_exists($col, $metaColumnsSet)) {
+                throw new CatalogValidateException( 'Column '.$col.' is not valid for import' );
+            }
+        }
+    }
+
 }

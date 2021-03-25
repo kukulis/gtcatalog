@@ -10,6 +10,7 @@ namespace Gt\Catalog\Dao;
 
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\EntityManager;
 use Gt\Catalog\Entity\Picture;
@@ -18,6 +19,8 @@ use Psr\Log\LoggerInterface;
 
 class PicturesDao
 {
+    const COL_SKU = 'sku';
+
     /** @var LoggerInterface */
     private $logger;
 
@@ -321,5 +324,108 @@ class PicturesDao
         $pictures = $query->getResult();
 
         return $pictures;
+    }
+
+    /**
+     * @param string[] $skus
+     * @return ProductPicture[]
+     */
+    public function loadProductsPicturesBySkus($skus)
+    {
+        $ppiClass = ProductPicture::class;
+        $dql = /** @lang DQL */
+        "SELECT ppi, pi FROM $ppiClass ppi JOIN ppi.picture as pi JOIN ppi.product as p 
+         WHERE p.sku in (:skus)";
+
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        $query = $em->createQuery($dql);
+        $query->setParameter('skus', $skus );
+
+        /** @var ProductPicture[] $pps */
+        $pps = $query->getResult();
+
+        return $pps;
+    }
+
+
+    /**
+     * @param $header
+     * @param array $linesMapsMap
+     * @param ProductPicture[] $productsPictures
+     * @return int
+     * @throws DBALException
+     */
+    public function upsertPicturesMetas( $header, $linesMapsMap, $productsPictures) {
+        if ( count($productsPictures) == 0 ) {
+            return 0;
+        }
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+        $conn = $em->getConnection();
+
+        // ========= values ===========
+        $sqlLines = [];
+        foreach ($productsPictures as $ppi ) {
+            $sku = $ppi->getProduct()->getSku();
+            $pictureId = $ppi->getPicture()->getId();
+            $lineMap = $linesMapsMap[$sku];
+
+            $sqlLine=[
+                $pictureId,
+            ];
+
+            // extract values, depending on header
+            foreach ($header as $column) {
+                if ( $column == self::COL_SKU ) {
+                    // SKIP sku, as it doesnt belong to picture object
+                    continue;
+                }
+                $value = $lineMap[$column];
+                $sqlLine[] = $conn->quote($value);
+            }
+            $sqlLines[] = '('. join (',', $sqlLine ) . ')';
+        }
+
+        $valuesStr = join ( ",\n", $sqlLines );
+
+        // ============== columns =======================
+
+        $columnsNames = ['id'];
+        foreach ($header as $column ) {
+            if ( $column == self::COL_SKU) {
+                continue;
+            }
+            $columnsNames[] = $column;
+        }
+        $columnsNamesStr = join (',', $columnsNames );
+
+
+
+        // =========== updates ================================
+        $updatesLines = [];
+        // updates statements by header
+        foreach ($header as $column ) {
+            if ( $column == self::COL_SKU) {
+                continue;
+            }
+            $updatesLines[] = "$column=values($column)";
+        }
+
+        $updatesStr='';
+        if ( count($updatesLines )) {
+            $updatesLinesStr = join ( ',', $updatesLines );
+            $updatesStr = 'ON DUPLICATE KEY UPDATE '.$updatesLinesStr;
+        }
+
+        // ============= the SQL ==============================
+        $sql =
+            "INSERT INTO pictures($columnsNamesStr)
+             VALUES $valuesStr
+             ON DUPLICATE KEY UPDATE $updatesStr";
+
+        // ============== executing sql ========================
+        return $conn->exec($sql);
     }
 }

@@ -13,8 +13,10 @@ use Gt\Catalog\Entity\ImportPicturesJob;
 use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Form\PicturesJobFilterFormType;
 use Gt\Catalog\Services\ImportPicturesService;
+use Gt\Catalog\Services\PicturesService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -113,5 +115,30 @@ class ImagesImportController extends AbstractController
 
     public function jobCancel() {
         // TODO
+    }
+
+    public function importImagesFormMeta() {
+        return $this->render('@Catalog/pictures/images_meta_form.html.twig',
+            [
+            ]
+        );
+    }
+
+    /**
+     * @param Request $request
+     * @param PicturesService $picturesService
+     * @return Response
+     * @throws CatalogValidateException
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function importImagesMeta(Request $request, PicturesService $picturesService)  {
+        /** @var  UploadedFile $csvFileObject */
+        $csvFileObject = $request->files->get('csvfile');
+        $count = $picturesService->importPicturesMeta($csvFileObject->getRealPath(), $csvFileObject->getFilename() );
+        return $this->render('@Catalog/pictures/images_meta_import_result.html.twig',
+            [
+                'count' => $count,
+            ]
+        );
     }
 }

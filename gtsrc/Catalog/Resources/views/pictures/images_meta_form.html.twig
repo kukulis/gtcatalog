@@ -1,0 +1,41 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block title %}Import pictures meta{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Import pictures meta</h1>
+                <p>csv file</p>
+                <div>Csv file must contain:
+                    <ul>
+                        <li>sku</li>
+                        <li>statusas</li>
+                        <li>priority</li>
+                        <li>info_provider</li>
+                    </ul>
+
+                    <ul>
+                        <li>sku - a product sku to which picture is assigned</li>
+                        <li>statusas - picture status</li>
+                        <li>priority - picture priority for the given product</li>
+                        <li>info_provider - info provider of the picture</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <form action="{{ path('gt.catalog.images_meta_import') }}" method="post" enctype="multipart/form-data">
+                    <dl>
+                        <dt><label for="csvfile">Csv</label></dt>
+                        <dd><input type="file" name="csvfile" /></dd>
+                        <dt></dt>
+                        <dd><button type="submit" name="register">Import</button></dd>
+                    </dl>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

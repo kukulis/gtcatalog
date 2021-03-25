@@ -28,3 +28,16 @@ gt.catalog.job_view_csv:
     path: "/job_view_csv/{id}"
     controller: Gt\Catalog\Controller\ImagesImportController::viewCsv
     methods: [GET]
+
+gt.catalog.images_meta_import_form:
+    path: "/images_meta_form"
+    controller: Gt\Catalog\Controller\ImagesImportController::importImagesFormMeta
+    methods: [GET]
+
+gt.catalog.images_meta_import:
+    path: "/images_meta_import"
+    controller: Gt\Catalog\Controller\ImagesImportController::importImagesMeta
+    methods: [POST]
+
+
+
