@@ -9,6 +9,7 @@
 namespace Gt\Catalog\Services;
 
 
+use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\ORMException;
 use Gt\Catalog\Dao\PicturesDao;
 use Gt\Catalog\Entity\Picture;
@@ -332,7 +333,7 @@ class PicturesService
      * @param string $filePath
      * @param string $fileName
      * @throws CatalogValidateException
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws CatalogErrorException
      * @return int
      */
     public function importPicturesMeta($filePath, $fileName) {
@@ -340,6 +341,7 @@ class PicturesService
 
         $file = fopen ( $filePath, 'r' );
         $header = fgetcsv($file);
+        $headMap = array_flip($header);
         $this->validateMetaHeader($header);
 
         $allLines = [];
@@ -347,14 +349,17 @@ class PicturesService
         $line = fgetcsv($file);
         while ( $line != null && count($line) > 0 ) {
             $this->logger->debug('line:'.join ( '|', $line ));
-            $lineMap = CsvUtils::arrayToAssoc($header, $line);
+            $lineMap = CsvUtils::arrayToAssoc($headMap, $line);
             $allLines[] = $lineMap;
             $line = fgetcsv($file);
         }
         fclose($file);
 
-        // TODO catch DBAL exception and rethrow CatalogException
-        return $this->importPicturesMetaLines($header, $allLines);
+        try {
+            return $this->importPicturesMetaLines($header, $allLines);
+        } catch ( DBALException $e ) {
+            throw new CatalogErrorException($e->getMessage());
+        }
     }
 
     /**

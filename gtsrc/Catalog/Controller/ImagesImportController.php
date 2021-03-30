@@ -10,6 +10,7 @@ namespace Gt\Catalog\Controller;
 
 
 use Gt\Catalog\Entity\ImportPicturesJob;
+use Gt\Catalog\Exception\CatalogBaseException;
 use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Form\PicturesJobFilterFormType;
 use Gt\Catalog\Services\ImportPicturesService;
@@ -128,17 +129,21 @@ class ImagesImportController extends AbstractController
      * @param Request $request
      * @param PicturesService $picturesService
      * @return Response
-     * @throws CatalogValidateException
-     * @throws \Doctrine\DBAL\DBALException
      */
     public function importImagesMeta(Request $request, PicturesService $picturesService)  {
-        /** @var  UploadedFile $csvFileObject */
-        $csvFileObject = $request->files->get('csvfile');
-        $count = $picturesService->importPicturesMeta($csvFileObject->getRealPath(), $csvFileObject->getFilename() );
-        return $this->render('@Catalog/pictures/images_meta_import_result.html.twig',
-            [
-                'count' => $count,
-            ]
-        );
+        try {
+            /** @var  UploadedFile $csvFileObject */
+            $csvFileObject = $request->files->get('csvfile');
+            $count = $picturesService->importPicturesMeta($csvFileObject->getRealPath(), $csvFileObject->getFilename());
+            return $this->render('@Catalog/pictures/images_meta_import_result.html.twig',
+                [
+                    'count' => $count,
+                ]
+            );
+        } catch (CatalogBaseException $e ) {
+            return $this->render('@Catalog/error/error.html.twig', [
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }
