@@ -179,6 +179,7 @@ services:
         bind:
             $logger: '@logger'
             $productsRestService: '@gt.catalog.products_rest_service'
+            $categoriesRestService: '@gt.catalog.categories_rest_service'
 
 
     # ------------------ rest -------------------------------------------
@@ -337,3 +338,10 @@ services:
             - "controller.service_arguments"
         bind:
             $brandsService: '@gt.catalog.brands_service'
+
+    gt.catalog.categories_rest_service:
+        class: 'Gt\Catalog\Services\Rest\CategoriesRestService'
+        arguments:
+            - '@logger'
+            - '@gt.catalog.categories_service'
+            - '@gt.catalog.language_dao'

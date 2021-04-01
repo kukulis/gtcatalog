@@ -10,6 +10,7 @@ namespace Gt\Catalog\Rest\Controllers;
 
 
 use Catalog\B2b\Common\Data\Rest\RestResult;
+use Gt\Catalog\Services\Rest\CategoriesRestService;
 use Gt\Catalog\Services\Rest\ProductsRestService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,8 +23,6 @@ class ProductsRestController  extends AbstractController {
     const MAX_RESULT = 500;
     public function getProductsAction(Request $r, $language, LoggerInterface $logger, ProductsRestService $productsRestService)
     {
-        // TODO validate language code
-
         // 1) get skus
         $content = $r->getContent();
         $skus = json_decode($content);
@@ -45,7 +44,22 @@ class ProductsRestController  extends AbstractController {
         // TODO exceptions
     }
 
-    public function getCategoriesAction() {
+    public function getCategoriesAction( $lang, CategoriesRestService $categoriesRestService ) {
+        $restCategories = $categoriesRestService->getRestCategories($lang);
+        $response = new RestResult();
+        $response->data= $restCategories;
+        return new JsonResponse($response);
+    }
+
+    public function getCategoriesRootsAction() {
+        // TODO
+    }
+
+    public function getCategoryTreeAction($categoryCode, $lang) {
+        // TODO
+    }
+
+    public function getCategoryAction($categoryCode, $lang ) {
         // TODO
     }
 }
