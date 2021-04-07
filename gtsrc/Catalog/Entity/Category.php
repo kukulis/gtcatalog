@@ -118,6 +118,9 @@ class Category
      */
     public function isConfirmed(): bool
     {
+        if ( $this->confirmed === null ) {
+            return false;
+        }
         return $this->confirmed;
     }
 

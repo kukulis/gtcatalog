@@ -9,7 +9,10 @@
 namespace Gt\Catalog\Rest\Controllers;
 
 
+use Catalog\B2b\Common\Data\Rest\ErrorResponse;
 use Catalog\B2b\Common\Data\Rest\RestResult;
+use Gt\Catalog\Exception\CatalogErrorException;
+use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Services\Rest\CategoriesRestService;
 use Gt\Catalog\Services\Rest\ProductsRestService;
 use Psr\Log\LoggerInterface;
@@ -21,7 +24,7 @@ use Symfony\Component\HttpFoundation\Response;
 class ProductsRestController  extends AbstractController {
 
     const MAX_RESULT = 500;
-    public function getProductsAction(Request $r, $language, LoggerInterface $logger, ProductsRestService $productsRestService)
+    public function getProductsAction(Request $r, $language, ProductsRestService $productsRestService)
     {
         // 1) get skus
         $content = $r->getContent();
@@ -44,6 +47,12 @@ class ProductsRestController  extends AbstractController {
         // TODO exceptions
     }
 
+    /**
+     * @param string $lang
+     * @param CategoriesRestService $categoriesRestService
+     * @return JsonResponse
+     * @throws CatalogValidateException
+     */
     public function getCategoriesAction( $lang, CategoriesRestService $categoriesRestService ) {
         $restCategories = $categoriesRestService->getRestCategories($lang);
         $response = new RestResult();
@@ -51,15 +60,50 @@ class ProductsRestController  extends AbstractController {
         return new JsonResponse($response);
     }
 
-    public function getCategoriesRootsAction() {
-        // TODO
+    /**
+     * @param CategoriesRestService $categoriesRestService
+     * @return JsonResponse
+     */
+    public function getCategoriesRootsAction(CategoriesRestService $categoriesRestService) {
+        $codes = $categoriesRestService->getCategoriesRoots();
+        $response = new RestResult();
+        $response->data= $codes;
+        return new JsonResponse($response);
     }
 
-    public function getCategoryTreeAction($categoryCode, $lang) {
-        // TODO
+    /**
+     * @param string $categoryCode
+     * @param string $lang
+     * @param CategoriesRestService $categoriesRestService
+     * @param LoggerInterface $logger
+     * @return JsonResponse
+     */
+    public function getCategoryTreeAction($categoryCode, $lang, CategoriesRestService $categoriesRestService, LoggerInterface  $logger) {
+        try {
+            $categories = $categoriesRestService->getCategoriesTree($categoryCode, $lang);
+            $response = new RestResult();
+            $response->data= $categories;
+            return new JsonResponse($response);
+        } catch ( CatalogValidateException $e ) {
+            return new JsonResponse(new ErrorResponse(ErrorResponse::TYPE_VALIDATION, $e->getMessage(), Response::HTTP_BAD_REQUEST));
+        } catch ( CatalogErrorException $e ) {
+            $logger->error('On getCategoryTreeAction: '.$e->getMessage() );
+            return new JsonResponse(new ErrorResponse(ErrorResponse::TYPE_ERROR, 'Server errror', Response::HTTP_INTERNAL_SERVER_ERROR));
+        }
     }
 
-    public function getCategoryAction($categoryCode, $lang ) {
-        // TODO
+    /**
+     * @param string $categoryCode
+     * @param string $lang
+     * @param CategoriesRestService $categoriesRestService
+     * @return JsonResponse
+     * @throws CatalogErrorException
+     * @throws CatalogValidateException
+     */
+    public function getCategoryAction($categoryCode, $lang, CategoriesRestService $categoriesRestService ) {
+        $restCategory = $categoriesRestService->getCategoryLang($categoryCode, $lang);
+        $response = new RestResult();
+        $response->data= $restCategory;
+        return new JsonResponse($response);
     }
 }

@@ -15,6 +15,8 @@ use Psr\Log\LoggerInterface;
 
 class CategoryDao extends BaseDao
 {
+    const MAX_ROOTS=1000;
+
     /** @var LoggerInterface  */
     private $logger;
 
@@ -421,4 +423,50 @@ class CategoryDao extends BaseDao
 
         return $productCategories;
     }
+
+    /**
+     * @return Category[]
+     */
+    public function getRootCategories() {
+        $class = Category::class;
+        $dql = /** @lang DQL */
+            "SELECT c from $class c
+             WHERE c.parent is null";
+
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        $query = $em->createQuery($dql);
+//        $query->setMaxResults(self::MAX_ROOTS); // ?? may be not needed
+
+
+        /** @var Category[] $categories */
+        $categories = $query->getResult();
+
+        return $categories;
+    }
+
+    /**
+     * @param $parentCodes
+     * @return Category[]
+     */
+    public function loadCategoriesByParentCodes($parentCodes) {
+        $class = Category::class;
+        $dql = /** @lang DQL */
+            "SELECT c from $class c
+             JOIN c.parent p
+             WHERE p.code in (:parentCodes)";
+
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        $query = $em->createQuery($dql);
+        $query->setParameter('parentCodes', $parentCodes);
+
+        /** @var Category[] $categories */
+        $categories = $query->getResult();
+
+        return $categories;
+    }
+
 }

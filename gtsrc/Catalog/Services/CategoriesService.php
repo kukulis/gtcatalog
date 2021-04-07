@@ -409,4 +409,95 @@ class CategoriesService extends ProductsBaseService
         $pps = $this->categoryDao->getCategoriesProducts($categoryCode, self::PRODUCTS_LIMIT);
         return $pps;
     }
+
+    /**
+     * @return Category[]
+     */
+    public function getRootCategories() {
+        return $this->categoryDao->getRootCategories();
+    }
+
+    /**
+     * @param string $categoryCode
+     * @return Category
+     */
+    public function getCategory($categoryCode) {
+        return $this->categoryDao->getCategory($categoryCode);
+    }
+
+    /**
+     * @param $categoriesCodes
+     * @return Category[]
+     */
+    public function getCategories($categoriesCodes) {
+        /** @var Category[] $rez */
+        $rez = [];
+        for ($i=0; $i < count($categoriesCodes); $i+= self::STEP ) {
+            $part = array_slice($categoriesCodes, $i, self::STEP );
+            $partRez = $this->categoryDao->loadCategories($part);
+            $rez = array_merge($rez, $partRez);
+        }
+       return $rez;
+    }
+
+    /**
+     * Loads categories by parent codes.
+     *
+     * @param string[] $parentCodes
+     * @return Category[]
+     */
+    public function getCategoriesByParentCodes($parentCodes) {
+        /** @var Category[] $rez */
+        $rez = [];
+        for ($i=0; $i < count($parentCodes); $i+= self::STEP ) {
+            $part = array_slice($parentCodes, $i, self::STEP );
+            $partRez = $this->categoryDao->loadCategoriesByParentCodes($part);
+            $rez = array_merge($rez, $partRez);
+        }
+        return $rez;
+    }
+
+    /**
+     * @param string[] $categoriesCodes
+     * @param string $lang
+     * @return CategoryLanguage[]
+     */
+    public function getCategoriesLanguagesByCodes($categoriesCodes, $lang ) {
+        /** @var CategoryLanguage[] $rez */
+        $rez = [];
+        for ($i=0; $i < count($categoriesCodes); $i+= self::STEP ) {
+            $part = array_slice($categoriesCodes, $i, self::STEP );
+            $partRez = $this->categoryDao->getCategoriesLanguages($part, $lang);
+            $rez = array_merge($rez, $partRez);
+        }
+        return $rez;
+    }
+
+    /**
+     * @param string $categoryCode
+     * @param int $maxDepth
+     * @return Category[]
+     * @throws CatalogErrorException
+     */
+    public function getWithAncestors($categoryCode, $maxDepth=10) {
+        $code = $categoryCode;
+        $depth = 0;
+        /** @var Category[] $categories */
+        $categories = [];
+        $codes = [];
+        while ( $code != null ) {
+            $codes[] = $code;
+            $depth++;
+            if ( $depth > $maxDepth ) {
+                throw new CatalogErrorException('Too deep category tree for category ['.$categoryCode. '] Constructed path: ['.join ( '|', $codes).']');
+            }
+            $category = $this->categoryDao->getCategory($code);
+            if ( $category == null ) {
+                break;
+            }
+            $categories[] = $category;
+            $code = $category->getParentCode();
+        }
+        return $categories;
+    }
 }

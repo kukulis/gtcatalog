@@ -7,3 +7,16 @@ gt.catalog.rest.categories: # deprecated
     path: "/categories/{language}"
     controller: Gt\Catalog\Rest\Controllers\ProductsRestController::getCategoriesAction
     methods: GET|POST
+
+gt.catalog.rest.categories_roots:
+    path: "/categories_roots"
+    controller: Gt\Catalog\Rest\Controllers\ProductsRestController::getCategoriesRootsAction
+    methods: GET|POST
+
+
+gt.catalog.rest.category_tree:
+    path: "/category_tree/{categoryCode}/{lang}"
+    controller: Gt\Catalog\Rest\Controllers\ProductsRestController::getCategoryTreeAction
+    methods: GET|POST
+
+

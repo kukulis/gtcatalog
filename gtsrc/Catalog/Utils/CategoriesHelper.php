@@ -9,6 +9,8 @@
 namespace Gt\Catalog\Utils;
 
 
+use Gt\Catalog\Entity\Category;
+
 class CategoriesHelper
 {
     public static function splitCategoriesStr($str) {
@@ -43,5 +45,16 @@ class CategoriesHelper
         }
         $rez = preg_split ( '/[\\s,]+/', $str, -1, PREG_SPLIT_NO_EMPTY );
         return $rez;
+    }
+
+    /**
+     * @param $categories
+     * @param string $separator
+     * @return string
+     */
+    public static function constructPathByAncestors($categories, $separator = '/') {
+        $codes = array_map ([Category::class, 'lambdaGetCode'], $categories);
+        $reverseCodes = array_reverse($codes);
+        return $separator . join ( $separator, $reverseCodes );
     }
 }
