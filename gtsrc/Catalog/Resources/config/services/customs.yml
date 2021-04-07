@@ -1,0 +1,7 @@
+services:
+    gt.catalog.customs.keywords_service:
+        class: 'Gt\Catalog\Services\CustomsKeywordsService'
+        arguments:
+            - '@logger'
+            - '@doctrine.orm.entity_manager'
+

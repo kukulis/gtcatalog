@@ -1,1 +1,40 @@
-TODO list
+{% extends 'base.html.twig' %}
+{% block title %}{% trans %}Customs codes{% endtrans %}{% endblock %}
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>{% trans %}Customs codes{% endtrans %}</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <p><a href="{{ path('gt.catalog.customs.keywords_import') }}">Import</a></p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                {{ form(form) }}
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>{% trans %}Id{% endtrans %}</th>
+                        <th>{% trans %}Customs code{% endtrans %}</th>
+                        <th>{% trans %}Keyword{% endtrans %}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for c in customs_keywords %}
+                        <tr>
+                            <td>{{ c.id }}</td>
+                            <td>{{ c.customsCode }}</td>
+                            <td>{{ c.keyword }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

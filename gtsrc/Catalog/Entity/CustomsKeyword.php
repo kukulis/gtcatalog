@@ -9,12 +9,14 @@
 namespace Gt\Catalog\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Gt\Catalog\Repository\CustomsKeywordsRepository;
 
 
 /**
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass=CustomsKeywordsRepository::class)
  * @ORM\Table(name="customs_keywords")
+ *
  */
 class CustomsKeyword
 {

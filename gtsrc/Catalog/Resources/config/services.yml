@@ -345,3 +345,10 @@ services:
             - '@logger'
             - '@gt.catalog.categories_service'
             - '@gt.catalog.language_dao'
+
+
+    Gt\Catalog\Controller\CustomsKeywordsController:
+        tags:
+            - "controller.service_arguments"
+        bind:
+            $customsKeywordsService: '@gt.catalog.customs.keywords_service'
