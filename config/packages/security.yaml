@@ -43,11 +43,6 @@ security:
         - { path: ^/admin/classificator_group/new, roles: ROLE_ADMIN }
         - { path: ^/admin/users, roles: ROLE_ADMIN }
         - { path: ^/admin, roles: [ROLE_EDITOR, ROLE_ADMIN] }
-#        - { path: ^/product, roles: [ROLE_EDITOR, ROLE_ADMIN] }
-#        - { path: ^/classificator_groups, roles: [ROLE_ADMIN, ROLE_EDITOR] }
-#        - { path: ^/classificators, roles: [ROLE_EDITOR, ROLE_ADMIN] }
-#        - { path: ^/classificator, roles: [ROLE_EDITOR, ROLE_ADMIN] }
-#        - { path: ^/categories, roles: [ROLE_EDITOR, ROLE_ADMIN] }
-#        - { path: ^/languages, roles: [ROLE_EDITOR, ROLE_ADMIN] }
+        - { path: ^/buh, roles: [ROLE_BUH, ROLE_ADMIN] }
 
     enable_authenticator_manager: true

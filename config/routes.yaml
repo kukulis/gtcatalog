@@ -40,3 +40,8 @@ images_routes:
 brands_routes:
     resource: '@CatalogBundle/Resources/config/brands_routes.yml'
     prefix: '/admin'
+
+
+customs_keywords_routes:
+    resource: '@CatalogBundle/Resources/config/customs_keywords_routes.yml'
+    prefix: '/buh'

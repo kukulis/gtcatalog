@@ -11,6 +11,9 @@ namespace Gt\Catalog\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * This class represents structure of the customs codes from global customs codes database.
+ * Not practicaly used in this project yet.
+ *
  * @ORM\Entity
  * @ORM\Table(name="customs_numbers")
  */

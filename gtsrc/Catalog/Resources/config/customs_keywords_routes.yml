@@ -1,0 +1,9 @@
+gt.catalog.customs.keywords_list:
+    path: "/customs/keywords_list"
+    controller: Gt\Catalog\Controller\CustomsKeywordsController::listAction
+    methods: [GET, POST]
+
+gt.catalog.customs.keywords_import:
+    path: "/customs/keywords_import"
+    controller: Gt\Catalog\Controller\CustomsKeywordsController::importAction
+    methods: [GET, POST]
