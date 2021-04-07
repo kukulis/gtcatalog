@@ -30,8 +30,13 @@ class CustomsKeywordsController  extends AbstractController
         ]);
     }
 
+    public function importFormAction(Request $request) {
+        return $this->render('@Catalog/customs/keywords_import_form.html.twig', [
+        ]);
+    }
+
     public function importAction(Request $request) {
-        return $this->render('@Catalog/customs/keywords_import.html.twig', [
+        return $this->render('@Catalog/customs/keywords_import_result.html.twig', [
         ]);
     }
 }

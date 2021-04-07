@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+{% block title %}{% trans %}Customs keywords Import Form{% endtrans %}{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>{% trans %}Import customs keywords{% endtrans %}</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <p>Stulpeliai:</p>
+                <ul>
+                    <li><strong>customs_code</strong></li>
+                    <li><strong>keyword</strong></li>
+                </ul>
+
+                <form method="post" enctype="multipart/form-data" action="{{ path('gt.catalog.customs.keywords_import') }}">
+                    <input type="file" name="csvfile" />
+                    <input type="submit" name="import" value="Importuoti" />
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
