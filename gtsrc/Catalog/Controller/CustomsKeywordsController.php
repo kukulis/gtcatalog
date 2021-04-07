@@ -9,13 +9,22 @@
 namespace Gt\Catalog\Controller;
 
 
+use Gt\Catalog\Exception\CatalogErrorException;
+use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Form\CustomsKeywordsFormType;
 use Gt\Catalog\Services\CustomsKeywordsService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class CustomsKeywordsController  extends AbstractController
 {
+    /**
+     * @param Request $request
+     * @param CustomsKeywordsService $customsKeywordsService
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function listAction(Request $request, CustomsKeywordsService $customsKeywordsService) {
         $filterType = new CustomsKeywordsFormType();
 
@@ -30,13 +39,57 @@ class CustomsKeywordsController  extends AbstractController
         ]);
     }
 
-    public function importFormAction(Request $request) {
+    /**
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function importFormAction() {
         return $this->render('@Catalog/customs/keywords_import_form.html.twig', [
         ]);
     }
 
-    public function importAction(Request $request) {
-        return $this->render('@Catalog/customs/keywords_import_result.html.twig', [
-        ]);
+    /**
+     * @param Request $request
+     * @param CustomsKeywordsService $customsKeywordsService
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function importAction(Request $request, CustomsKeywordsService $customsKeywordsService) {
+        /** @var UploadedFile $file */
+        $file = $request->files->get('csvfile');
+        try {
+            if (empty($file)) {
+                throw new CatalogErrorException('Csv file is not given!');
+            }
+            $count = $customsKeywordsService->importKeywordsFromCsvFile($file->getRealPath(), $file->getClientOriginalName());
+            return $this->render('@Catalog/customs/keywords_import_result.html.twig', [
+                'count' =>$count,
+            ]);
+        } catch (CatalogErrorException $e ) {
+            return $this->render('@Catalog/error/error.html.twig', [
+                'error'=> $e->getMessage(),
+            ]);
+        }
+        catch ( CatalogValidateException $e ) {
+            return $this->render('@Catalog/error/error.html.twig', [
+                'error'=> 'Validavimo klaida:' . $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
+     * @param $id
+     * @param CustomsKeywordsService $customsKeywordsService
+     * @return Response
+     */
+    public function deleteAction($id, CustomsKeywordsService $customsKeywordsService) {
+        try {
+            $customsKeywordsService->deleteKeyword($id);
+            return $this->redirectToRoute('gt.catalog.customs.keywords_list');
+        }
+        catch ( CatalogValidateException $e ) {
+            return $this->render('@Catalog/error/error.html.twig', [
+                'error'=> 'Validavimo klaida:' . $e->getMessage(),
+            ]);
+        }
+
     }
 }

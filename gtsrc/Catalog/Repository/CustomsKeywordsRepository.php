@@ -9,6 +9,7 @@
 namespace Gt\Catalog\Repository;
 
 
+use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityRepository;
 use Gt\Catalog\Data\CustomsKeywordsFilter;
 use Gt\Catalog\Entity\CustomsKeyword;
@@ -31,5 +32,30 @@ class CustomsKeywordsRepository extends EntityRepository
         $customsKeywords = $query->getResult();
 
         return $customsKeywords;
+    }
+
+    /**
+     * @param CustomsKeyword[] $keywords
+     * @return int
+     * @throws DBALException
+     */
+    public function importKeywords($keywords) {
+        $conn = $this->_em->getConnection();
+        $values = [];
+
+        foreach ($keywords as $keyword) {
+            $line = [
+                $conn->quote( $keyword->getCustomsCode()),
+                $conn->quote( $keyword->getKeyword()),
+            ];
+            $lineStr = '('.join(',', $line).')';
+            $values[] = $lineStr;
+        }
+
+        $valuesStr = join(",\n", $values );
+        $sql = /** @lang MySQL */
+        "INSERT IGNORE INTO customs_keywords ( customs_code, keyword )
+        values $valuesStr";
+        return $conn->executeStatement($sql);
     }
 }

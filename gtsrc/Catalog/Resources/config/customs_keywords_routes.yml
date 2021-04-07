@@ -12,3 +12,9 @@ gt.catalog.customs.keywords_import:
     path: "/customs/keywords_import"
     controller: Gt\Catalog\Controller\CustomsKeywordsController::importAction
     methods: [GET, POST]
+
+
+gt.catalog.customs.keyword_delete:
+    path: "/customs/keyword_delete/{id}"
+    controller: Gt\Catalog\Controller\CustomsKeywordsController::deleteAction
+    methods: [GET]

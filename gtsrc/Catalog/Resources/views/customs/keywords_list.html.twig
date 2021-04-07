@@ -22,6 +22,7 @@
                         <th>{% trans %}Id{% endtrans %}</th>
                         <th>{% trans %}Customs code{% endtrans %}</th>
                         <th>{% trans %}Keyword{% endtrans %}</th>
+                        <th>Actions</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -30,6 +31,10 @@
                             <td>{{ c.id }}</td>
                             <td>{{ c.customsCode }}</td>
                             <td>{{ c.keyword }}</td>
+                            <td>
+                                <a onclick="return confirm('Do you really want to delete keyword {{ c.id }}?')"
+                                   href="{{ path( 'gt.catalog.customs.keyword_delete',{id:c.id} ) }}">X</a>
+                                </td>
                         </tr>
                     {% endfor %}
                     </tbody>
