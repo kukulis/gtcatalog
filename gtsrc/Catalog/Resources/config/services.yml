@@ -352,3 +352,19 @@ services:
             - "controller.service_arguments"
         bind:
             $customsKeywordsService: '@gt.catalog.customs.keywords_service'
+
+    gt.catalog.auto_assign_customs_numbers_by_keywords_service:
+        class: 'Gt\Catalog\Services\AutoAssignCustomsNumbersByKeywordsService'
+        arguments:
+            - '@logger'
+            - '@doctrine'
+        calls:
+            - [setLanguages,[['en','lt']]]
+
+    gt.catalog.auto_assign_customs_numbers_by_keywords_command:
+        class: 'Gt\Catalog\Command\AutoAssignCustomsNumbersByKeywordsCommand'
+        arguments:
+            - '@logger'
+            - '@gt.catalog.auto_assign_customs_numbers_by_keywords_service'
+        tags:
+            - { name: 'console.command', command: 'catalog:auto_assign_customs_numbers_by_keywords' }

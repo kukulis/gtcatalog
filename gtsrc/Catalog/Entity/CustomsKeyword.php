@@ -41,6 +41,12 @@ class CustomsKeyword
     private $keyword;
 
     /**
+     * @var string
+     * @ORM\Column(type="string", length=66, nullable=true)
+     */
+    private $likeKeyword;
+
+    /**
      * @return int
      */
     public function getId(): int
@@ -86,5 +92,21 @@ class CustomsKeyword
     public function setKeyword(string $keyword): void
     {
         $this->keyword = $keyword;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLikeKeyword(): string
+    {
+        return $this->likeKeyword;
+    }
+
+    /**
+     * @param string $likeKeyword
+     */
+    public function setLikeKeyword(string $likeKeyword): void
+    {
+        $this->likeKeyword = $likeKeyword;
     }
 }
