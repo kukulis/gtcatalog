@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+{% block title %}{% trans %}Customs codes assignement prognoze{% endtrans %}{% endblock %}
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>{% trans %}Customs codes assignement prognoze{% endtrans %}</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <p><a href="{{ path('gt.catalog.customs.keywords_import_form') }}">Import</a></p>
+            </div>
+        </div>
+        <p>{% trans %}Only first 500 records{% endtrans %}</p>
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>{% trans %}Sku{% endtrans %}</th>
+                        <th>{% trans %}Name{% endtrans %}</th>
+                        <th>{% trans %}Language{% endtrans %}</th>
+                        <th>{% trans %}Customs code{% endtrans %}</th>
+                        <th>{% trans %}Keyword{% endtrans %}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for d in data %}
+                        <tr>
+                            <td>{{ d.sku }}</td>
+                            <td>{{ d.name }}</td>
+                            <td>{{ d.language }}</td>
+                            <td>{{ d.customs_code }}</td>
+                            <td>{{ d.keyword }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

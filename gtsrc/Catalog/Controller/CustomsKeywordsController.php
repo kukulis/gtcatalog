@@ -12,6 +12,7 @@ namespace Gt\Catalog\Controller;
 use Gt\Catalog\Exception\CatalogErrorException;
 use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Form\CustomsKeywordsFormType;
+use Gt\Catalog\Services\AutoAssignCustomsNumbersByKeywordsService;
 use Gt\Catalog\Services\CustomsKeywordsService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -90,6 +91,21 @@ class CustomsKeywordsController  extends AbstractController
                 'error'=> 'Validavimo klaida:' . $e->getMessage(),
             ]);
         }
-
     }
+
+    /**
+     * @param AutoAssignCustomsNumbersByKeywordsService $autoAssignCustomsNumbersByKeywordsService
+     * @return Response
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function showAssignmentPrognoze(AutoAssignCustomsNumbersByKeywordsService $autoAssignCustomsNumbersByKeywordsService) {
+        $data = $autoAssignCustomsNumbersByKeywordsService->showUpdates(500);
+        return $this->render(
+            '@Catalog/customs/show_keywords_assignements.html.twig',
+            [
+                'data' => $data,
+            ]
+        );
+    }
+
 }

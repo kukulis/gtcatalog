@@ -9,6 +9,7 @@
 namespace Gt\Catalog\Services;
 
 
+use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\EntityManager;
 use Gt\Catalog\Data\CustomsKeywordsFilter;
 use Gt\Catalog\Entity\CustomsKeyword;
@@ -108,5 +109,56 @@ class CustomsKeywordsService
 
         $this->entityManager->remove($customsKeyword);
         $this->entityManager->flush();
+    }
+
+    /**
+     * @return int
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function calculateLikeKeywords() {
+        $conn = $this->entityManager->getConnection();
+
+        $sql = /** @lang MySQL */ "update customs_keywords set like_keyword = concat('%', keyword, '%')";
+        return $conn->executeStatement($sql);
+    }
+
+    public function assignCustomCodesByKeywords($languages) {
+        $conn = $this->entityManager->getConnection();
+        $qLanguages = array_map([$conn, 'quote'], $languages);
+        $languagesStr = join ( ',', $qLanguages );
+
+        $sql = /** @lang MySQL */
+            "update
+            products p join
+            products_languages pl ON p.sku = pl.sku
+           JOIN customs_keywords ck
+           ON pl.name like like_keyword
+        SET p.code_from_custom = ck.customs_code
+        where language in ($languagesStr) and ( p.code_from_custom is null || p.code_from_custom=''  )";
+
+        return $conn->executeStatement($sql);
+    }
+
+    /**
+     * @param $languages
+     * @return array
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function showAssignementPrognoseByKeywords($languages, $max=500) {
+        $conn = $this->entityManager->getConnection();
+        $qLanguages = array_map([$conn, 'quote'], $languages);
+        $languagesStr = join ( ',', $qLanguages );
+
+        $sql = /** @lang MySQL */
+            "select * from products p join
+            products_languages pl ON p.sku = pl.sku
+            JOIN customs_keywords ck
+            ON pl.name like like_keyword
+            where language in ($languagesStr) and ( p.code_from_custom is null || p.code_from_custom=''  )
+            LIMIT $max";
+
+        /** @var array $rez */
+        $rez = $conn->executeQuery($sql)->fetchAll(FetchMode::ASSOCIATIVE );
+        return $rez;
     }
 }

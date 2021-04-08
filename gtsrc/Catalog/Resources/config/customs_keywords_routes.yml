@@ -18,3 +18,8 @@ gt.catalog.customs.keyword_delete:
     path: "/customs/keyword_delete/{id}"
     controller: Gt\Catalog\Controller\CustomsKeywordsController::deleteAction
     methods: [GET]
+
+gt.catalog.customs.show_assignments_prognoze:
+    path: "/customs/show_assignments_prognoze"
+    controller: Gt\Catalog\Controller\CustomsKeywordsController::showAssignmentPrognoze
+    methods: [GET]

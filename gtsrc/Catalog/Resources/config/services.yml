@@ -346,20 +346,20 @@ services:
             - '@gt.catalog.categories_service'
             - '@gt.catalog.language_dao'
 
+    gt.catalog.auto_assign_customs_numbers_by_keywords_service:
+        class: 'Gt\Catalog\Services\AutoAssignCustomsNumbersByKeywordsService'
+        arguments:
+            - '@logger'
+            - '@gt.catalog.customs.keywords_service'
+        calls:
+            - [setLanguages,[['en','lt']]]
 
     Gt\Catalog\Controller\CustomsKeywordsController:
         tags:
             - "controller.service_arguments"
         bind:
             $customsKeywordsService: '@gt.catalog.customs.keywords_service'
-
-    gt.catalog.auto_assign_customs_numbers_by_keywords_service:
-        class: 'Gt\Catalog\Services\AutoAssignCustomsNumbersByKeywordsService'
-        arguments:
-            - '@logger'
-            - '@doctrine'
-        calls:
-            - [setLanguages,[['en','lt']]]
+            $autoAssignCustomsNumbersByKeywordsService: '@gt.catalog.auto_assign_customs_numbers_by_keywords_service'
 
     gt.catalog.auto_assign_customs_numbers_by_keywords_command:
         class: 'Gt\Catalog\Command\AutoAssignCustomsNumbersByKeywordsCommand'
