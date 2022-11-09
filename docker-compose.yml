@@ -1,0 +1,38 @@
+version: "3.6"
+
+networks:
+  catalog-network:
+    name: catalog-network
+    external: true
+
+services:
+
+
+  catalog:
+    image: gt/catalog:latest
+    container_name: catalog
+    build:
+      context: ./
+      dockerfile: .docker/catalog/Dockerfile
+    volumes:
+      - ./:/var/www/html
+
+    networks:
+      - catalog-network
+
+  catalog_db:
+    container_name: catalog_db
+    image: mysql:8
+    volumes:
+      - ./.docker/catalog_db/volumes/mysql:/var/lib/mysql
+      - ./.docker/shared/:/shared/:rw
+    environment:
+      - MYSQL_ROOT_PASSWORD=cat
+      - MYSQL_USER=cat
+      - MYSQL_PASSWORD=cat
+      - MYSQL_DATABASE=cat
+      - TERM=dumb
+    ports:
+      - "23308:3306"
+    networks:
+      - catalog-network

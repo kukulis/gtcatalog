@@ -18,3 +18,8 @@
 ###< symfony/phpunit-bridge ###
 
 /composer.lock
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###
