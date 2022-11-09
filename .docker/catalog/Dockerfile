@@ -15,7 +15,7 @@ RUN pecl install xdebug
 #RUN pecl install redis
 #RUN pecl install mongodb
 RUN docker-php-ext-enable xdebug
-RUN docker-php-ext-install zip gd
+RUN docker-php-ext-install zip gd pdo_mysql
 #RUN docker-php-ext-enable redis
 #RUN docker-php-ext-enable mongodb
 
