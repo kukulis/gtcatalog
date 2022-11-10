@@ -2,8 +2,8 @@
 
 namespace Gt\Catalog\Entity;
 
-use Gt\Catalog\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Gt\Catalog\Repository\UserRepository;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -40,7 +40,7 @@ class User implements UserInterface
      * @var bool
      * @ORM\Column(type="boolean", name="enabled", nullable=true, options={"default":1})
      */
-    private $enabled=true;
+    private $enabled = true;
 
 
     /**
@@ -74,7 +74,7 @@ class User implements UserInterface
      */
     public function getUsername(): string
     {
-        return (string) $this->email;
+        return (string)$this->email;
     }
 
     /**
@@ -101,7 +101,7 @@ class User implements UserInterface
      */
     public function getPassword(): string
     {
-        return (string) $this->password;
+        return (string)$this->password;
     }
 
     public function setPassword(string $password): self
@@ -144,12 +144,14 @@ class User implements UserInterface
         $this->enabled = $enabled;
     }
 
-    public function getRolesStr() {
-        return join ( ',', $this->roles );
+    public function getRolesStr()
+    {
+        return join(',', $this->roles);
     }
 
-    public function isAdmin() {
-         return array_search( self::ROLE_ADMIN, $this->roles) !== false;
+    public function isAdmin()
+    {
+        return array_search(self::ROLE_ADMIN, $this->roles) !== false;
     }
 
     /**
@@ -163,8 +165,15 @@ class User implements UserInterface
     /**
      * @param string $name
      */
-    public function setName(string $name=null): void
+    public function setName(string $name = null): void
     {
         $this->name = $name;
     }
+
+
+    public function getUserIdentifier(): int
+    {
+        return $this->id;
+    }
+
 }
