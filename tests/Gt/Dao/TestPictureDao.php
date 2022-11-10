@@ -15,7 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class TestPictureDao extends KernelTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         self::bootKernel();
     }
