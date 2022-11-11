@@ -23,3 +23,6 @@
 /phpunit.xml
 .phpunit.result.cache
 ###< phpunit/phpunit ###
+
+xdebug.ini
+

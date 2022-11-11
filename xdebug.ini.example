@@ -1,0 +1,14 @@
+zend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-20190902/xdebug.so
+;xdebug.remote_enable=On
+;xdebug.remote_autostart=Off
+;xdebug.remote_host=host
+;xdebug.remote_connect_back=On
+;xdebug.remote_port=9001
+;xdebug.profiler_enable=Off
+;xdebug.profiler_output_dir=
+
+xdebug.mode=debug
+xdebug.client_host=172.27.0.1
+# xdebug.discover_client_host=yes
+# xdebug.trigger_value=PHPSTORM
+xdebug.output_dir=/var/www/html/.xdebug

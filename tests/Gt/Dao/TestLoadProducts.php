@@ -36,7 +36,7 @@ class TestLoadProducts extends KernelTestCase
 
         $this->assertIsArray($products);
 
-        var_dump($products);
+        echo "extracted products count ".count($products)."\n";
 
     }
 }

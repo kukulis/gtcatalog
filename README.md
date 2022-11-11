@@ -19,3 +19,29 @@ stop composer and remove all related images (?)
 
 The hashed password here is 'Labas123'.
 
+
+# xdebug
+
+    cp xdebug.ini.example xdebug.ini
+
+Edit xdebug.ini and change ip address in line:
+
+    xdebug.client_host=172.27.0.1
+
+to value equal to container 'catalog' ip address. To get ip address you may run:
+
+    docker inspect catalog
+
+You will get lots of info and in the end something like this:
+    
+    ...
+    "Gateway": "172.25.0.1"
+    ...
+
+
+Running from command line, from inside docker container:
+
+    export XDEBUG_SESSION=PHPSTORM
+    export PHP_IDE_CONFIG="serverName=catalog.dv"
+
+    
