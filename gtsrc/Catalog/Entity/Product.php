@@ -614,6 +614,11 @@ class Product
         }
     }
 
+    /**
+     * @deprecated not needed with arrow functions.
+     * @param Product $p
+     * @return string
+     */
     public static function lambdaGetSku ( Product $p ) {
         return $p->getSku();
     }

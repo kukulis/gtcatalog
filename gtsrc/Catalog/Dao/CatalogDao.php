@@ -587,4 +587,10 @@ class CatalogDao extends BaseDao
         }
         return $classificatorLanguagesTotal;
     }
+
+    public function getDoctrine(): Registry
+    {
+        return $this->doctrine;
+    }
+
 }

@@ -83,7 +83,7 @@ class ProductsService extends ProductsBaseService
     public function getProducts ( ProductsFilter $filter ) {
         $products = $this->catalogDao->getProductsListByFilter($filter);
 
-        $skus = array_map ([Product::class, 'lambdaGetSku'], $products);
+        $skus = array_map ( fn(Product $p) => $p->getSku(), $products);
         $productsLanguages = $this->catalogDao->getProductsLangs($skus, $filter->getLanguageCode());
 
         /** @var ProductLanguage[] $plMap */
