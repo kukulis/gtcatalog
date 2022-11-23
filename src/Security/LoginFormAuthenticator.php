@@ -70,13 +70,13 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
         /** @var User $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $credentials['email']]);
 
-        if ( ! $user->isEnabled() ) {
-            throw new CustomUserMessageAuthenticationException('User '.$user->getEmail().' is disabled');
-        }
-
         if (!$user) {
             // fail authentication with a custom error
             throw new CustomUserMessageAuthenticationException('Email could not be found.');
+        }
+
+        if ( ! $user->isEnabled() ) {
+            throw new CustomUserMessageAuthenticationException('User '.$user->getEmail().' is disabled');
         }
 
         return $user;

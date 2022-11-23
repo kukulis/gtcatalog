@@ -55,6 +55,7 @@ class Product
         'priority',
         'google_product_category_id',
         'info_provider',
+        'ingredients',
     ];
 
 
@@ -256,7 +257,11 @@ class Product
      */
     private $googleProductCategoryId=0;
 
-    // TODO EAN ?
+    /**
+     * @var ?string
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $ingredients="";
 
 
     /** @var string */
@@ -830,4 +835,15 @@ class Product
     {
         $this->manufacturer = $manufacturer;
     }
+
+    public function getIngredients(): ?string
+    {
+        return $this->ingredients;
+    }
+
+    public function setIngredients(?string $ingredients): void
+    {
+        $this->ingredients = $ingredients;
+    }
+
 }

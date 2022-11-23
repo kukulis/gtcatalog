@@ -9,6 +9,7 @@
 namespace Gt\Catalog\Form;
 
 
+use DateTime;
 use Gt\Catalog\Entity\Classificator;
 use Gt\Catalog\Entity\Product;
 use Gt\Catalog\Entity\ProductLanguage;
@@ -19,7 +20,6 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use \DateTime;
 
 
 /**
@@ -40,42 +40,43 @@ class ProductFormType extends AbstractType
 //        $data = $options['data'];
 
         $builder
-            ->add('p_sku'                   , TextType::class, ['disabled'=>true, 'label'=> 'sku' ] )
-            ->add('p_last_update'           , DateTimeType::class, ['disabled'=>true,  'label'=> 'updated' ])
-            ->add('p_version'               , TextType::class, ['required'=>false, 'disabled'=>true, 'label'=> 'version'] )
-            ->add('p_brand'                 , TextType::class, ['label'=> 'Brand'] )
-            ->add('p_line'                  , TextType::class, ['label'=> 'Line'] )
-            ->add('p_parent_sku'            , TextType::class, ['required'=>false, 'label'=> 'Parent'] )
-            ->add('p_info_provider'         , TextType::class, ['disabled'=>true, 'label'=> 'Info provider'] )
-            ->add('p_origin_country_code'   , TextType::class, ['required'=>false, 'label'=> 'Origin country code'] )
-            ->add('p_vendor'                , TextType::class, ['required'=>false, 'label'=> 'Vendor'] )
-            ->add('p_manufacturer'          , TextType::class, ['required'=>false, 'label'=> 'Manufacturer'] )
-            ->add('p_type'                  , TextType::class, ['required'=>false, 'label'=> 'Type code'] )
-            ->add('p_purpose'               , TextType::class, ['required'=>false, 'label'=> 'Purpose code'] )
-            ->add('p_measure'               , TextType::class, ['required'=>false, 'label'=> 'Measure code'] )
-            ->add('p_color'                 , TextType::class, ['required'=>false, 'label'=> 'Color'] )
-            ->add('p_for_male'              , CheckboxType::class, ['required'=>false, 'label'=> 'For male'] )
-            ->add('p_for_female'            , CheckboxType::class, ['required'=>false, 'label'=> 'For female'] )
-            ->add('p_size'                  , TextType::class, ['required'=>false, 'label'=> 'Size'] )
-            ->add('p_pack_size'             , TextType::class, ['required'=>false, 'label'=> 'Pack Size'] )
-            ->add('p_pack_amount'           , TextType::class, ['required'=>false, 'label'=> 'Pack amount'] )
-            ->add('p_weight'                , NumberType::class, ['required'=>false, 'label'=> 'Weight'] )
-            ->add('p_length'                , NumberType::class, ['required'=>false, 'label'=> 'Length'] )
-            ->add('p_height'                , NumberType::class, ['required'=>false, 'label'=> 'Height'] )
-            ->add('p_width'                 , NumberType::class, ['required'=>false, 'label'=> 'Width'] )
-            ->add('p_delivery_time'         , TextType::class, ['required'=>false, 'label'=> 'Delivery time'] )
-            ->add('p_google_category_id'    , TextType::class, ['required'=>false, 'label'=> 'Google category id'] )
-            ->add('p_priority'                   , TextType::class, ['required'=>false, 'label'=> 'Priority'] )
-            ->add('pl_language'            , TextType::class, ['disabled'=>true, 'label'=> 'Language'])
-            ->add('pl_name'                 , TextType::class, ['label'=> 'Name'] )
-            ->add('pl_description'          , TextType::class, ['required'=>false, 'label'=> 'Description'] )
-            ->add('pl_label'                , TextType::class, ['required'=>false, 'label'=> 'Label'] )
-            ->add('pl_label_size'           , TextType::class, ['required'=>false, 'label'=> 'Label size'] )
-            ->add('pl_variant_name'         , TextType::class, ['required'=>false, 'label'=> 'Variant name'] )
-            ->add('pl_info_provider'        , TextType::class, ['required'=>false, 'label'=> 'Info provider'] )
-            ->add('pl_tags'                 , TextType::class, ['required'=>false, 'label'=> 'Tags'] );
-            $builder->add('save', SubmitType::class, ['label' => 'Išsaugoti']);
-
+            ->add('p_sku', TextType::class, ['disabled' => true, 'label' => 'sku'])
+            ->add('p_last_update', DateTimeType::class, ['disabled' => true, 'label' => 'updated'])
+            ->add('p_version', TextType::class, ['required' => false, 'disabled' => true, 'label' => 'version'])
+            ->add('p_brand', TextType::class, ['label' => 'Brand'])
+            ->add('p_line', TextType::class, ['label' => 'Line'])
+            ->add('p_parent_sku', TextType::class, ['required' => false, 'label' => 'Parent'])
+            ->add('p_info_provider', TextType::class, ['disabled' => true, 'label' => 'Info provider'])
+            ->add('p_origin_country_code', TextType::class, ['required' => false, 'label' => 'Origin country code'])
+            ->add('p_vendor', TextType::class, ['required' => false, 'label' => 'Vendor'])
+            ->add('p_manufacturer', TextType::class, ['required' => false, 'label' => 'Manufacturer'])
+            ->add('p_type', TextType::class, ['required' => false, 'label' => 'Type code'])
+            ->add('p_purpose', TextType::class, ['required' => false, 'label' => 'Purpose code'])
+            ->add('p_measure', TextType::class, ['required' => false, 'label' => 'Measure code'])
+            ->add('p_color', TextType::class, ['required' => false, 'label' => 'Color'])
+            ->add('p_for_male', CheckboxType::class, ['required' => false, 'label' => 'For male'])
+            ->add('p_for_female', CheckboxType::class, ['required' => false, 'label' => 'For female'])
+            ->add('p_size', TextType::class, ['required' => false, 'label' => 'Size'])
+            ->add('p_pack_size', TextType::class, ['required' => false, 'label' => 'Pack Size'])
+            ->add('p_pack_amount', TextType::class, ['required' => false, 'label' => 'Pack amount'])
+            ->add('p_weight', NumberType::class, ['required' => false, 'label' => 'Weight'])
+            ->add('p_length', NumberType::class, ['required' => false, 'label' => 'Length'])
+            ->add('p_height', NumberType::class, ['required' => false, 'label' => 'Height'])
+            ->add('p_width', NumberType::class, ['required' => false, 'label' => 'Width'])
+            ->add('p_delivery_time', TextType::class, ['required' => false, 'label' => 'Delivery time'])
+            ->add('p_google_category_id', TextType::class, ['required' => false, 'label' => 'Google category id'])
+            ->add('p_priority', TextType::class, ['required' => false, 'label' => 'Priority'])
+            ->add('p_ingredients', TextType::class, ['required' => false, 'label' => 'Ingredients'])
+            ->add('pl_language', TextType::class, ['disabled' => true, 'label' => 'Language'])
+            ->add('pl_name', TextType::class, ['label' => 'Name'])
+            ->add('pl_description', TextType::class, ['required' => false, 'label' => 'Description'])
+            ->add('pl_label', TextType::class, ['required' => false, 'label' => 'Label'])
+            ->add('pl_label_size', TextType::class, ['required' => false, 'label' => 'Label size'])
+            ->add('pl_variant_name', TextType::class, ['required' => false, 'label' => 'Variant name'])
+            ->add('pl_info_provider', TextType::class, ['required' => false, 'label' => 'Info provider'])
+            ->add('pl_tags', TextType::class, ['required' => false, 'label' => 'Tags'])
+        ;
+        $builder->add('save', SubmitType::class, ['label' => 'Išsaugoti']);
     }
 
     /**
@@ -146,7 +147,7 @@ class ProductFormType extends AbstractType
      */
     public function setPLastUpdate(DateTime $lastUpdate): void
     {
-        $this->product->setLastUpdate( $lastUpdate );
+        $this->product->setLastUpdate($lastUpdate);
     }
 
     /**
@@ -176,7 +177,7 @@ class ProductFormType extends AbstractType
     /**
      * @param string $brandCode
      */
-    public function setPBrand(string $brandCode=null): void
+    public function setPBrand(string $brandCode = null): void
     {
         $this->product->setBrand($brandCode);
     }
@@ -192,7 +193,7 @@ class ProductFormType extends AbstractType
     /**
      * @param string $lineCode
      */
-    public function setPLine(string $lineCode=null): void
+    public function setPLine(string $lineCode = null): void
     {
         $this->product->setLine($lineCode);
     }
@@ -208,9 +209,9 @@ class ProductFormType extends AbstractType
     /**
      * @param string $parentSku
      */
-    public function setPParentSku(string $parentSku=null): void
+    public function setPParentSku(string $parentSku = null): void
     {
-        $this->product->setParentSku( $parentSku );
+        $this->product->setParentSku($parentSku);
     }
 
     /**
@@ -224,9 +225,9 @@ class ProductFormType extends AbstractType
     /**
      * @param string $infoProvider
      */
-    public function setPInfoProvider(string $infoProvider=null): void
+    public function setPInfoProvider(string $infoProvider = null): void
     {
-        $this->product->setInfoProvider( $infoProvider );
+        $this->product->setInfoProvider($infoProvider);
     }
 
     /**
@@ -240,16 +241,18 @@ class ProductFormType extends AbstractType
     /**
      * @param string $originCountryCode
      */
-    public function setPOriginCountryCode(string $originCountryCode=null): void
+    public function setPOriginCountryCode(string $originCountryCode = null): void
     {
-        $this->product->setOriginCountryCode( $originCountryCode );
+        $this->product->setOriginCountryCode($originCountryCode);
     }
 
-    public function getPVendor() : ?string {
+    public function getPVendor(): ?string
+    {
         return $this->product->getVendor();
     }
 
-    public function setPVendor($code) {
+    public function setPVendor($code)
+    {
         $this->product->setVendor($code);
     }
 
@@ -261,23 +264,23 @@ class ProductFormType extends AbstractType
         return $this->product->getManufacturer();
     }
 
-    public function setPManufacturer(string $code=null): void
+    public function setPManufacturer(string $code = null): void
     {
         $this->product->setManufacturer($code);
     }
 
     public function getPType(): ?string
     {
-        if ( $this->product->getType() == null ) {
+        if ($this->product->getType() == null) {
             return null;
         }
 
         return $this->product->getType()->getCode();
     }
 
-    public function setPType(string $type=null): void
+    public function setPType(string $type = null): void
     {
-        if ( empty($type) ) {
+        if (empty($type)) {
             $this->product->setType(null);
             return;
         }
@@ -286,7 +289,7 @@ class ProductFormType extends AbstractType
 
     public function getPPurpose(): ?string
     {
-        if ( $this->product->getPurpose() == null ) {
+        if ($this->product->getPurpose() == null) {
             return null;
         }
         return $this->product->getPurpose()->getCode();
@@ -295,18 +298,18 @@ class ProductFormType extends AbstractType
     /**
      * @param string $purpose
      */
-    public function setPPurpose(string $purpose=null): void
+    public function setPPurpose(string $purpose = null): void
     {
-        if (  empty($purpose) ) {
+        if (empty($purpose)) {
             $this->product->setPurpose(null);
             return;
         }
-        $this->product->setPurpose( Classificator::createClassificator($purpose, 'purpose') );
+        $this->product->setPurpose(Classificator::createClassificator($purpose, 'purpose'));
     }
 
     public function getPMeasure(): ?string
     {
-        if ( $this->product->getMeasure() == null ) {
+        if ($this->product->getMeasure() == null) {
             return null;
         }
         return $this->product->getMeasure()->getCode();
@@ -315,14 +318,14 @@ class ProductFormType extends AbstractType
     /**
      * @param string $measure
      */
-    public function setPMeasure(string $measure=null): void
+    public function setPMeasure(string $measure = null): void
     {
-        if (empty($measure )) {
+        if (empty($measure)) {
             $this->product->setMeasure(null);
             return;
         }
 
-        $this->product->setMeasure( Classificator::createClassificator($measure, 'measure') );
+        $this->product->setMeasure(Classificator::createClassificator($measure, 'measure'));
     }
 
     /**
@@ -336,9 +339,9 @@ class ProductFormType extends AbstractType
     /**
      * @param string $color
      */
-    public function setPColor(string $color=null): void
+    public function setPColor(string $color = null): void
     {
-        $this->product->setColor( $color );
+        $this->product->setColor($color);
     }
 
     /**
@@ -354,7 +357,7 @@ class ProductFormType extends AbstractType
      */
     public function setPForMale(bool $forMale): void
     {
-        $this->product->setForMale( $forMale );
+        $this->product->setForMale($forMale);
     }
 
     /**
@@ -370,7 +373,7 @@ class ProductFormType extends AbstractType
      */
     public function setPForFemale(bool $forFemale): void
     {
-        $this->product->setForFemale( $forFemale );
+        $this->product->setForFemale($forFemale);
     }
 
     /**
@@ -384,9 +387,9 @@ class ProductFormType extends AbstractType
     /**
      * @param string $size
      */
-    public function setPSize(string $size=null): void
+    public function setPSize(string $size = null): void
     {
-        $this->product->setSize( $size );
+        $this->product->setSize($size);
     }
 
     /**
@@ -400,9 +403,9 @@ class ProductFormType extends AbstractType
     /**
      * @param string $packSize
      */
-    public function setPPackSize(string $packSize=null): void
+    public function setPPackSize(string $packSize = null): void
     {
-        $this->product->setPackSize( $packSize );
+        $this->product->setPackSize($packSize);
     }
 
     /**
@@ -416,9 +419,9 @@ class ProductFormType extends AbstractType
     /**
      * @param string $packAmount
      */
-    public function setPPackAmount(string $packAmount=null): void
+    public function setPPackAmount(string $packAmount = null): void
     {
-        $this->product->setPackAmount( $packAmount );
+        $this->product->setPackAmount($packAmount);
     }
 
     /**
@@ -434,7 +437,7 @@ class ProductFormType extends AbstractType
      */
     public function setPWeight(float $weight): void
     {
-        $this->product->setWeight( $weight );
+        $this->product->setWeight($weight);
     }
 
     /**
@@ -450,7 +453,7 @@ class ProductFormType extends AbstractType
      */
     public function setPLength(float $length): void
     {
-        $this->product->setLength( $length );
+        $this->product->setLength($length);
     }
 
     /**
@@ -466,7 +469,7 @@ class ProductFormType extends AbstractType
      */
     public function setPHeight(float $height): void
     {
-        $this->product->setHeight( $height );
+        $this->product->setHeight($height);
     }
 
     /**
@@ -482,7 +485,7 @@ class ProductFormType extends AbstractType
      */
     public function setPWidth(float $width): void
     {
-        $this->product->setWidth( $width );
+        $this->product->setWidth($width);
     }
 
     /**
@@ -496,9 +499,9 @@ class ProductFormType extends AbstractType
     /**
      * @param string $deliveryTime
      */
-    public function setPDeliveryTime(string $deliveryTime=null): void
+    public function setPDeliveryTime(string $deliveryTime = null): void
     {
-        $this->product->setDeliveryTime( $deliveryTime );
+        $this->product->setDeliveryTime($deliveryTime);
     }
 
     /**
@@ -517,12 +520,24 @@ class ProductFormType extends AbstractType
         $this->product->setGoogleProductCategoryId($googleProductCategoryId);
     }
 
-    public function getPPriority() {
+    public function getPPriority()
+    {
         return $this->product->getPriority();
     }
 
-    public function setPPriority($priority) {
+    public function setPPriority($priority)
+    {
         $this->product->setPriority($priority);
+    }
+
+    public function getPIngredients()
+    {
+        return $this->product->getIngredients();
+    }
+
+    public function setPIngredients($ingredients)
+    {
+        $this->product->setIngredients($ingredients);
     }
 
     // delegating language
@@ -538,9 +553,9 @@ class ProductFormType extends AbstractType
     /**
      * @param string $name
      */
-    public function setPLName(string $name=null): void
+    public function setPLName(string $name = null): void
     {
-        $this->productLanguage->setName( $name );
+        $this->productLanguage->setName($name);
     }
 
     /**
@@ -554,9 +569,9 @@ class ProductFormType extends AbstractType
     /**
      * @param string $description
      */
-    public function setPLDescription(string $description=null): void
+    public function setPLDescription(string $description = null): void
     {
-        $this->productLanguage->setDescription( $description );
+        $this->productLanguage->setDescription($description);
     }
 
     /**
@@ -570,9 +585,9 @@ class ProductFormType extends AbstractType
     /**
      * @param string $label
      */
-    public function setPLLabel(string $label=null): void
+    public function setPLLabel(string $label = null): void
     {
-        $this->productLanguage->setLabel( $label );
+        $this->productLanguage->setLabel($label);
     }
 
     /**
@@ -586,9 +601,9 @@ class ProductFormType extends AbstractType
     /**
      * @param string $label
      */
-    public function setPLLabelSize(string $labelSize=null): void
+    public function setPLLabelSize(string $labelSize = null): void
     {
-        $this->productLanguage->setLabelSize( $labelSize );
+        $this->productLanguage->setLabelSize($labelSize);
     }
 
     /**
@@ -602,9 +617,9 @@ class ProductFormType extends AbstractType
     /**
      * @param string $infoProvider
      */
-    public function setPLInfoProvider(string $infoProvider=null): void
+    public function setPLInfoProvider(string $infoProvider = null): void
     {
-        $this->productLanguage->setInfoProvider( $infoProvider );
+        $this->productLanguage->setInfoProvider($infoProvider);
     }
 
     /**
@@ -618,9 +633,9 @@ class ProductFormType extends AbstractType
     /**
      * @param string $variantName
      */
-    public function setPLVariantName(string $variantName=null): void
+    public function setPLVariantName(string $variantName = null): void
     {
-        $this->productLanguage->setVariantName( $variantName );
+        $this->productLanguage->setVariantName($variantName);
     }
 
     /**
@@ -634,15 +649,16 @@ class ProductFormType extends AbstractType
     /**
      * @param string $tags
      */
-    public function setPLTags(string $tags=null): void
+    public function setPLTags(string $tags = null): void
     {
-        $this->productLanguage->setTags( $tags );
+        $this->productLanguage->setTags($tags);
     }
 
     /**
      * @return string
      */
-    public function getPlLanguage() {
+    public function getPlLanguage()
+    {
         return $this->productLanguage->getLanguage()->getCode();
     }
 
