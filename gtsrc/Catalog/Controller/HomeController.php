@@ -20,7 +20,7 @@ class HomeController extends AbstractController
     }
 
     /**
-     * @Route("/info", name="home")
+     * @Route("/info", name="info")
      */
     public function infoAction()
     {
