@@ -11,6 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class HomeController extends AbstractController
 {
     /**
+     * Annotations are not working, the config is in yml files.
      * @Route("/", name="home")
      */
     public function homeAction()
@@ -20,6 +21,7 @@ class HomeController extends AbstractController
     }
 
     /**
+     * Annotations are not working, the config is in yml files.
      * @Route("/info", name="info")
      */
     public function infoAction()

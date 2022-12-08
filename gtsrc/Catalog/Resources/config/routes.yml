@@ -3,6 +3,11 @@ gt.catalog.home:
     controller: Gt\Catalog\Controller\HomeController::homeAction
     methods: GET
 
+gt.catalog.info:
+    path: "/info"
+    controller: Gt\Catalog\Controller\HomeController::infoAction
+    methods: GET
+
 gt.catalog.admin_home:
     path: "/admin"
     controller: Gt\Catalog\Controller\AdminHomeController::homeAction
