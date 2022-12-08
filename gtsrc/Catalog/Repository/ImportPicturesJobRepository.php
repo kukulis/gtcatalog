@@ -27,6 +27,8 @@ class ImportPicturesJobRepository extends ServiceEntityRepository
      */
     public function getByFilter(IPicturesJobsFilter $filter) {
         $builder = $this->createQueryBuilder('j');
+
+        $builder->orderBy( 'id', 'desc' );
         $builder->setMaxResults($filter->getLimit());
 
         if ( !empty($filter->getStatus())) {
