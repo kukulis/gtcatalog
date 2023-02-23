@@ -35,7 +35,7 @@ services:
       - MYSQL_DATABASE=cat
       - TERM=dumb
     ports:
-      - "23308:3306"
+      - "23311:3306"
     networks:
       - catalog-network
 
