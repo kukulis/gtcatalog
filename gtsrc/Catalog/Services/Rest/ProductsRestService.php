@@ -22,6 +22,7 @@ use Gt\Catalog\Entity\ProductLanguage;
 use Gt\Catalog\Entity\ProductPicture;
 use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Services\PicturesService;
+use Gt\Catalog\Utils\BatchRunner;
 use Gt\Catalog\Utils\ProductsHelper;
 use Psr\Log\LoggerInterface;
 
@@ -46,7 +47,7 @@ class ProductsRestService
     private $picturesSevice;
 
     /** @var array   initialized dynamicaly */
-    private $languagesMap=null;
+    private $languagesMap = null;
 
     /** @var LanguageDao */
     private $languageDao;
@@ -57,14 +58,14 @@ class ProductsRestService
      * @param CatalogDao $catalogDao
      * @param CategoryDao $categoryDao
      */
-    public function __construct(LoggerInterface $logger,
-                                CatalogDao $catalogDao,
-                                CategoryDao $categoryDao,
-                                PicturesDao $picturesDao,
-                                PicturesService $picturesService,
-                                LanguageDao $languageDao
-                                )
-    {
+    public function __construct(
+        LoggerInterface $logger,
+        CatalogDao $catalogDao,
+        CategoryDao $categoryDao,
+        PicturesDao $picturesDao,
+        PicturesService $picturesService,
+        LanguageDao $languageDao
+    ) {
         $this->logger = $logger;
         $this->catalogDao = $catalogDao;
         $this->categoryDao = $categoryDao;
@@ -80,22 +81,30 @@ class ProductsRestService
      * @return KatalogasPreke[]
      * @throws CatalogValidateException
      */
-    public function getLegacyPrekes ($skus, $language ) {
+    public function getLegacyPrekes($skus, $language, $addidionalLanguages = [])
+    {
         $this->getLanguagesMap();
 
-        if ( count($skus) > self::MAX_PORTION ) {
-            throw new CatalogValidateException('Maximum skus in request is limited to '.self::MAX_PORTION );
+        if (count($skus) > self::MAX_PORTION) {
+            throw new CatalogValidateException('Maximum skus in request is limited to ' . self::MAX_PORTION);
         }
 
-        if ( !array_key_exists($language, $this->languagesMap )) {
-            throw new CatalogValidateException('Unavailable language '.$language );
+        if (!array_key_exists($language, $this->languagesMap)) {
+            throw new CatalogValidateException('Unavailable language ' . $language);
         }
 
         $langCode = $this->languagesMap[$language];
 
 
         // 1) load all data from database
-        $productsLanguages = $this->catalogDao->batchGetProductsLangsWithSubobjects($skus, $langCode, self::STEP );
+        $productsLanguages = $this->catalogDao->batchGetProductsLangsWithSubobjects($skus, $langCode, self::STEP);
+
+        $additionalLanguageData = BatchRunner::runBatchArrayResult(
+            $skus,
+            100,
+            fn($part) => $this->catalogDao->loadAdditionLanguagesData($part, $addidionalLanguages),
+            fn($msg) => $this->logger->info($msg)
+        );
 
         // 1.5) load assotiated objects
 //        $this->categoryDao->getProductCategories()
@@ -104,21 +113,24 @@ class ProductsRestService
 
         /** @var ProductPicture[][] $productsPicturesArraysMap */
         $productsPicturesArraysMap = [];
-        foreach ($skus as $sku ) {
+        foreach ($skus as $sku) {
             $productsPicturesArraysMap[$sku] = [];
         }
-        foreach ($productsPictures as $pp ) {
-            $path = $this->picturesSevice->calculatePicturePath($pp->getPicture()->getId(), $pp->getPicture()->getName());
-            $pp->getPicture()->setConfiguredPath( $path );
+        foreach ($productsPictures as $pp) {
+            $path = $this->picturesSevice->calculatePicturePath(
+                $pp->getPicture()->getId(),
+                $pp->getPicture()->getName()
+            );
+            $pp->getPicture()->setConfiguredPath($path);
             $productsPicturesArraysMap[$pp->getProduct()->getSku()][] = $pp;
         }
 
         // categories
         $productsCategories = $this->categoryDao->batchGetProductsCategories($skus, self::STEP);
-        $categoriesCodes = array_map( [ProductCategory::class, 'lambdaGetCategoryCode'] , $productsCategories);
+        $categoriesCodes = array_map([ProductCategory::class, 'lambdaGetCategoryCode'], $productsCategories);
 
         // categoriesLanguages
-        $categoriesLanguages = $this->categoryDao->batchGetCategoriesLanguages( $categoriesCodes, $langCode, self::STEP );
+        $categoriesLanguages = $this->categoryDao->batchGetCategoriesLanguages($categoriesCodes, $langCode, self::STEP);
 
         $categoriesLanguagesMap = [];
         foreach ($categoriesLanguages as $cl) {
@@ -127,30 +139,35 @@ class ProductsRestService
 
         /** @var CategoryLanguage[][] $productsCategoriesArraysMap */
         $productsCategoriesArraysMap = [];
-        foreach ($skus as $sku ) {
+        foreach ($skus as $sku) {
             $productsCategoriesArraysMap[$sku] = [];
         }
 
-        foreach ($productsCategories as $pc ) {
+        foreach ($productsCategories as $pc) {
             $sku = $pc->getProduct()->getSku();
             $code = $pc->getCategory()->getCode();
-            if ( array_key_exists($code, $categoriesLanguagesMap) ) {
+            if (array_key_exists($code, $categoriesLanguagesMap)) {
                 $cl = $categoriesLanguagesMap[$code];
                 $productsCategoriesArraysMap[$sku][] = $cl;
             }
         }
 
         // classificators
-        $products = array_map ( [ProductLanguage::class, 'lambdaGetProduct'], $productsLanguages);
+        $products = array_map([ProductLanguage::class, 'lambdaGetProduct'], $productsLanguages);
         $classificatorsCodes = ProductsHelper::getAllClassificatorsCodes($products);
         $classificatorsCodes = array_unique($classificatorsCodes);
 
         // load classificators languages from database
-        $classificatorsLanguages = $this->catalogDao->loadClassificatorsLanguagesByCodes($classificatorsCodes, $langCode); // TODO make by parts
+        $classificatorsLanguages = BatchRunner::runBatchArrayResult(
+            $classificatorsCodes,
+            100,
+            fn($part) => $this->catalogDao->loadClassificatorsLanguagesByCodes($part, $langCode),
+            fn($msg) => $this->logger->info($msg)
+        );
 
         /** @var ClassificatorLanguage[] $classificatorsLanguagesMap */
         $classificatorsLanguagesMap = [];
-        foreach ($classificatorsLanguages as $cl ) {
+        foreach ($classificatorsLanguages as $cl) {
             $classificatorsLanguagesMap[$cl->getClassificator()->getCode()] = $cl;
         }
 
@@ -158,49 +175,64 @@ class ProductsRestService
         /** @var KatalogasPreke[] $prekes */
         $prekes = [];
 
-        foreach ( $productsLanguages as $productLang ) {
+        foreach ($productsLanguages as $productLang) {
             /** @var ClassificatorLanguage[] $productClassificatorsLanguages */
             $productClassificatorsLanguagesByGroupsMap = [];
-            foreach (Product::CLASSIFICATORS_GROUPS as $group ) {
+            foreach (Product::CLASSIFICATORS_GROUPS as $group) {
                 // 1) get classificator by group
                 /** @var Classificator $c */
-                $c = $productLang->getProduct()->{'get'.$group}();
-                if ( $c != null ) {
+                $c = $productLang->getProduct()->{'get' . $group}();
+                if ($c != null) {
                     // 2) get classificator language from map
-                    if ( array_key_exists( $c->getCode(), $classificatorsLanguagesMap )) {
+                    if (array_key_exists($c->getCode(), $classificatorsLanguagesMap)) {
                         $productClassificatorsLanguagesByGroupsMap[$group] = $classificatorsLanguagesMap[$c->getCode()];
                     }
                 }
             }
 
             $categories = [];
-            if ( array_key_exists($productLang->getSku(), $productsCategoriesArraysMap)) {
+            if (array_key_exists($productLang->getSku(), $productsCategoriesArraysMap)) {
                 $categories = $productsCategoriesArraysMap[$productLang->getSku()];
             }
 
             $pictures = [];
-            if ( array_key_exists($productLang->getSku(), $productsPicturesArraysMap)) {
+            if (array_key_exists($productLang->getSku(), $productsPicturesArraysMap)) {
                 $pictures = $productsPicturesArraysMap[$productLang->getSku()];
             }
 
-            $preke = ProductToKatalogasPrekeMapper::mapProduct2KatalogasPreke($productLang,
+            $preke = ProductToKatalogasPrekeMapper::mapProduct2KatalogasPreke(
+                $productLang,
                 $categories,
                 $pictures,
-                $productClassificatorsLanguagesByGroupsMap);
+                $productClassificatorsLanguagesByGroupsMap
+            );
+
+            $this->addAdditionalLanguageData($preke, $additionalLanguageData);
+
             $prekes[] = $preke;
         }
         return $prekes;
     }
 
+    private function addAdditionalLanguageData(KatalogasPreke $preke, array $additionalData)
+    {
+        $preke->nameTranslations = [];
 
-    public function getLanguagesMap() {
-        if ( $this->languagesMap != null ) {
+        if (array_key_exists($preke->nomnr, $additionalData)) {
+            $preke->nameTranslations = $additionalData[$preke->nomnr];
+        }
+    }
+
+
+    public function getLanguagesMap()
+    {
+        if ($this->languagesMap != null) {
             return $this->languagesMap;
         }
 
-        $languages = $this->languageDao->getLanguagesList(0, 10 );
+        $languages = $this->languageDao->getLanguagesList(0, 10);
         $this->languagesMap = [];
-        foreach ($languages as $l ) {
+        foreach ($languages as $l) {
             $this->languagesMap[$l->getCode()] = $l->getCode();
             $this->languagesMap[$l->getLocaleCode()] = $l->getCode();
         }
@@ -212,13 +244,14 @@ class ProductsRestService
      * @param string $lang
      * @return ProductLanguage[]
      */
-    public function getProductsLanguages ($skus, $lang) {
+    public function getProductsLanguages($skus, $lang)
+    {
         /** @var ProductLanguage[] $rez */
         $rez = [];
-        for ( $i=0; $i < self::STEP; $i += self::STEP ) {
-            $part = array_slice( $skus, $i, self::STEP);
+        for ($i = 0; $i < self::STEP; $i += self::STEP) {
+            $part = array_slice($skus, $i, self::STEP);
             $pls = $this->catalogDao->getProductsLangs($part, $lang);
-            $rez = array_merge($rez, $pls );
+            $rez = array_merge($rez, $pls);
         }
         return $rez;
     }
@@ -228,7 +261,8 @@ class ProductsRestService
      * @param string $lang
      * @return \Catalog\B2b\Common\Data\Catalog\Product[]
      */
-    public function getRestProducts($skus, $lang) {
+    public function getRestProducts($skus, $lang)
+    {
         $productsLanguages = $this->getProductsLanguages($skus, $lang);
 
         /** @var \Catalog\B2b\Common\Data\Catalog\Product[] $rez */

@@ -10,7 +10,6 @@ namespace Gt\Catalog\Dao;
 
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMException;
 use Gt\Catalog\Data\ProductsFilter;
@@ -170,6 +169,7 @@ class CatalogDao extends BaseDao
      * @param string $languageCode
      * @param int $step
      * @return ProductLanguage[]
+     * @deprecated use BatchRunner with lambda function instead.
      */
     public function batchGetProductsLangsWithSubobjects($skus, $languageCode, $step)
     {
@@ -461,7 +461,6 @@ class CatalogDao extends BaseDao
      * @param Classificator[] $cs
      * @param array $givenFieldsSet
      * @return int
-     * @throws DBALException
      */
     public function importClassificators($cs, $givenFieldsSet)
     {
@@ -490,7 +489,6 @@ class CatalogDao extends BaseDao
      * @param ClassificatorLanguage[] $cls
      * @param array $givenFieldsSet
      * @return int
-     * @throws DBALException
      */
     public function importClassificatorsLangs($cls, $givenFieldsSet)
     {
@@ -562,7 +560,6 @@ class CatalogDao extends BaseDao
     /**
      * @param Product[] $products
      * @return int
-     * @throws DBALException
      */
     public function importProducts($products, $givenFieldsSet)
     {
@@ -588,7 +585,6 @@ class CatalogDao extends BaseDao
     /**
      * @param ProductLanguage[] $productsLangs
      * @return int
-     * @throws DBALException
      */
     public function importProductsLangs($productsLangs, $givenFieldsSet)
     {
@@ -685,6 +681,11 @@ class CatalogDao extends BaseDao
     public function getDoctrine(): Registry
     {
         return $this->doctrine;
+    }
+
+    public function loadAdditionLanguagesData($skus, $addidionalLanguages) {
+        // TODO
+        return [];
     }
 
 }
