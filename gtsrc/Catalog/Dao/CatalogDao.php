@@ -684,7 +684,7 @@ class CatalogDao extends BaseDao
     }
 
     public function loadAdditionLanguagesData($skus, $addidionalLanguages) {
-        // TODO
+        // TODO make query
         return [];
     }
 
