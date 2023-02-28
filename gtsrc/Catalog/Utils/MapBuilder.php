@@ -3,6 +3,7 @@
 namespace Gt\Catalog\Utils;
 
 // TODO move to a separate lib
+// this might be used as lambdish/phunctional reindex
 
 class MapBuilder
 {
