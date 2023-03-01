@@ -99,12 +99,14 @@ class ProductsRestService
         // 1) load all data from database
         $productsLanguages = $this->catalogDao->batchGetProductsLangsWithSubobjects($skus, $langCode, self::STEP);
 
-        $additionalLanguageData = BatchRunner::runBatchArrayResult(
+        $additionalProductLanguages= BatchRunner::runBatchArrayResult(
             $skus,
             100,
             fn($part) => $this->catalogDao->loadProductLanguagesLazy($part, $addidionalLanguages),
             fn($msg) => $this->logger->info($msg)
         );
+
+        $additionalLanguageData = self::buildAdditionalLanguagesData($additionalProductLanguages);
 
         // 1.5) load assotiated objects
 //        $this->categoryDao->getProductCategories()
