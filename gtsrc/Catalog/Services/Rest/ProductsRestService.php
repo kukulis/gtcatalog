@@ -1,10 +1,4 @@
 <?php
-/**
- * ProductsRestService.php
- * Created by Giedrius Tumelis.
- * Date: 2020-10-15
- * Time: 15:07
- */
 
 namespace Gt\Catalog\Services\Rest;
 
@@ -106,7 +100,7 @@ class ProductsRestService
             fn($msg) => $this->logger->info($msg)
         );
 
-        $additionalLanguageData = self::buildAdditionalLanguagesData($additionalProductLanguages);
+        $additionalLanguageData = self::buildAdditionalNameLanguageData($additionalProductLanguages);
 
         // 1.5) load assotiated objects
 //        $this->categoryDao->getProductCategories()
@@ -237,7 +231,7 @@ class ProductsRestService
      * @param ProductLanguage[] $productLanguages
      * @return array
      */
-    public static function buildAdditionalLanguagesData(array $productLanguages) : array {
+    public static function buildAdditionalNameLanguageData(array $productLanguages) : array {
 
         $result = [];
 
@@ -255,7 +249,6 @@ class ProductsRestService
 
         return $result;
     }
-
 
     public function getLanguagesMap()
     {

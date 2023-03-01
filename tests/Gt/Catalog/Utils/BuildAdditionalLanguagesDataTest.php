@@ -40,7 +40,7 @@ class BuildAdditionalLanguagesDataTest extends TestCase
             ],
         ];
 
-        $additionalLanguagesData = ProductsRestService::buildAdditionalLanguagesData($productLanguages);
+        $additionalLanguagesData = ProductsRestService::buildAdditionalNameLanguageData($productLanguages);
         $this->assertEquals($expected, $additionalLanguagesData);
     }
 

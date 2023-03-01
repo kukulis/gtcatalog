@@ -27,7 +27,7 @@ class TestLoadAdditionalLanguagesData extends KernelTestCase
         $this->assertIsArray($productLanguages);
         $this->assertGreaterThan(0, count($productLanguages));
 
-        $additionalLanguagesData = ProductsRestService::buildAdditionalLanguagesData($productLanguages);
+        $additionalLanguagesData = ProductsRestService::buildAdditionalNameLanguageData($productLanguages);
 
         $this->assertArrayHasKey('0000-01660', $additionalLanguagesData);
         $this->assertArrayHasKey('0000-02063', $additionalLanguagesData);
@@ -49,7 +49,7 @@ class TestLoadAdditionalLanguagesData extends KernelTestCase
         $this->assertIsArray($productLanguages);
         $this->assertGreaterThan(0, count($productLanguages));
 
-        $additionalLanguagesData = ProductsRestService::buildAdditionalLanguagesData($productLanguages);
+        $additionalLanguagesData = ProductsRestService::buildAdditionalNameLanguageData($productLanguages);
 
         $this->assertArrayHasKey('0000-01660', $additionalLanguagesData);
         $this->assertArrayHasKey('0000-02063', $additionalLanguagesData);
@@ -71,7 +71,7 @@ class TestLoadAdditionalLanguagesData extends KernelTestCase
         $productLanguages = $catalogDao->loadProductLanguagesLazy($skus, []);
 
         $this->assertIsArray($productLanguages);
-        $additionalLanguagesData = ProductsRestService::buildAdditionalLanguagesData($productLanguages);
+        $additionalLanguagesData = ProductsRestService::buildAdditionalNameLanguageData($productLanguages);
         $this->assertCount(0, $additionalLanguagesData);
     }
 }
