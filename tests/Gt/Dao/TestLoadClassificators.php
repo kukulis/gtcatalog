@@ -14,7 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class TestLoadClassificators extends KernelTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         self::bootKernel();
     }
