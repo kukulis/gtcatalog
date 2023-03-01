@@ -11,7 +11,7 @@ RUN apt-get -y install less
 RUN apt-get -y install vim
 RUN apt-get -y install iputils-ping zip libzip-dev libpng-dev
 
-RUN pecl install xdebug
+RUN pecl install xdebug-3.1.5
 #RUN pecl install redis
 #RUN pecl install mongodb
 RUN docker-php-ext-enable xdebug
