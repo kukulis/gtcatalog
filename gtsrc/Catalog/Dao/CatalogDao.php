@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: giedrius
- * Date: 20.6.24
- * Time: 13.32
- */
 
 namespace Gt\Catalog\Dao;
-
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
@@ -57,11 +50,6 @@ class CatalogDao extends BaseDao
         $builder->select('p')
             ->from(Product::class, 'p');
 
-//        if ( !empty($filter->getLikeName() )) {
-//            $builder->andWhere( 'p.name like :likeName' );
-//            $builder->setParameter( 'likeName', '%'. $filter->getLikeName().'%' );
-//        }
-
         if (!empty($filter->getLikeSku())) {
             $builder->andWhere('p.sku like :likeSku');
             $builder->setParameter('likeSku', '%' . $filter->getLikeSku() . '%');
@@ -93,7 +81,7 @@ class CatalogDao extends BaseDao
             $builder->andWhere('p.sku like :likeSku');
             $builder->setParameter('likeSku', '%' . $filter->getLikeSku() . '%');
         }
-        if(!empty($filter->getLikeName())) {
+        if (!empty($filter->getLikeName())) {
             $builder->andWhere('pl.name like :likeName');
             $builder->setParameter('likeName', '%' . $filter->getLikeName() . '%');
 
@@ -285,9 +273,7 @@ class CatalogDao extends BaseDao
 
             $loadedClassificator = $loadedMap[$c->getCode()];
             if ($loadedClassificator->getGroupCode() != $c->getGroupCode()) {
-                $messages[] = 'Group for [' . $loadedClassificator->getCode(
-                    ) . '] is wrong: [' . $loadedClassificator->getGroupCode() . '] should be: [' . $c->getGroupCode(
-                    ) . ']';
+                $messages[] = 'Group for [' . $loadedClassificator->getCode() . '] is wrong: [' . $loadedClassificator->getGroupCode() . '] should be: [' . $c->getGroupCode() . ']';
                 $relatedObjectClassificator = new RelatedObjectClassificator();
                 $relatedObjectClassificator->classificatorCode = $c->getCode();
                 $relatedObjectClassificator->correctCode = $c->getGroupCode();
@@ -683,9 +669,36 @@ class CatalogDao extends BaseDao
         return $this->doctrine;
     }
 
-    public function loadAdditionLanguagesData($skus, $addidionalLanguages) {
-        // TODO make query
-        return [];
-    }
+    /**
+     * Currently returning only products names.
+     *
+     * @param string[] $skus
+     * @param string[] $langCodes
+     * @return ProductLanguage[]
+     */
+    public function loadProductLanguagesLazy($skus, $langCodes): array
+    {
 
+        if (count($langCodes) == 0) {
+            return [];
+        }
+
+        /** @var EntityManager $manager */
+        $manager = $this->doctrine->getManager();
+
+        $queryBuilder = $manager->createQueryBuilder();
+
+        $queryBuilder->select('pl')->from(ProductLanguage::class, 'pl');
+        $queryBuilder->join('pl.product', 'p');
+        $queryBuilder->join('pl.language', 'l');
+        $queryBuilder->andWhere('p.sku in (:skus)');
+        $queryBuilder->setParameter('skus', $skus);
+
+        if ($langCodes[0] != '*') {
+            $queryBuilder->andWhere('l.code in (:langs)');
+            $queryBuilder->setParameter('langs', $langCodes);
+        }
+
+        return $queryBuilder->getQuery()->getResult();
+    }
 }

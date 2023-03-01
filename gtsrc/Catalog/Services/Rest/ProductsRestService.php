@@ -102,7 +102,7 @@ class ProductsRestService
         $additionalLanguageData = BatchRunner::runBatchArrayResult(
             $skus,
             100,
-            fn($part) => $this->catalogDao->loadAdditionLanguagesData($part, $addidionalLanguages),
+            fn($part) => $this->catalogDao->loadProductLanguagesLazy($part, $addidionalLanguages),
             fn($msg) => $this->logger->info($msg)
         );
 
@@ -214,6 +214,11 @@ class ProductsRestService
         return $prekes;
     }
 
+    /**
+     * @param KatalogasPreke $preke
+     * @param ProductLanguage[] $additionalData
+     * @return void
+     */
     private function addAdditionalLanguageData(KatalogasPreke $preke, array $additionalData)
     {
         $preke->nameTranslations = [];
@@ -221,6 +226,32 @@ class ProductsRestService
         if (array_key_exists($preke->nomnr, $additionalData)) {
             $preke->nameTranslations = $additionalData[$preke->nomnr];
         }
+    }
+
+    /**
+     * Builds associative array from the ProductLanguage objects array.
+     * The results are arrays of arrays, where parent array key is sku, and the inner array key is language code.
+     * The inner array value is product name in the given language.
+     * @param ProductLanguage[] $productLanguages
+     * @return array
+     */
+    public static function buildAdditionalLanguagesData(array $productLanguages) : array {
+
+        $result = [];
+
+        foreach ($productLanguages as $pl) {
+            $sku = $pl->getProduct()->getSku();
+
+            if ( !array_key_exists($pl->getProduct()->getSku(), $result)) {
+                $result[$sku] = [];
+            }
+
+            $values = &$result[$sku];
+
+            $values[$pl->getLanguage()->getCode()] = $pl->getName();
+        }
+
+        return $result;
     }
 
 

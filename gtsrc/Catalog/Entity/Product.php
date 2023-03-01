@@ -278,9 +278,11 @@ class Product
     /**
      * @param string $sku
      */
-    public function setSku(string $sku): void
+    public function setSku(string $sku): self
     {
         $this->sku = $sku;
+
+        return $this;
     }
 
     /**
