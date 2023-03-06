@@ -44,4 +44,6 @@ Running from command line, from inside docker container:
     export XDEBUG_SESSION=PHPSTORM
     export PHP_IDE_CONFIG="serverName=catalog.dv"
 
+When debugging with rest testing tool,add header parameter Cookie:XDEBUG_SESSION=PHPSTORM
+
     

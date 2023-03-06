@@ -117,12 +117,11 @@ class ProductLanguage
         return $this->product;
     }
 
-    /**
-     * @param Product $product
-     */
-    public function setProduct(Product $product): void
+    public function setProduct(Product $product): self
     {
         $this->product = $product;
+
+        return $this;
     }
 
     /**
@@ -136,9 +135,11 @@ class ProductLanguage
     /**
      * @param Language $language
      */
-    public function setLanguage(Language $language): void
+    public function setLanguage(Language $language): self
     {
         $this->language = $language;
+
+        return $this;
     }
 
     /**
@@ -152,9 +153,11 @@ class ProductLanguage
     /**
      * @param string $name
      */
-    public function setName(string $name=null): void
+    public function setName(string $name=null): self
     {
         $this->name = $name;
+
+        return $this;
     }
 
     /**

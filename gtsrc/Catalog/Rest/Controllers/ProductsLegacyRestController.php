@@ -33,7 +33,9 @@ class ProductsLegacyRestController extends AbstractController{
         }
         try {
             $logger->debug('getPrekesAction called ' . var_export($data, true));
-            $prekes = $productsRestService->getLegacyPrekes($data, $language);
+
+            $additionalLanguages = $r->get('additionalLanguages', []);
+            $prekes = $productsRestService->getLegacyPrekes($data, $language, $additionalLanguages);
             $prekesResponse = new PrekesRestResult();
             $prekesResponse->Prekes = new Prekes();
             $prekesResponse->Prekes->PrekesList = $prekes;

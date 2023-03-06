@@ -1,8 +1,11 @@
 version: "3.6"
 
 networks:
-  catalog-network:
-    name: catalog-network
+#  catalog-network:
+#    name: catalog-network
+#    external: true
+  un-network:
+    name: un-network
     external: true
 
 services:
@@ -20,7 +23,7 @@ services:
     depends_on:
       - catalog_db
     networks:
-      - catalog-network
+      - un-network
 
   catalog_db:
     container_name: catalog_db
@@ -37,7 +40,7 @@ services:
     ports:
       - "23311:3306"
     networks:
-      - catalog-network
+      - un-network
 
   catalog_web:
     image: catalog_web:latest
@@ -58,7 +61,7 @@ services:
       - ./shared:/var/shared
 
     networks:
-      - catalog-network
+      - un-network
 
     depends_on:
       - catalog
