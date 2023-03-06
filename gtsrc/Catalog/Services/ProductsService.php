@@ -206,7 +206,7 @@ class ProductsService extends ProductsBaseService
      * @return Language[]
      */
     public function getAllLanguages() {
-        $languages = $this->languageDao->getLanguagesList(0,10);
+        $languages = $this->languageDao->getLanguagesList(0,100);
         return $languages;
     }
 
