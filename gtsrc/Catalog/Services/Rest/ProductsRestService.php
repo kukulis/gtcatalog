@@ -256,7 +256,7 @@ class ProductsRestService
             return $this->languagesMap;
         }
 
-        $languages = $this->languageDao->getLanguagesList(0, 10);
+        $languages = $this->languageDao->getLanguagesList(0, 100);
         $this->languagesMap = [];
         foreach ($languages as $l) {
             $this->languagesMap[$l->getCode()] = $l->getCode();
