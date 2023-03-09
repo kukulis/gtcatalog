@@ -20,3 +20,8 @@ gt.catalog.rest.category_tree:
     methods: GET|POST
 
 
+gt.catalog.rest.packages_test:
+    path: "/packages"
+    controller: Gt\Catalog\Rest\Controllers\PackagesRestController::getAll
+    methods: GET|POST
+

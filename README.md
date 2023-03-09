@@ -46,4 +46,9 @@ Running from command line, from inside docker container:
 
 When debugging with rest testing tool,add header parameter Cookie:XDEBUG_SESSION=PHPSTORM
 
+When running composer inside container do:
+
+    expot HOME=/var/www/html
+
+
     

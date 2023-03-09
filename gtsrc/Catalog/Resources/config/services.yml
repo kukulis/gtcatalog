@@ -181,6 +181,12 @@ services:
             $productsRestService: '@gt.catalog.products_rest_service'
             $categoriesRestService: '@gt.catalog.categories_rest_service'
 
+    Gt\Catalog\Rest\Controllers\PackagesRestController:
+        tags:
+            - "controller.service_arguments"
+        bind:
+            $logger: '@logger'
+            $tmpPackagesDao: '@gt.catalog.tmp_packages_dao'
 
     # ------------------ rest -------------------------------------------
 
@@ -368,3 +374,11 @@ services:
             - '@gt.catalog.auto_assign_customs_numbers_by_keywords_service'
         tags:
             - { name: 'console.command', command: 'catalog:auto_assign_customs_numbers_by_keywords' }
+
+
+    gt.catalog.tmp_packages_dao:
+        class: 'Gt\Catalog\Dao\TmpPackagesDao'
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@jms_serializer'
+
