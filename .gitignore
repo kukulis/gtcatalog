@@ -16,9 +16,5 @@
 .phpunit.result.cache
 ###< symfony/phpunit-bridge ###
 
-/composer.lock
-
-
-
 xdebug.ini
 
