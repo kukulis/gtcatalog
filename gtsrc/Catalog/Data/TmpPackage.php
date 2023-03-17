@@ -12,17 +12,21 @@ class TmpPackage
 
 //  pragma dalis
     /**
-     * @Type("string")
+     * @Type("int")
      */
     public $preke_id;
     /**
-     * @Type("string")
+     * @Type("int")
      */
     public $pakuotes_tipas;
     /**
-     * @Type("string")
+     * @Type("int")
      */
     public $pakuotes_rusis;
+    /**
+     * @Type("string")
+     */
+    public $pakuotes_rusis_name;
     /**
      * @Type("string")
      */
