@@ -67,6 +67,7 @@ class ProductFormType extends AbstractType
             ->add('p_google_category_id', TextType::class, ['required' => false, 'label' => 'Google category id'])
             ->add('p_priority', TextType::class, ['required' => false, 'label' => 'Priority'])
             ->add('p_ingredients', TextType::class, ['required' => false, 'label' => 'Ingredients'])
+            ->add('p_code_from_custom', TextType::class, ['required' => false, 'label' => 'Customs code'])
             ->add('pl_language', TextType::class, ['disabled' => true, 'label' => 'Language'])
             ->add('pl_name', TextType::class, ['label' => 'Name'])
             ->add('pl_description', TextType::class, ['required' => false, 'label' => 'Description'])
@@ -538,6 +539,13 @@ class ProductFormType extends AbstractType
     public function setPIngredients($ingredients)
     {
         $this->product->setIngredients($ingredients);
+    }
+
+    public function getPCodeFromCustom() {
+        return $this->product->getCodeFromCustom();
+    }
+    public function setPCodeFromCustom($code) {
+        $this->product->setCodeFromCustom($code);
     }
 
     // delegating language
