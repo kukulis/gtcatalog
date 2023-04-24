@@ -78,6 +78,7 @@ class ProductToKatalogasPrekeMapper
         $kp->Atributai->google_product_category              = $pl->getProduct()->getGoogleProductCategoryId();
         $kp->Atributai->ingredients = $pl->getProduct()->getIngredients();
         $kp->Atributai->vendor = $pl->getProduct()->getVendor();
+        $kp->Atributai->label_material = $pl->getProduct()->getLabelMaterial();
 //        $kp->Atributai->google_product_category_title        =        ; // TODO kažkada vėliau šitą
 
         $categoriesCodes = [];

@@ -2105,12 +2105,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kukulis/b2bcommon.git",
-                "reference": "a501b33baf4a9ed877b1c2fb073561cac1816759"
+                "reference": "929e4fb170370d7e194639af0d3cd70d379a9348"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kukulis/b2bcommon/zipball/a501b33baf4a9ed877b1c2fb073561cac1816759",
-                "reference": "a501b33baf4a9ed877b1c2fb073561cac1816759",
+                "url": "https://api.github.com/repos/kukulis/b2bcommon/zipball/929e4fb170370d7e194639af0d3cd70d379a9348",
+                "reference": "929e4fb170370d7e194639af0d3cd70d379a9348",
                 "shasum": ""
             },
             "require": {
@@ -2132,7 +2132,7 @@
                 "source": "https://github.com/kukulis/b2bcommon/tree/main",
                 "issues": "https://github.com/kukulis/b2bcommon/issues"
             },
-            "time": "2022-11-28T15:07:28+00:00"
+            "time": "2023-04-24T12:10:07+00:00"
         },
         {
             "name": "laminas/laminas-code",
