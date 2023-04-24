@@ -73,6 +73,7 @@ class ProductFormType extends AbstractType
             ->add('pl_description', TextType::class, ['required' => false, 'label' => 'Description'])
             ->add('pl_label', TextType::class, ['required' => false, 'label' => 'Label'])
             ->add('pl_label_size', TextType::class, ['required' => false, 'label' => 'Label size'])
+            ->add('p_label_material', TextType::class, ['required' => false, 'label' => 'Label material'])
             ->add('pl_variant_name', TextType::class, ['required' => false, 'label' => 'Variant name'])
             ->add('pl_info_provider', TextType::class, ['required' => false, 'label' => 'Info provider'])
             ->add('pl_tags', TextType::class, ['required' => false, 'label' => 'Tags'])
@@ -668,6 +669,14 @@ class ProductFormType extends AbstractType
     public function getPlLanguage()
     {
         return $this->productLanguage->getLanguage()->getCode();
+    }
+
+    public function getPLabelMaterial() {
+        return $this->product->getLabelMaterial();
+    }
+
+    public function setPLabelMaterial($m) {
+        $this->product->setLabelMaterial($m);
     }
 
 }

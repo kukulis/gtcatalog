@@ -21,7 +21,7 @@ class ProductLanguage
         'name',
         'description',
         'label',
-        'label_size',
+        'label_size', // TODO not translatable
         'variant_name',
         'info_provider',
         'tags'

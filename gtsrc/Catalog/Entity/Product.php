@@ -263,6 +263,12 @@ class Product
      */
     private $ingredients="";
 
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=64, name="label_material", nullable=true)
+     */
+    private $labelMaterial;
+
 
     /** @var string */
     private $extractedName; // not stored in database
@@ -846,6 +852,16 @@ class Product
     public function setIngredients(?string $ingredients): void
     {
         $this->ingredients = $ingredients;
+    }
+
+    public function getLabelMaterial(): ?string
+    {
+        return $this->labelMaterial;
+    }
+
+    public function setLabelMaterial(string $labelMaterial=null): void
+    {
+        $this->labelMaterial = $labelMaterial;
     }
 
 }
