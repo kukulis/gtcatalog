@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: giedrius
- * Date: 20.6.24
- * Time: 15.17
- */
 
 namespace Gt\Catalog\Controller;
 
@@ -30,22 +24,26 @@ class ProductsController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function listAction(Request $request, LoggerInterface $logger, ProductsService $productsService ) {
-        $logger->info ( 'listAction called');
+    public function listAction(Request $request, LoggerInterface $logger, ProductsService $productsService)
+    {
+        $logger->info('listAction called');
 
         $productsFilterType = new ProductsFilterType();
-        $filterForm = $this->createForm( ProductsFilterType::class, $productsFilterType);
+        $filterForm = $this->createForm(ProductsFilterType::class, $productsFilterType);
         $filterForm->handleRequest($request);
 
         $products = $productsService->getProducts($productsFilterType);
 
         $languageCode = $productsFilterType->getLanguageCode();
 
-        return $this->render('@Catalog/products/list.html.twig', [
-            'products' => $products,
-            'languageCode'  => $languageCode,
-            'filterForm' => $filterForm->createView(),
-        ]);
+        return $this->render(
+            '@Catalog/products/list.html.twig',
+            [
+                'products' => $products,
+                'languageCode' => $languageCode,
+                'filterForm' => $filterForm->createView(),
+            ]
+        );
     }
 
     /**
@@ -56,20 +54,28 @@ class ProductsController extends AbstractController
      * @throws CatalogErrorException
      * @throws CatalogDetailedException
      */
-    public function editAction(Request $request, $sku, $languageCode, ProductsService $productsService ) {
-
+    public function editAction(
+        Request $request,
+        $sku,
+        $languageCode,
+        ProductsService $productsService,
+        string $pdfGeneratorUrl
+    ) {
         $messages = [];
         $message = '';
-        $suggestions =[];
+        $suggestions = [];
         $allLanguages = [];
 
         try {
-            $product = $productsService->getProduct( $sku );
+            $product = $productsService->getProduct($sku);
 
-            if ( $product == null ) {
-                return $this->render('@Catalog/error/error.html.twig', [
-                    'error' => 'Product not loaded by sku '.$sku,
-                ]);
+            if ($product == null) {
+                return $this->render(
+                    '@Catalog/error/error.html.twig',
+                    [
+                        'error' => 'Product not loaded by sku ' . $sku,
+                    ]
+                );
             }
             $productLanguage = $productsService->getProductLanguage($sku, $languageCode);
 
@@ -84,94 +90,121 @@ class ProductsController extends AbstractController
 
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
-
                 /** @var SubmitButton $saveSubmit */
                 $saveSubmit = $form->get('save');
 
                 if ($saveSubmit->isSubmitted()) {
                     $productsService->storeProduct($product);
-                    $productsService->storeProductLanguage ($productLanguage);
+                    $productsService->storeProductLanguage($productLanguage);
                 }
             }
-
-        } catch ( WrongAssociationsException $e ) { // paveldi iš CatalogDetailedException
+        } catch (WrongAssociationsException $e) { // paveldi iš CatalogDetailedException
             $message = $e->getMessage();
             $messages = $e->getDetails();
             $objects = $e->getRelatedObjects();
 
-            $suggestions = $productsService->getSuggestions ( $objects );
-        }
-        catch ( CatalogErrorException $e ) {
-            return $this->render('@Catalog/error/error.html.twig', [
-                'error' => $e->getMessage(),
-            ]);
+            $suggestions = $productsService->getSuggestions($objects);
+        } catch (CatalogErrorException $e) {
+            return $this->render(
+                '@Catalog/error/error.html.twig',
+                [
+                    'error' => $e->getMessage(),
+                ]
+            );
         }
 
-        return $this->render('@Catalog/products/edit.html.twig', [
-            'form' => $form->createView(),
-            'messages' => $messages,
-            'message' => $message,
-            'suggestions' => $suggestions,
-            'languages' => $allLanguages,
-            'sku' => $sku,
-            'languageCode' => $languageCode,
-        ]);
+        $fixedPdfGeneratorUrl = str_replace(
+            ['EAN_HOLDER', 'LANG_HOLDER'],
+            [$sku, $languageCode],
+            $pdfGeneratorUrl
+        );
+
+        return $this->render(
+            '@Catalog/products/edit.html.twig',
+            [
+                'form' => $form->createView(),
+                'messages' => $messages,
+                'message' => $message,
+                'suggestions' => $suggestions,
+                'languages' => $allLanguages,
+                'sku' => $sku,
+                'languageCode' => $languageCode,
+                'pdfUrl' => $fixedPdfGeneratorUrl
+            ]
+        );
     }
 
-    public function deleteAction() {
-        return new Response('TODO delete product' );
+    public function deleteAction()
+    {
+        return new Response('TODO delete product');
     }
 
-    public function addPictureForm($sku, ProductsService $productsService) {
+    public function addPictureForm($sku, ProductsService $productsService)
+    {
         $product = $productsService->getProduct($sku);
-        return $this->render('@Catalog/pictures/add.html.twig',
+        return $this->render(
+            '@Catalog/pictures/add.html.twig',
             [
                 'product' => $product
-            ] );
+            ]
+        );
     }
 
-    public function importProductsFormAction() {
+    public function importProductsFormAction()
+    {
         return $this->render('@Catalog/products/import_form.html.twig', []);
     }
 
-    public function importProductsAction(Request $r, ProductsService $productsService) {
+    public function importProductsAction(Request $r, ProductsService $productsService)
+    {
         /** @var File $csvFileObj */
-        $csvFileObj  = $r->files->get('csvfile');
+        $csvFileObj = $r->files->get('csvfile');
 
         $import = $r->get('import');
-        $import_classificators = $r->get('import_classificators' );
+        $import_classificators = $r->get('import_classificators');
 
         try {
-            if ( empty($csvFileObj) ) {
-                throw new CatalogValidateException('Import file is not given' );
+            if (empty($csvFileObj)) {
+                throw new CatalogValidateException('Import file is not given');
             }
             $file = $csvFileObj->getPathname();
 
-            if ( !empty($import)) {
+            if (!empty($import)) {
                 $count = $productsService->importProducts($file);
-                return $this->render('@Catalog/products/import_products_results.html.twig',
-                    ['count' => $count,
+                return $this->render(
+                    '@Catalog/products/import_products_results.html.twig',
+                    [
+                        'count' => $count,
                     ]
                 );
+            } else {
+                if (!empty($import_classificators)) {
+                    $count = $productsService->importClassificatorsFromProductsCsv($file);
+                    return $this->render(
+                        '@Catalog/products/import_classificators_from_productscsv_result.html.twig',
+                        [
+                            'count' => $count,
+                        ]
+                    );
+                } else {
+                    throw new CatalogValidateException('ungiven action');
+                }
             }
-            else if ( !empty($import_classificators) ) {
-                $count =  $productsService->importClassificatorsFromProductsCsv($file);
-                return $this->render('@Catalog/products/import_classificators_from_productscsv_result.html.twig',
-                    ['count' => $count,
-                    ]
-                );
-            }
-            else {
-                throw new CatalogValidateException('ungiven action' );
-            }
-        } catch ( CatalogValidateException | CatalogErrorException $e ) {
-            return $this->render('@Catalog/error/error.html.twig', [
-                'error' => $e->getMessage(),
-            ]);
+        } catch (CatalogValidateException | CatalogErrorException $e) {
+            return $this->render(
+                '@Catalog/error/error.html.twig',
+                [
+                    'error' => $e->getMessage(),
+                ]
+            );
         }
     }
 
-    public function editProductCategoriesFormAction ($sku, ProductsService $productsService, CategoriesService $categoriesService ) {
+    public function editProductCategoriesFormAction(
+        $sku,
+        ProductsService $productsService,
+        CategoriesService $categoriesService
+    ) {
         try {
             $product = $productsService->getProduct($sku);
 
@@ -180,28 +213,37 @@ class ProductsController extends AbstractController
             }
             $productCategories = $categoriesService->getProductCategories($sku);
             $categoriesCodesStr = $categoriesService->getProductCategoriesCodesStr($productCategories);
-            return $this->render('@Catalog/products/edit_product_categories.html.twig',
-                ['sku' => $sku,
+            return $this->render(
+                '@Catalog/products/edit_product_categories.html.twig',
+                [
+                    'sku' => $sku,
                     'categoriesCodesStr' => $categoriesCodesStr,
                     'productCategories' => $productCategories,
                 ]
             );
-        } catch ( CatalogValidateException | CatalogErrorException $e ) {
-            return $this->render('@Catalog/error/error.html.twig', [
-                'error' => $e->getMessage(),
-            ]);
+        } catch (CatalogValidateException | CatalogErrorException $e) {
+            return $this->render(
+                '@Catalog/error/error.html.twig',
+                [
+                    'error' => $e->getMessage(),
+                ]
+            );
         }
     }
 
-    public function updateProductCategoriesAction ( Request $r, $sku, CategoriesService $categoriesService ) {
+    public function updateProductCategoriesAction(Request $r, $sku, CategoriesService $categoriesService)
+    {
         try {
             $categoriesStr = $r->get('categories');
             $count = $categoriesService->updateProductCategories($sku, $categoriesStr);
             return new Response('Updated product ' . $sku . ' categories ' . $count);
-        } catch ( CatalogValidateException | CatalogErrorException $e ) {
-            return $this->render('@Catalog/error/error.html.twig', [
-                'error' => $e->getMessage(),
-            ]);
+        } catch (CatalogValidateException | CatalogErrorException $e) {
+            return $this->render(
+                '@Catalog/error/error.html.twig',
+                [
+                    'error' => $e->getMessage(),
+                ]
+            );
         }
     }
 }

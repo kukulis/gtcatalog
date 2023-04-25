@@ -45,6 +45,7 @@ services:
             $logger: '@logger'
             $productsService: '@gt.catalog.products_service'
             $categoriesService: '@gt.catalog.categories_service'
+            $pdfGeneratorUrl: '%env(LABEL_PDF_GENERATOR_URL)%'
 
     Gt\Catalog\Controller\LanguagesController:
         tags:
