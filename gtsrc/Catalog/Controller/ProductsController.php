@@ -115,7 +115,7 @@ class ProductsController extends AbstractController
 
         $fixedPdfGeneratorUrl = str_replace(
             ['EAN_HOLDER', 'LANG_HOLDER'],
-            [$sku, $languageCode],
+            [$sku, $productLanguage->getLanguage()->getLocaleCode()],
             $pdfGeneratorUrl
         );
 
