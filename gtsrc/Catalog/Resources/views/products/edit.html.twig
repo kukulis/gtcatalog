@@ -5,58 +5,74 @@
 {% endblock %}
 
 {% block body %}
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <h1>Product {{ sku }} Edit</h1>
-            <p><a href="{{ path('gt.catalog.product_categories_edit_form', {sku:sku}) }}">Categories</a>,
-            <a href="{{ path('gt.catalog.product_pictures', {sku:sku}) }}">Pictures</a></p>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Product {{ sku }} Edit</h1>
+                <p><a href="{{ path('gt.catalog.product_categories_edit_form', {sku:sku}) }}">Categories</a>,
+                    <a href="{{ path('gt.catalog.product_pictures', {sku:sku}) }}">Pictures</a></p>
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            {% for l in languages %}
-                {% if l.code==languageCode %}
-                    <spam>{{ l.code }}</spam>
-                {% else %}
-                    <a href="{{  path('gt.catalog.product_edit', {sku: sku, languageCode: l.code }) }}">{{ l.code }}</a>
+        <div class="row">
+            <div class="col-md-12">
+                {% for l in languages %}
+                    {% if l.code==languageCode %}
+                        <spam>{{ l.code }}</spam>
+                    {% else %}
+                        <a href="{{ path('gt.catalog.product_edit', {sku: sku, languageCode: l.code }) }}">{{ l.code }}</a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+
+                {% if message is not empty %}
+                    <h3 style="color:red">{{ message }}</h3>
                 {% endif %}
-            {% endfor  %}
+                <ul>
+                    {% for m in messages %}
+                        <li style="color:red">{{ m }}</li>
+                    {% endfor %}
+                </ul>
+
+                {% if suggestions | length > 0 %}
+                    Suggestions:
+                    <ul>
+                        {% for s in suggestions %}
+                            {% if s.suggestions is defined %}
+                                <li style="color:blue">
+                                    {{ s.correctCode }}:
+                                    {% for code in s.suggestions %}
+                                        {{ code }},
+                                    {% endfor %}
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                {{ form(form) }}
+
+                <a class="btn-primary btn" id="pdf_button" href="{{ pdfUrl }}">View label pdf</a>
+
+            </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-12">
 
-{%if message is not empty %}
-    <h3 style="color:red">{{ message }}</h3>
-{% endif %}
-            <ul>
-{% for m in messages %}
-    <li style="color:red">{{ m }}</li>
-{% endfor %}
-            </ul>
-
-{% if suggestions | length > 0 %}
-            Suggestions:
-            <ul>
-{% for s in suggestions %}
-    {% if s.suggestions is defined %}
-    <li style="color:blue">
-        {{ s.correctCode }}:
-        {% for code in s.suggestions %}
-            {{ code }},
-        {% endfor %}
-    </li>
-    {% endif %}
-{% endfor %}
-            </ul>
-{% endif %}
-
-{{ form(form) }}
-
-            <a class="btn-primary btn" href="{{ pdfUrl }}">View label pdf</a>
-
-        </div>
-    </div>
-</div>
 {% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#product_form_pl_label').keyup( function(){
+                $('#pdf_button').prop('hidden', true);
+            });
+
+            $('#product_form_pl_label_size').keyup( function(){
+                $('#pdf_button').prop('hidden', true);
+            });
+        });
+    </script>
+{% endblock  javascripts %}
