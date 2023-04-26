@@ -4,6 +4,18 @@
     Product Edit {{ sku }}
 {% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .isDisabled {
+            color: currentColor;
+            cursor: not-allowed;
+            opacity: 0.5;
+            text-decoration: none;
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
     <div class="container">
         <div class="row">
@@ -67,12 +79,28 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $('#product_form_pl_label').keyup( function(){
-                $('#pdf_button').prop('hidden', true);
+                disableViewPdfButton()
             });
 
             $('#product_form_pl_label_size').keyup( function(){
-                $('#pdf_button').prop('hidden', true);
+                disableViewPdfButton()
+            });
+
+            $("#pdf_button").on("click", function(event){
+                if ($(this).attr("disabled") == 'disabled' ) {
+                    event.preventDefault();
+                }
             });
         });
+
+        function disableViewPdfButton() {
+            var jq_pdf_button = $("#pdf_button");
+
+            jq_pdf_button.attr("disabled", "disabled");
+            jq_pdf_button.removeClass("btn-primary");
+            jq_pdf_button.addClass("btn-outline-secondary");
+            jq_pdf_button.addClass("isDisabled");
+            jq_pdf_button.text('View label pdf: save to enable');
+        }
     </script>
 {% endblock  javascripts %}
