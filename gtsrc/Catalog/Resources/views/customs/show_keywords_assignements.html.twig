@@ -12,7 +12,7 @@
                 <p><a href="{{ path('gt.catalog.customs.keywords_import_form') }}">Import</a></p>
             </div>
         </div>
-        <p>{% trans %}Only first 500 records{% endtrans %}</p>
+        <p>{% trans %}Only first {{ limit }} records{% endtrans %}</p>
         <div class="row">
             <div class="col-md-12">
                 <table class="table table-bordered">

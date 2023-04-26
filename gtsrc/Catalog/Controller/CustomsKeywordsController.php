@@ -99,11 +99,13 @@ class CustomsKeywordsController  extends AbstractController
      * @throws \Doctrine\DBAL\Exception
      */
     public function showAssignmentPrognoze(AutoAssignCustomsNumbersByKeywordsService $autoAssignCustomsNumbersByKeywordsService) {
-        $data = $autoAssignCustomsNumbersByKeywordsService->showUpdates(500);
+        $limit = 100;
+        $data = $autoAssignCustomsNumbersByKeywordsService->showUpdates($limit);
         return $this->render(
             '@Catalog/customs/show_keywords_assignements.html.twig',
             [
                 'data' => $data,
+                'limit' => $limit
             ]
         );
     }
