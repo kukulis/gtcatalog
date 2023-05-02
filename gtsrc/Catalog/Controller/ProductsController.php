@@ -2,6 +2,8 @@
 
 namespace Gt\Catalog\Controller;
 
+use Gt\Catalog\Dao\CategoryDao;
+use Gt\Catalog\Data\SimpleCategoriesFilter;
 use Gt\Catalog\Exception\CatalogDetailedException;
 use Gt\Catalog\Exception\CatalogErrorException;
 use Gt\Catalog\Exception\CatalogValidateException;
@@ -24,8 +26,12 @@ class ProductsController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function listAction(Request $request, LoggerInterface $logger, ProductsService $productsService)
-    {
+    public function listAction(
+        Request $request,
+        LoggerInterface $logger,
+        ProductsService $productsService,
+        CategoryDao $categoryDao
+    ) {
         $logger->info('listAction called');
 
         $productsFilterType = new ProductsFilterType();
@@ -36,12 +42,22 @@ class ProductsController extends AbstractController
 
         $languageCode = $productsFilterType->getLanguageCode();
 
+        $categories = [];
+        if (strlen($productsFilterType->getCategory()) > 0) {
+            $categoriesFilter = new SimpleCategoriesFilter();
+            $categoriesFilter->setLikeCode($productsFilterType->getCategory());
+            $categoriesFilter->setLimit(100);
+
+            $categories = $categoryDao->getCategories($categoriesFilter);
+        }
+
         return $this->render(
             '@Catalog/products/list.html.twig',
             [
                 'products' => $products,
                 'languageCode' => $languageCode,
                 'filterForm' => $filterForm->createView(),
+                'categories' => $categories,
             ]
         );
     }

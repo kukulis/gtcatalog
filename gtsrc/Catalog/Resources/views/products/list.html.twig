@@ -15,6 +15,12 @@
             {{ form(filterForm) }}
         </div>
         <div class="col-md-12">
+            Similar categories:
+            {% for cat in categories %}
+                <span>{{ cat.code }} : TODO</span>
+            {% endfor %}
+        </div>
+        <div class="col-md-12">
 <table class="table table-bordered">
     <thead>
         <tr>

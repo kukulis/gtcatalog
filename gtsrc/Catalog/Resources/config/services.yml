@@ -46,6 +46,7 @@ services:
             $productsService: '@gt.catalog.products_service'
             $categoriesService: '@gt.catalog.categories_service'
             $pdfGeneratorUrl: '%env(LABEL_PDF_GENERATOR_URL)%'
+            $categoryDao: '@gt.catalog.category_dao'
 
     Gt\Catalog\Controller\LanguagesController:
         tags:

@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: giedrius
- * Date: 20.8.29
- * Time: 19.53
- */
 
 namespace Gt\Catalog\Form;
-
 
 use Gt\Catalog\Data\ProductsFilter;
 use Gt\Catalog\Entity\Language;
@@ -29,26 +22,41 @@ class ProductsFilterType extends AbstractType implements ProductsFilter
     /** @var Language */
     private $language;
 
-    private $limit=100;
+    private ?string $dateFrom = '';
+    private ?string $dateTill = '';
+    private ?string $brand = '';
+    private ?string $category = '';
+
+
+    private $limit = 100;
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('likeSku', TextType::class, ['required'=>false] )
+        $builder->add('likeSku', TextType::class, ['required' => false])
             ->add('likeName', TextType::class, ['required' => false])
             ->add('limit', IntegerType::class)
-            ->add('language', EntityType::class, [
-                'class' => Language::class,
-                'choice_label' => 'name'
-            ])
-            ->add('search', SubmitType::class );
+            ->add('dateFrom', TextType::class, ['required' => false])
+            ->add('dateTill', TextType::class, ['required' => false])
+            ->add('brand', TextType::class, ['required' => false])
+            ->add('category', TextType::class, ['required' => false])
+            ->add(
+                'language',
+                EntityType::class,
+                [
+                    'class' => Language::class,
+                    'choice_label' => 'name'
+                ]
+            )
+            ->add('search', SubmitType::class)
+        ;
 
-        $builder->setMethod('get' );
+        $builder->setMethod('get');
     }
 
     /**
      * @return string
      */
-    public function getLikeSku(): ? string
+    public function getLikeSku(): ?string
     {
         return $this->likeSku;
     }
@@ -56,7 +64,7 @@ class ProductsFilterType extends AbstractType implements ProductsFilter
     /**
      * @param string $likeSku
      */
-    public function setLikeSku(string $likeSku=null): void
+    public function setLikeSku(string $likeSku = null): void
     {
         $this->likeSku = $likeSku;
     }
@@ -72,7 +80,7 @@ class ProductsFilterType extends AbstractType implements ProductsFilter
     /**
      * @param string $likeName
      */
-    public function setLikeName(string $likeName=null): void
+    public function setLikeName(string $likeName = null): void
     {
         $this->likeName = $likeName;
     }
@@ -88,14 +96,15 @@ class ProductsFilterType extends AbstractType implements ProductsFilter
     /**
      * @param Language $language
      */
-    public function setLanguage(Language $language=null): void
+    public function setLanguage(Language $language = null): void
     {
         $this->language = $language;
     }
 
 
-    public function getLanguageCode() {
-        if ( $this->language == null ) {
+    public function getLanguageCode()
+    {
+        if ($this->language == null) {
             return 'en';
         }
         return $this->language->getCode();
@@ -116,4 +125,45 @@ class ProductsFilterType extends AbstractType implements ProductsFilter
     {
         $this->limit = $limit;
     }
+
+    public function getDateFrom(): ?string
+    {
+        return $this->dateFrom;
+    }
+
+    public function setDateFrom(?string $dateFrom): void
+    {
+        $this->dateFrom = $dateFrom;
+    }
+
+    public function getDateTill(): ?string
+    {
+        return $this->dateTill;
+    }
+
+    public function setDateTill(?string $dateTill): void
+    {
+        $this->dateTill = $dateTill;
+    }
+
+    public function getBrand(): ?string
+    {
+        return $this->brand;
+    }
+
+    public function setBrand(?string $brand): void
+    {
+        $this->brand = $brand;
+    }
+
+    public function getCategory(): ?string
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?string $category): void
+    {
+        $this->category = $category;
+    }
+
 }
