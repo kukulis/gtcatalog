@@ -79,6 +79,7 @@ class ProductsController extends AbstractController
                 'filterForm' => $filterForm->createView(),
                 'categories' => $categories,
                 'categoriesLanguages' => $categoriesLanguages,
+                'productsCount' => count($products),
             ]
         );
     }
