@@ -28,6 +28,7 @@
             <th>{% trans %}Last update{% endtrans %}</th>
             <th>{% trans %}version{% endtrans %}</th>
             <th>{% trans %}Name{% endtrans %}</th>
+            <th>{% trans %}Brand{% endtrans %}</th>
             <th colspan="3">{% trans %}Actions{% endtrans %}</th>
         </tr>
     </thead>
@@ -38,6 +39,7 @@
         <td>{{ p.lastUpdate | date('Y-m-d H:i:s') }}</td>
         <td>{{ p.version }}</td>
         <td>{{ p.extractedName }}</td>
+        <td>{{ p.brand }}</td>
         <td><a href="{{ path('gt.catalog.product_edit', {sku: p.sku, languageCode: languageCode }) }}">Edit</a></td>
         <td><a href="{{ path('gt.catalog.product_pictures', {sku: p.sku }) }}">Pictures</a></td>
         <td><a href="{{ path('gt.catalog.product_categories_edit_form', {sku: p.sku }) }}">Categories</a></td>

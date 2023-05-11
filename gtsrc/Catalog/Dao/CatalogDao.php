@@ -63,6 +63,21 @@ class CatalogDao extends BaseDao
             $builder->setParameter('categoryCode', $filter->getCategory());
         }
 
+        if (!empty($filter->getBrand())) {
+            $builder->andWhere('p.brand like :likeBrand');
+            $builder->setParameter('likeBrand', '%' . $filter->getBrand() . '%');
+        }
+
+        if (!empty($filter->getDateFrom())) {
+            $builder->andWhere('p.lastUpdate >= :dateFrom');
+            $builder->setParameter('dateFrom', $filter->getDateFrom());
+        }
+
+        if (!empty($filter->getDateTill())) {
+            $builder->andWhere('p.lastUpdate <= :dateTill');
+            $builder->setParameter('dateTill', $filter->getDateTill());
+        }
+
         $builder->setMaxResults($filter->getLimit());
 
         /** @var Product[] $products */

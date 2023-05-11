@@ -43,6 +43,7 @@ class ProductsController extends AbstractController
         $languageCode = $productsFilterType->getLanguageCode();
 
         $categories = [];
+        $categoriesLanguages = [];
         if (strlen($productsFilterType->getCategory()) > 0) {
             $categoriesFilter = new SimpleCategoriesFilter();
             $categoriesFilter->setLikeCode($productsFilterType->getCategory());
