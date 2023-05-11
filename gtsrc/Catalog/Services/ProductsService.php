@@ -86,7 +86,7 @@ class ProductsService extends ProductsBaseService
      */
     public function getProducts(ProductsFilter $filter)
     {
-        if (!empty($filter->getLikeName())) {
+        if (!empty($filter->getLikeName()) || $filter->getNoLabel()) {
             $productsLanguages = $this->catalogDao->getProductsLangListByFilter($filter);
             $products = array_map(fn(ProductLanguage $pl) => $pl->getProduct(), $productsLanguages);
         } else {
@@ -123,27 +123,27 @@ class ProductsService extends ProductsBaseService
         $filter->setLimit(self::MAX_CSV);
         $productsLanguages = $this->catalogDao->getProductsLangListByFilter($filter);
 
-        if ( count($productsLanguages) < self::MAX_CSV ) {
+        if ( !empty($filter->getLikeSku()) ) {
             $products = $this->catalogDao->getProductsListByFilter($filter);
+            // join both
+            $plsMap = MapBuilder::buildMap($productsLanguages, fn(ProductLanguage $pl) => $pl->getSku());
+
+            $plResult = [];
+            foreach ($products as $p) {
+                if (array_key_exists($p->getSku(), $plsMap)) {
+                    $pl = $plsMap[$p->getSku()];
+                } else {
+                    $pl = new ProductLanguage();
+                    $pl->setProduct($p);
+                }
+
+                $plResult[] = $pl;
+            }
         }
         else {
-            $products = array_map ( fn($pl)=>$pl->getProduct(), $productsLanguages);
+            $plResult = $productsLanguages;
         }
 
-        // join both
-        $plsMap = MapBuilder::buildMap($productsLanguages, fn(ProductLanguage $pl) => $pl->getSku());
-
-        $plResult = [];
-        foreach ($products as $p) {
-            if (array_key_exists($p->getSku(), $plsMap)) {
-                $pl = $plsMap[$p->getSku()];
-            } else {
-                $pl = new ProductLanguage();
-                $pl->setProduct($p);
-            }
-
-            $plResult[] = $pl;
-        }
 
         return $plResult;
     }

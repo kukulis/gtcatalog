@@ -5,6 +5,7 @@ namespace Gt\Catalog\Dao;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\QueryBuilder;
 use Gt\Catalog\Data\ProductsFilter;
 use Gt\Catalog\Entity\Classificator;
 use Gt\Catalog\Entity\ClassificatorLanguage;
@@ -51,32 +52,7 @@ class CatalogDao extends BaseDao
         $builder->select('p')
             ->from(Product::class, 'p');
 
-        if (!empty($filter->getLikeSku())) {
-            $builder->andWhere('p.sku like :likeSku');
-            $builder->setParameter('likeSku', '%' . $filter->getLikeSku() . '%');
-        }
-
-        if ( !empty($filter->getCategory())) {
-            $builder->join('p.productCategories', 'pc' );
-            $builder->join('pc.category', 'c' );
-            $builder->andWhere( 'c.code = :categoryCode' );
-            $builder->setParameter('categoryCode', $filter->getCategory());
-        }
-
-        if (!empty($filter->getBrand())) {
-            $builder->andWhere('p.brand like :likeBrand');
-            $builder->setParameter('likeBrand', '%' . $filter->getBrand() . '%');
-        }
-
-        if (!empty($filter->getDateFrom())) {
-            $builder->andWhere('p.lastUpdate >= :dateFrom');
-            $builder->setParameter('dateFrom', $filter->getDateFrom());
-        }
-
-        if (!empty($filter->getDateTill())) {
-            $builder->andWhere('p.lastUpdate <= :dateTill');
-            $builder->setParameter('dateTill', $filter->getDateTill());
-        }
+        $this->appendProductConditionsFromFilter($builder, $filter);
 
         $builder->setMaxResults($filter->getLimit());
 
@@ -103,24 +79,55 @@ class CatalogDao extends BaseDao
         $builder->andWhere( 'l.code = :language');
         $builder->setParameter('language', $filter->getLanguageCode());
 
-        if (!empty($filter->getLikeSku())) {
-            $builder->andWhere('p.sku like :likeSku');
-            $builder->setParameter('likeSku', '%' . $filter->getLikeSku() . '%');
-        }
+        $this->appendProductConditionsFromFilter($builder, $filter);
+
         if (!empty($filter->getLikeName())) {
             $builder->andWhere('pl.name like :likeName');
             $builder->setParameter('likeName', '%' . $filter->getLikeName() . '%');
+        }
 
+        if ( $filter->getNoLabel()) {
+            $builder->andWhere( "(pl.label = '' or pl.label is null)");
         }
 
         if ( $filter->getLimit() > 0 ) {
             $builder->setMaxResults($filter->getLimit());
         }
 
+
         /** @var ProductLanguage[] $productsLanguages */
         $productsLanguages = $builder->getQuery()->getResult();
 
         return $productsLanguages;
+    }
+
+    public function appendProductConditionsFromFilter(QueryBuilder $builder, ProductsFilter $filter) {
+        if (!empty($filter->getLikeSku())) {
+            $builder->andWhere('p.sku like :likeSku');
+            $builder->setParameter('likeSku', '%' . $filter->getLikeSku() . '%');
+        }
+
+        if ( !empty($filter->getCategory())) {
+            $builder->join('p.productCategories', 'pc' );
+            $builder->join('pc.category', 'c' );
+            $builder->andWhere( 'c.code = :categoryCode' );
+            $builder->setParameter('categoryCode', $filter->getCategory());
+        }
+
+        if (!empty($filter->getBrand())) {
+            $builder->andWhere('p.brand like :likeBrand');
+            $builder->setParameter('likeBrand', '%' . $filter->getBrand() . '%');
+        }
+
+        if (!empty($filter->getDateFrom())) {
+            $builder->andWhere('p.lastUpdate >= :dateFrom');
+            $builder->setParameter('dateFrom', $filter->getDateFrom());
+        }
+
+        if (!empty($filter->getDateTill())) {
+            $builder->andWhere('p.lastUpdate <= :dateTill');
+            $builder->setParameter('dateTill', $filter->getDateTill());
+        }
     }
 
     /**

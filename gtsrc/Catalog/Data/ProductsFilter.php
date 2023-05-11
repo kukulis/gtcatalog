@@ -47,4 +47,6 @@ interface ProductsFilter
     public function getDateTill(): ?string;
 
     public function getBrand(): ?string;
+
+    public function getNoLabel(): ?bool;
 }

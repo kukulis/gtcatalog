@@ -6,6 +6,7 @@ use Gt\Catalog\Data\ProductsFilter;
 use Gt\Catalog\Entity\Language;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -27,6 +28,8 @@ class ProductsFilterType extends AbstractType implements ProductsFilter
     private ?string $brand = '';
     private ?string $category = '';
 
+    private ?bool $noLabel = false;
+
 
     private $limit = 100;
 
@@ -39,6 +42,7 @@ class ProductsFilterType extends AbstractType implements ProductsFilter
             ->add('dateTill', TextType::class, ['required' => false])
             ->add('brand', TextType::class, ['required' => false])
             ->add('category', TextType::class, ['required' => false])
+            ->add('noLabel', CheckboxType::class, ['required' => false])
             ->add(
                 'language',
                 EntityType::class,
@@ -165,5 +169,15 @@ class ProductsFilterType extends AbstractType implements ProductsFilter
     public function setCategory(?string $category): void
     {
         $this->category = $category;
+    }
+
+    public function getNoLabel(): ?bool
+    {
+        return $this->noLabel;
+    }
+
+    public function setNoLabel(?bool $noLabel): void
+    {
+        $this->noLabel = $noLabel;
     }
 }
