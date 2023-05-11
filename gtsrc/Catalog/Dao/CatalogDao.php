@@ -9,6 +9,7 @@ use Gt\Catalog\Data\ProductsFilter;
 use Gt\Catalog\Entity\Classificator;
 use Gt\Catalog\Entity\ClassificatorLanguage;
 use Gt\Catalog\Entity\Product;
+use Gt\Catalog\Entity\ProductCategory;
 use Gt\Catalog\Entity\ProductLanguage;
 use Gt\Catalog\Exception\CatalogDetailedException;
 use Gt\Catalog\Exception\CatalogErrorException;
@@ -53,6 +54,13 @@ class CatalogDao extends BaseDao
         if (!empty($filter->getLikeSku())) {
             $builder->andWhere('p.sku like :likeSku');
             $builder->setParameter('likeSku', '%' . $filter->getLikeSku() . '%');
+        }
+
+        if ( !empty($filter->getCategory())) {
+            $builder->join('p.productCategories', 'pc' );
+            $builder->join('pc.category', 'c' );
+            $builder->andWhere( 'c.code = :categoryCode' );
+            $builder->setParameter('categoryCode', $filter->getCategory());
         }
 
         $builder->setMaxResults($filter->getLimit());

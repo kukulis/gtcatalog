@@ -8,6 +8,8 @@
 
 namespace Gt\Catalog\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gt\Catalog\Exception\CatalogErrorException;
 use \DateTime;
@@ -18,6 +20,10 @@ use \DateTime;
  */
 class Product
 {
+    public function __construct() {
+        $this->productCategories = new ArrayCollection();
+    }
+
     const CLASSIFICATORS_GROUPS = [
 //        'brand',
 //        'line',
@@ -272,6 +278,12 @@ class Product
 
     /** @var string */
     private $extractedName; // not stored in database
+
+    /**
+     * @var Collection
+     * @ORM\OneToMany(targetEntity="ProductCategory", mappedBy="product" )
+     */
+    private $productCategories;
 
     /**
      * @return string
@@ -864,4 +876,13 @@ class Product
         $this->labelMaterial = $labelMaterial;
     }
 
+    public function getProductCategories(): Collection
+    {
+        return $this->productCategories;
+    }
+
+    public function setProductCategories(Collection $productCategories): void
+    {
+        $this->productCategories = $productCategories;
+    }
 }
