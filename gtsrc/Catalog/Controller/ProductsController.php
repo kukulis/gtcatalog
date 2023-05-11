@@ -38,6 +38,20 @@ class ProductsController extends AbstractController
         $filterForm = $this->createForm(ProductsFilterType::class, $productsFilterType);
         $filterForm->handleRequest($request);
 
+
+        if ($filterForm->get('csv')->isClicked()) {
+            $pls = $productsService->getProductsLanguagesForCsv($productsFilterType);
+            $csvContent = $productsService->buildCsv($pls);
+
+            $fileName = 'products' . time() . '.csv';
+
+            return new Response(
+                $csvContent,
+                200,
+                ['Content-Type' => 'text/csv', 'Content-Disposition' => 'attachment; filename=' . $fileName]
+            );
+        }
+
         $products = $productsService->getProducts($productsFilterType);
 
         $languageCode = $productsFilterType->getLanguageCode();
@@ -50,8 +64,12 @@ class ProductsController extends AbstractController
             $categoriesFilter->setLimit(100);
 
             $categories = $categoryDao->getCategories($categoriesFilter);
-            $categoriesLanguages = $categoryDao->loadCategoriesLanguages($categories, $productsFilterType->getLanguageCode());
+            $categoriesLanguages = $categoryDao->loadCategoriesLanguages(
+                $categories,
+                $productsFilterType->getLanguageCode()
+            );
         }
+
 
         return $this->render(
             '@Catalog/products/list.html.twig',
@@ -148,7 +166,7 @@ class ProductsController extends AbstractController
                 'languages' => $allLanguages,
                 'sku' => $sku,
                 'languageCode' => $languageCode,
-                'pdfUrl' => $fixedPdfGeneratorUrl
+                'pdfUrl' => $fixedPdfGeneratorUrl,
             ]
         );
     }
@@ -161,10 +179,11 @@ class ProductsController extends AbstractController
     public function addPictureForm($sku, ProductsService $productsService)
     {
         $product = $productsService->getProduct($sku);
+
         return $this->render(
             '@Catalog/pictures/add.html.twig',
             [
-                'product' => $product
+                'product' => $product,
             ]
         );
     }
@@ -190,6 +209,7 @@ class ProductsController extends AbstractController
 
             if (!empty($import)) {
                 $count = $productsService->importProducts($file);
+
                 return $this->render(
                     '@Catalog/products/import_products_results.html.twig',
                     [
@@ -199,6 +219,7 @@ class ProductsController extends AbstractController
             } else {
                 if (!empty($import_classificators)) {
                     $count = $productsService->importClassificatorsFromProductsCsv($file);
+
                     return $this->render(
                         '@Catalog/products/import_classificators_from_productscsv_result.html.twig',
                         [
@@ -232,6 +253,7 @@ class ProductsController extends AbstractController
             }
             $productCategories = $categoriesService->getProductCategories($sku);
             $categoriesCodesStr = $categoriesService->getProductCategoriesCodesStr($productCategories);
+
             return $this->render(
                 '@Catalog/products/edit_product_categories.html.twig',
                 [
@@ -255,6 +277,7 @@ class ProductsController extends AbstractController
         try {
             $categoriesStr = $r->get('categories');
             $count = $categoriesService->updateProductCategories($sku, $categoriesStr);
+
             return new Response('Updated product ' . $sku . ' categories ' . $count);
         } catch (CatalogValidateException | CatalogErrorException $e) {
             return $this->render(

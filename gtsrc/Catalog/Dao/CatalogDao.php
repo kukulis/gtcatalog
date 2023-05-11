@@ -93,12 +93,15 @@ class CatalogDao extends BaseDao
 
         $builder = $em->createQueryBuilder();
 
-        $builder->select('pl, p')
+        $builder->select('pl, p, l')
             ->from(ProductLanguage::class, 'pl');
 
         //sku
 
         $builder->join('pl.product', 'p');
+        $builder->join('pl.language', 'l');
+        $builder->andWhere( 'l.code = :language');
+        $builder->setParameter('language', $filter->getLanguageCode());
 
         if (!empty($filter->getLikeSku())) {
             $builder->andWhere('p.sku like :likeSku');
@@ -109,7 +112,10 @@ class CatalogDao extends BaseDao
             $builder->setParameter('likeName', '%' . $filter->getLikeName() . '%');
 
         }
-        $builder->setMaxResults($filter->getLimit());
+
+        if ( $filter->getLimit() > 0 ) {
+            $builder->setMaxResults($filter->getLimit());
+        }
 
         /** @var ProductLanguage[] $productsLanguages */
         $productsLanguages = $builder->getQuery()->getResult();

@@ -392,6 +392,14 @@ class Product
         return $this->type;
     }
 
+    public function getTypeCode() : ?string {
+        if ( $this->type == null ) {
+            return null;
+        }
+
+        return $this->type->getCode();
+    }
+
     /**
      * @param Classificator $type
      */
@@ -408,6 +416,14 @@ class Product
         return $this->purpose;
     }
 
+    public function getPurposeCode():?string {
+        if ( is_null($this->purpose)) {
+            return null;
+        }
+
+        return $this->purpose->getCode();
+    }
+
     /**
      * @param Classificator $purpose
      */
@@ -422,6 +438,14 @@ class Product
     public function getMeasure(): ?Classificator
     {
         return $this->measure;
+    }
+
+    public function getMeasureCode() : ?string {
+        if ( $this->measure == null ) {
+            return null;
+        }
+
+        return $this->measure->getCode();
     }
 
     /**

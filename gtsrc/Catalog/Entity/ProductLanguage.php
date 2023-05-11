@@ -17,14 +17,14 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class ProductLanguage
 {
-    const ALLOWED_FIELDS=[
+    const ALLOWED_FIELDS = [
         'name',
         'description',
         'label',
         'label_size', // TODO not translatable
         'variant_name',
         'info_provider',
-        'tags'
+        'tags',
     ];
 
     /**
@@ -36,7 +36,7 @@ class ProductLanguage
     private $product;
 
     /**
-     * @var Language
+     * @var ?Language
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Language" )
      * @ORM\JoinColumn(name="language", referencedColumnName="code")
@@ -105,7 +105,8 @@ class ProductLanguage
     /**
      * @return string
      */
-    public function getSku () {
+    public function getSku()
+    {
         return $this->product->getSku();
     }
 
@@ -127,7 +128,7 @@ class ProductLanguage
     /**
      * @return Language
      */
-    public function getLanguage(): Language
+    public function getLanguage(): ?Language
     {
         return $this->language;
     }
@@ -135,7 +136,7 @@ class ProductLanguage
     /**
      * @param Language $language
      */
-    public function setLanguage(Language $language): self
+    public function setLanguage(?Language $language): self
     {
         $this->language = $language;
 
@@ -153,7 +154,7 @@ class ProductLanguage
     /**
      * @param string $name
      */
-    public function setName(string $name=null): self
+    public function setName(string $name = null): self
     {
         $this->name = $name;
 
@@ -171,7 +172,7 @@ class ProductLanguage
     /**
      * @param string $description
      */
-    public function setDescription(string $description=null): void
+    public function setDescription(string $description = null): void
     {
         $this->description = $description;
     }
@@ -187,7 +188,7 @@ class ProductLanguage
     /**
      * @param string $label
      */
-    public function setLabel(string $label=null): void
+    public function setLabel(string $label = null): void
     {
         $this->label = $label;
     }
@@ -203,7 +204,7 @@ class ProductLanguage
     /**
      * @param string $infoProvider
      */
-    public function setInfoProvider(string $infoProvider=null): void
+    public function setInfoProvider(string $infoProvider = null): void
     {
         $this->infoProvider = $infoProvider;
     }
@@ -219,7 +220,7 @@ class ProductLanguage
     /**
      * @param string $variantName
      */
-    public function setVariantName(string $variantName=null): void
+    public function setVariantName(string $variantName = null): void
     {
         $this->variantName = $variantName;
     }
@@ -235,7 +236,7 @@ class ProductLanguage
     /**
      * @param string $tags
      */
-    public function setTags(string $tags=null): void
+    public function setTags(string $tags = null): void
     {
         $this->tags = $tags;
     }
@@ -251,7 +252,7 @@ class ProductLanguage
     /**
      * @param string $labelSize
      */
-    public function setLabelSize(string $labelSize=null): void
+    public function setLabelSize(string $labelSize = null): void
     {
         $this->labelSize = $labelSize;
     }
@@ -267,7 +268,7 @@ class ProductLanguage
     /**
      * @param string $distributor
      */
-    public function setDistributor(string $distributor=null): void
+    public function setDistributor(string $distributor = null): void
     {
         $this->distributor = $distributor;
     }
@@ -283,12 +284,22 @@ class ProductLanguage
     /**
      * @param string $composition
      */
-    public function setComposition(string $composition=null): void
+    public function setComposition(string $composition = null): void
     {
         $this->composition = $composition;
     }
 
-    public static function lambdaGetProduct (ProductLanguage  $productLanguage) {
+    public static function lambdaGetProduct(ProductLanguage $productLanguage)
+    {
         return $productLanguage->getProduct();
+    }
+
+    public function getLanguageCode(): ?string
+    {
+        if (is_object($this->language)) {
+            return $this->language->getCode();
+        }
+
+        return null;
     }
 }

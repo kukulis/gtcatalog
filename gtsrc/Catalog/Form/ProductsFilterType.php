@@ -48,6 +48,7 @@ class ProductsFilterType extends AbstractType implements ProductsFilter
                 ]
             )
             ->add('search', SubmitType::class)
+            ->add('csv', SubmitType::class)
         ;
 
         $builder->setMethod('get');
@@ -165,5 +166,4 @@ class ProductsFilterType extends AbstractType implements ProductsFilter
     {
         $this->category = $category;
     }
-
 }
