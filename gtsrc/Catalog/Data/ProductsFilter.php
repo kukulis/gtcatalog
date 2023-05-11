@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: giedrius
- * Date: 20.9.2
- * Time: 20.36
- */
 
 namespace Gt\Catalog\Data;
-
 
 use Gt\Catalog\Entity\Language;
 
@@ -21,7 +14,7 @@ interface ProductsFilter
     /**
      * @param string $likeSku
      */
-    public function setLikeSku(string $likeSku=null): void;
+    public function setLikeSku(string $likeSku = null): void;
 
     /**
      * @return string
@@ -31,7 +24,7 @@ interface ProductsFilter
     /**
      * @param string $likeName
      */
-    public function setLikeName(string $likeName=null): void;
+    public function setLikeName(string $likeName = null): void;
 
     /**
      * @return Language
@@ -41,9 +34,17 @@ interface ProductsFilter
     /**
      * @param Language $language
      */
-    public function setLanguage(Language $language=null): void;
+    public function setLanguage(Language $language = null): void;
 
     public function getLanguageCode();
 
     public function getLimit();
+
+    public function getCategory(): ?string;
+
+    public function getDateFrom(): ?string;
+
+    public function getDateTill(): ?string;
+
+    public function getBrand(): ?string;
 }

@@ -16,8 +16,8 @@
         </div>
         <div class="col-md-12">
             Similar categories:
-            {% for cat in categories %}
-                <span>{{ cat.code }} : TODO</span>
+            {% for cl in categoriesLanguages %}
+                <span>{{ cl.code }} : {{ cl.name }}</span>
             {% endfor %}
         </div>
         <div class="col-md-12">

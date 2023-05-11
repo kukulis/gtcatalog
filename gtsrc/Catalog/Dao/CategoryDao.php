@@ -11,6 +11,7 @@ use Gt\Catalog\Data\CategoriesFilter;
 use Gt\Catalog\Entity\Category;
 use Gt\Catalog\Entity\CategoryLanguage;
 use Gt\Catalog\Entity\ProductCategory;
+use Gt\Catalog\Utils\MapBuilder;
 use Psr\Log\LoggerInterface;
 
 class CategoryDao extends BaseDao
@@ -88,6 +89,7 @@ class CategoryDao extends BaseDao
      * @return CategoryLanguage[]
      */
     public function getCategoriesLanguages($categoriesCodes, $languageCode) {
+
         $class = CategoryLanguage::class;
         $dql = /** @lang DQL */ "SELECT cl from $class cl join cl.category c join cl.language l 
             where c.code in (:codes) and l.code = :language_code";
@@ -103,6 +105,33 @@ class CategoryDao extends BaseDao
         $categoriesLanguages = $query->getResult();
 
         return $categoriesLanguages;
+    }
+
+    /**
+     * @param Category[] $categories
+     * @param string $languageCode
+     * @return CategoryLanguage[]
+     */
+    public function loadCategoriesLanguages( $categories, $languageCode) : array {
+        $categoriesCodes = array_map(fn($c)=>$c->getCode(), $categories);
+
+        $cls = $this->getCategoriesLanguages($categoriesCodes, $languageCode);
+        $clsMap = MapBuilder::buildMap($cls, fn($cl)=>$cl->getCode());
+
+        $resultCategoriesLanguages = [];
+        foreach ($categories as $c ) {
+            if ( array_key_exists( $c->getCode() , $clsMap)) {
+                $cl = $clsMap[$c->getCode()];
+            }
+            else {
+                $cl = new CategoryLanguage();
+                $cl->setCategory($c);
+            }
+
+            $resultCategoriesLanguages[] = $cl;
+        }
+
+        return $resultCategoriesLanguages;
     }
 
     /**

@@ -49,6 +49,7 @@ class ProductsController extends AbstractController
             $categoriesFilter->setLimit(100);
 
             $categories = $categoryDao->getCategories($categoriesFilter);
+            $categoriesLanguages = $categoryDao->loadCategoriesLanguages($categories, $productsFilterType->getLanguageCode());
         }
 
         return $this->render(
@@ -58,6 +59,7 @@ class ProductsController extends AbstractController
                 'languageCode' => $languageCode,
                 'filterForm' => $filterForm->createView(),
                 'categories' => $categories,
+                'categoriesLanguages' => $categoriesLanguages,
             ]
         );
     }
