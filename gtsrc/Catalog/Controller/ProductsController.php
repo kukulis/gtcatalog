@@ -35,6 +35,7 @@ class ProductsController extends AbstractController
         $logger->info('listAction called');
 
         $productsFilterType = new ProductsFilterType();
+        $productsFilterType->setMaxCsvLimit($productsService->getMaxCsv());
         $filterForm = $this->createForm(ProductsFilterType::class, $productsFilterType);
         $filterForm->handleRequest($request);
 

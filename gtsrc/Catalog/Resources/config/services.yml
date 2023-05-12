@@ -31,6 +31,7 @@ services:
             - '@gt.catalog.language_dao'
             - '@gt.catalog.category_dao'
             - '@doctrine.orm.entity_manager'
+            - '%gt.catalog.max_csv%'
 
     gt.catalog.languages_service:
         class: 'Gt\Catalog\Services\LanguagesService'

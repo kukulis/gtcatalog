@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: giedrius
- * Date: 20.6.24
- * Time: 23.07
- */
 
 namespace Gt\Catalog\Services;
-
 
 use DateTime;
 use Doctrine\DBAL\DBALException;
@@ -43,8 +36,6 @@ class ProductsService extends ProductsBaseService
     const STEP = 100;
     const MAX_MESSAGE_LINES = 5;
 
-    const MAX_CSV = 15000;
-
     /** @var LoggerInterface */
     protected $logger;
 
@@ -59,6 +50,8 @@ class ProductsService extends ProductsBaseService
     /** @var EntityManagerInterface */
     private $entityManager;
 
+    private int $maxCsv;
+
     /**
      * ProductsService constructor.
      * @param LoggerInterface $logger
@@ -71,13 +64,15 @@ class ProductsService extends ProductsBaseService
         CatalogDao $catalogDao,
         LanguageDao $languageDao,
         CategoryDao $categoryDao,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        int $maxCsv
     ) {
         $this->logger = $logger;
         $this->catalogDao = $catalogDao;
         $this->languageDao = $languageDao;
         $this->categoryDao = $categoryDao; // from base class
         $this->entityManager = $entityManager;
+        $this->maxCsv = $maxCsv;
     }
 
     /**
@@ -120,7 +115,7 @@ class ProductsService extends ProductsBaseService
     public function getProductsLanguagesForCsv(ProductsFilter $filter): array
     {
         $oldLimit = $filter->getLimit();
-        $filter->setLimit(self::MAX_CSV);
+        $filter->setLimit($this->maxCsv);
         $productsLanguages = $this->catalogDao->getProductsLangListByFilter($filter);
 
         if ( !empty($filter->getLikeSku()) ) {
@@ -733,5 +728,10 @@ class ProductsService extends ProductsBaseService
         if (!CategoriesHelper::validateClassificatorCode($code)) {
             throw new CatalogValidateException('Invalid classificator code ' . $code . '    ' . $context);
         }
+    }
+
+    public function getMaxCsv(): int
+    {
+        return $this->maxCsv;
     }
 }
