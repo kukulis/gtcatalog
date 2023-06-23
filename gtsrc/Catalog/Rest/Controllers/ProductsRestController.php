@@ -48,13 +48,16 @@ class ProductsRestController  extends AbstractController {
     }
 
     /**
-     * @param string $lang
+     * @param string $language
      * @param CategoriesRestService $categoriesRestService
      * @return JsonResponse
      * @throws CatalogValidateException
      */
-    public function getCategoriesAction( $lang, CategoriesRestService $categoriesRestService ) {
-        $restCategories = $categoriesRestService->getRestCategories($lang);
+    public function getCategoriesAction( Request $request, $language, CategoriesRestService $categoriesRestService ) {
+
+        $limit = $request->get('limit', 500 );
+        $offset = $request->get('offset', 0 );
+        $restCategories = $categoriesRestService->getRestCategories($language, $offset, $limit);
         $response = new RestResult();
         $response->data= $restCategories;
         return new JsonResponse($response);
