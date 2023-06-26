@@ -1,21 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: giedrius
- * Date: 20.6.24
- * Time: 11.38
- */
 
 namespace Gt\Catalog\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
+use JsonSerializable;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="languages")
  */
-class Language
+class Language implements JsonSerializable
 {
 
     /**
@@ -87,6 +81,15 @@ class Language
     public function setLocaleCode(string $localeCode): void
     {
         $this->localeCode = $localeCode;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            $this->name,
+            $this->code,
+            $this->localeCode
+        ];
     }
 
 

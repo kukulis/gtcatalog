@@ -183,6 +183,7 @@ services:
             $logger: '@logger'
             $productsRestService: '@gt.catalog.products_rest_service'
             $categoriesRestService: '@gt.catalog.categories_rest_service'
+            $languageDao: '@gt.catalog.language_dao'
 
     Gt\Catalog\Rest\Controllers\PackagesRestController:
         tags:

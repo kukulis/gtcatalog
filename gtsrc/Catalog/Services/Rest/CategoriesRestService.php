@@ -1,13 +1,6 @@
 <?php
-/**
- * CategoriesRestService.php
- * Created by Giedrius Tumelis.
- * Date: 2021-03-30
- * Time: 16:12
- */
 
 namespace Gt\Catalog\Services\Rest;
-
 
 use Gt\Catalog\Dao\LanguageDao;
 use Gt\Catalog\Data\SimpleCategoriesFilter;
@@ -21,7 +14,6 @@ use Gt\Catalog\Utils\CategoriesMapper;
 use Psr\Log\LoggerInterface;
 
 use \Catalog\B2b\Common\Data\Catalog\Category as RestCategory;
-use Symfony\Component\HttpFoundation\Request;
 
 class CategoriesRestService
 {
