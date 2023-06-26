@@ -86,11 +86,9 @@ class Language implements JsonSerializable
     public function jsonSerialize()
     {
         return [
-            $this->name,
-            $this->code,
-            $this->localeCode
+            'name' => $this->name,
+            'code' => $this->code,
+            'locale_code' => $this->localeCode,
         ];
     }
-
-
 }
