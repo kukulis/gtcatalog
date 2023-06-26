@@ -20,7 +20,7 @@ gt.catalog.rest.category_tree:
     methods: GET|POST
 
 
-gt.catalog.rest.packages_test:
+gt.catalog.rest.languages:
     path: "/languages"
     controller: Gt\Catalog\Rest\Controllers\ProductsRestController::getLanguagesAction
     methods: GET|POST
