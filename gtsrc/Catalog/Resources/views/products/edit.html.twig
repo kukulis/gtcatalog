@@ -20,13 +20,16 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <h1>Product {{ sku }} Edit</h1>
-                <p><a href="{{ path('gt.catalog.product_categories_edit_form', {sku:sku}) }}">Categories</a>,
-                    <a href="{{ path('gt.catalog.product_pictures', {sku:sku}) }}">Pictures</a></p>
+                <h1>Edit Product</h1>
+                <p>
+                    <a href="{{ path('gt.catalog.product_categories_edit_form', {sku:sku}) }}">Edit categories</a><br>
+                    <a href="{{ path('gt.catalog.product_pictures', {sku:sku}) }}">Edit pictures</a>
+                </p>
             </div>
         </div>
         <div class="row">
             <div class="col-md-12">
+                Select language to edit:<br>
                 {% for l in languages %}
                     {% if l.code==languageCode %}
                         <spam>{{ l.code }}</spam>
@@ -64,10 +67,11 @@
                     </ul>
                 {% endif %}
 
-                {{ form(form) }}
+                {% include '@Catalog/products/edit_form.html.twig' %}
 
-                <a class="btn-primary btn" id="pdf_button" href="{{ pdfUrl }}">View label pdf</a>
-
+                <div class="text-right mb-4">
+                    <a class="btn-outline-primary btn" id="pdf_button" href="{{ pdfUrl }}">View label pdf</a>
+                </div>
             </div>
         </div>
     </div>

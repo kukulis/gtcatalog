@@ -1,0 +1,248 @@
+{# edit_form.html.twig #}
+
+<form action="" method="post">
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Product Information</h4>
+            <div class="form-group row">
+                <label for="{{ form.p_sku.vars.id }}" class="col-sm-4 col-form-label">SKU</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.p_sku, { 'attr': {'class': 'form-control'} }) }}
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="{{ form.p_parent_sku.vars.id }}" class="col-sm-4 col-form-label">Parent SKU</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.p_parent_sku, { 'attr': {'class': 'form-control'} }) }}
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="{{ form.p_brand.vars.id }}" class="col-sm-4 col-form-label">Brand</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.p_brand, { 'attr': {'class': 'form-control'} }) }}
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="{{ form.p_line.vars.id }}" class="col-sm-4 col-form-label">Line</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.p_line, { 'attr': {'class': 'form-control'} }) }}
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="{{ form.p_info_provider.vars.id }}" class="col-sm-4 col-form-label">Info provider</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.p_info_provider, { 'attr': {'class': 'form-control'} }) }}
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="{{ form.p_origin_country_code.vars.id }}" class="col-sm-4 col-form-label">Origin country
+                    code</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.p_origin_country_code, { 'attr': {'class': 'form-control'} }) }}
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="{{ form.p_vendor.vars.id }}" class="col-sm-4 col-form-label">Vendor</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.p_vendor, { 'attr': {'class': 'form-control'} }) }}
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="{{ form.p_manufacturer.vars.id }}" class="col-sm-4 col-form-label">Manufacturer</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.p_manufacturer, { 'attr': {'class': 'form-control'} }) }}
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="{{ form.p_type.vars.id }}" class="col-sm-4 col-form-label">Type code</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.p_type, { 'attr': {'class': 'form-control'} }) }}
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="{{ form.p_purpose.vars.id }}" class="col-sm-4 col-form-label">Purpose code</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.p_purpose, { 'attr': {'class': 'form-control'} }) }}
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="{{ form.p_measure.vars.id }}" class="col-sm-4 col-form-label">Measure code</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.p_measure, { 'attr': {'class': 'form-control'} }) }}
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="{{ form.p_color.vars.id }}" class="col-sm-4 col-form-label">Color</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.p_color, { 'attr': {'class': 'form-control'} }) }}
+                </div>
+            </div>
+
+            <h4>Other Information</h4>
+            <div class="form-group">
+                <label for="{{ form.p_last_update.vars.id }}">Last Updated</label>
+                {{ form_widget(form.p_last_update, { 'attr': {'class': 'form-control-sm'} }) }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.p_version.vars.id }}">Version</label>
+                {{ form_widget(form.p_version, { 'attr': {'class': 'form-control-sm'} }) }}
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <h4>For Male/Female</h4>
+
+            <div class="form-group row">
+                <div class="col-sm-4">
+                    {{ form_widget(form.p_for_male, { 'attr': {'class': 'form-check-input'} }) }}
+                </div>
+                <div class="col-sm-4">
+                    {{ form_widget(form.p_for_female, { 'attr': {'class': 'form-check-input'} }) }}
+                </div>
+            </div>
+
+            <h4>Size/Pack</h4>
+
+            <div class="form-group row mb-3">
+                <label for="{{ form.p_size.vars.id }}" class="col-sm-4 col-form-label">Size</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.p_size, { 'attr': {'class': 'form-control-sm'} }) }}
+                </div>
+
+                <label for="{{ form.p_pack_size.vars.id }}" class="col-sm-4 col-form-label">Pack Size</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.p_pack_size, { 'attr': {'class': 'form-control-sm'} }) }}
+                </div>
+
+                <label for="{{ form.p_pack_amount.vars.id }}" class="col-sm-4 col-form-label">Pack amount</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.p_pack_amount, { 'attr': {'class': 'form-control-sm'} }) }}
+                </div>
+            </div>
+
+            <h4>Weight/Dimensions</h4>
+            <div class="form-group row mb-3">
+                <label class="col-sm-4 col-form-label">Weight</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.p_weight, { 'attr': {'class': 'form-control-sm'} }) }}
+                </div>
+            </div>
+            <div class="form-group row mb-3">
+                <label class="col-sm-4 col-form-label">Dimensions</label>
+                <div class="col-sm-2">
+                    <label for="{{ form.p_length.vars.id }}">Length</label>
+                    {{ form_widget(form.p_length, { 'attr': {'class': 'form-control-sm'} }) }}
+                </div>
+                <div class="col-sm-2">
+                    <label for="{{ form.p_height.vars.id }}">Height</label>
+                    {{ form_widget(form.p_height, { 'attr': {'class': 'form-control-sm'} }) }}
+                </div>
+                <div class="col-sm-2">
+                    <label for="{{ form.p_width.vars.id }}">Width</label>
+                    {{ form_widget(form.p_width, { 'attr': {'class': 'form-control-sm'} }) }}
+                </div>
+            </div>
+
+            <h4>Delivery and Priority</h4>
+            <div class="form-group row mb-3">
+                <label for="{{ form.p_delivery_time.vars.id }}" class="col-sm-4 col-form-label">Delivery time</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.p_delivery_time, { 'attr': {'class': 'form-control-sm'} }) }}
+                </div>
+
+                <label for="{{ form.p_google_category_id.vars.id }}" class="col-sm-4 col-form-label">Google category
+                    id</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.p_google_category_id, { 'attr': {'class': 'form-control-sm'} }) }}
+                </div>
+
+                <label for="{{ form.p_priority.vars.id }}" class="col-sm-4 col-form-label">Priority</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.p_priority, { 'attr': {'class': 'form-control-sm'} }) }}
+                </div>
+            </div>
+
+            <h4>Ingredients and Custom Code</h4>
+            <div class="form-group row">
+                <label for="{{ form.p_ingredients.vars.id }}" class="col-sm-4 col-form-label">Ingredients</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.p_ingredients, { 'attr': {'class': 'form-control-sm'} }) }}
+                </div>
+
+                <label for="{{ form.p_code_from_custom.vars.id }}" class="col-sm-4 col-form-label">Customs code</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.p_code_from_custom, { 'attr': {'class': 'form-control-sm'} }) }}
+                </div>
+            </div>
+
+            <h4>Product Language</h4>
+            <div class="form-group row">
+                <label for="{{ form.pl_language.vars.id }}" class="col-sm-4 col-form-label">Language</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.pl_language, { 'attr': {'class': 'form-control-sm'} }) }}
+                </div>
+
+                <label for="{{ form.pl_name.vars.id }}" class="col-sm-4 col-form-label">Name</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.pl_name, { 'attr': {'class': 'form-control-sm'} }) }}
+                </div>
+
+                <label for="{{ form.pl_description.vars.id }}" class="col-sm-4 col-form-label">Description</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.pl_description, { 'attr': {'class': 'form-control-sm'} }) }}
+                </div>
+
+                <label for="{{ form.pl_label.vars.id }}" class="col-sm-4 col-form-label">Label</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.pl_label, { 'attr': {'class': 'form-control-sm'} }) }}
+                </div>
+
+                <label for="{{ form.pl_label_size.vars.id }}" class="col-sm-4 col-form-label">Label size</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.pl_label_size, { 'attr': {'class': 'form-control-sm'} }) }}
+                </div>
+
+                <label for="{{ form.p_label_material.vars.id }}" class="col-sm-4 col-form-label">Label material</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.p_label_material, { 'attr': {'class': 'form-control-sm'} }) }}
+                </div>
+
+                <label for="{{ form.pl_variant_name.vars.id }}" class="col-sm-4 col-form-label">Variant name</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.pl_variant_name, { 'attr': {'class': 'form-control-sm'} }) }}
+                </div>
+
+                <label for="{{ form.pl_info_provider.vars.id }}" class="col-sm-4 col-form-label">Info provider</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.pl_info_provider, { 'attr': {'class': 'form-control-sm'} }) }}
+                </div>
+
+                <label for="{{ form.pl_tags.vars.id }}" class="col-sm-4 col-form-label">Tags</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.pl_tags, { 'attr': {'class': 'form-control-sm'} }) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-end">
+        <div class="col-md-6">
+            <div class="form-group row">
+                <div class="col-sm-12 text-right">
+                    {{ form_widget(form.save, { 'attr': {'class': 'btn btn-primary'} }) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

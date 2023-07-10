@@ -41,7 +41,13 @@ class ProductFormType extends AbstractType
 
         $builder
             ->add('p_sku', TextType::class, ['disabled' => true, 'label' => 'sku'])
-            ->add('p_last_update', DateTimeType::class, ['disabled' => true, 'label' => 'updated'])
+            ->add('p_last_update', DateTimeType::class, [
+                'disabled' => true,
+                'label' => 'updated',
+                'widget' => 'single_text',
+                'html5' => false,
+                'format' => 'yyyy-MM-dd HH:mm:ss',
+            ])
             ->add('p_version', TextType::class, ['required' => false, 'disabled' => true, 'label' => 'version'])
             ->add('p_brand', TextType::class, ['label' => 'Brand'])
             ->add('p_line', TextType::class, ['label' => 'Line'])
@@ -78,7 +84,7 @@ class ProductFormType extends AbstractType
             ->add('pl_info_provider', TextType::class, ['required' => false, 'label' => 'Info provider'])
             ->add('pl_tags', TextType::class, ['required' => false, 'label' => 'Tags'])
         ;
-        $builder->add('save', SubmitType::class, ['label' => 'Išsaugoti']);
+        $builder->add('save', SubmitType::class, ['label' => 'Save']);
     }
 
     /**
