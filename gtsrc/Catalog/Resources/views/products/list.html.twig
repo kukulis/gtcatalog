@@ -10,16 +10,40 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-12"><a href="{{ path('gt.catalog.import_products_form') }}">Import</a></div>
-            <div class="col-md-12">
-                {{ form(filterForm) }}
+            <div class="col-md-6">
+                <a href="{{ path('gt.catalog.import_products_form') }}" class="btn btn-primary">Import Products</a>
             </div>
-            <div class="col-md-12">
-                Similar categories:
-                {% for cl in categoriesLanguages %}
-                    <span>{{ cl.code }} : {{ cl.name }}</span> |
-                {% endfor %}
+            <div class="col-md-6 text-right">
+                <button class="btn btn-primary" type="button"
+                        data-toggle="collapse"
+                        data-target="#filterCollapse"
+                        aria-expanded="{{ isFilterFormSubmitted ? 'true' : 'false' }}"
+                        aria-controls="filterCollapse" id="filterButton">
+                    Show Filters
+                </button>
             </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <div class="collapse {{ isFilterFormSubmitted ? 'show' : '' }}" id="filterCollapse">
+                    {% include '@Catalog/products/list_filter_form.html.twig' %}
+                </div>
+            </div>
+        </div>
+
+        {% if categoriesLanguages is not empty %}
+            <div class="row">
+                <div class="col-md-12">
+                    Similar categories:
+                    {% for cl in categoriesLanguages %}
+                        <span>{{ cl.code }} : {{ cl.name }}</span> |
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="row">
             <div class="col-md-12">
                 <p>Count: {{ productsCount }}</p>
                 <table class="table table-bordered">
@@ -66,3 +90,21 @@
         </div>
     </div>
 {% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#filterButton').click(function() {
+                var buttonText = $(this).text();
+                var filterCollapse = $('#filterCollapse');
+
+                if (filterCollapse.hasClass('show')) {
+                    $(this).text('Show Filters');
+                } else {
+                    $(this).text('Hide Filters');
+                }
+            });
+        });
+    </script>
+{% endblock  javascripts %}

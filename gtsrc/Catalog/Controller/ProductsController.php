@@ -42,9 +42,7 @@ class ProductsController extends AbstractController
         $productsFilterType->setMaxCsvLimit($productsService->getMaxCsv());
         $filterForm = $formFactory->create(ProductsFilterType::class, $productsFilterType);
         $filterForm->handleRequest($request);
-
-        $formRenderer->setTheme($filterForm->createView(), '@Catalog/products/list_filter_form.html.twig');
-
+        
         if ($filterForm->get('csv')->isClicked()) {
             $pls = $productsService->getProductsLanguagesForCsv($productsFilterType);
             $csvContent = $productsService->buildCsv($pls);
