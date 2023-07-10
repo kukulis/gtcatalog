@@ -105,6 +105,13 @@
                     $(this).text('Hide Filters');
                 }
             });
+
+            $('#filterForm').on('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    $('#searchButton').click();
+                }
+            });
         });
     </script>
 {% endblock  javascripts %}

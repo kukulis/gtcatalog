@@ -37,9 +37,12 @@
     </div>
     <div class="row">
         <div class="col-md-6">
-            <button type="submit" id="products_filter_csv" name="products_filter[csv]" class="btn btn-secondary btn">Download CSV</button>        </div>
+            <button type="submit" id="products_filter_csv" name="products_filter[csv]" class="btn btn-secondary btn">
+                Download CSV
+            </button>
+        </div>
         <div class="col-md-6 text-right">
-            <button class="btn btn-primary" type="submit" form="filterForm">Search</button>
+            <button class="btn btn-primary" id="searchButton" type="submit" form="filterForm">Search</button>
             <a href="{{ path('gt.catalog.product_list') }}" class="btn btn-outline-dark">Clear</a>
         </div>
     </div>
