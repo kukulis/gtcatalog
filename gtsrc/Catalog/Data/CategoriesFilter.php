@@ -13,9 +13,17 @@ use Gt\Catalog\Entity\Language;
 
 interface CategoriesFilter
 {
+    /**
+     * @return mixed
+     */
+    public function getOffset();
+
     public function getLimit();
+
     public function getLikeCode();
+
     public function getLikeParent();
+
     public function getExactParent();
 
     /** @return Language */

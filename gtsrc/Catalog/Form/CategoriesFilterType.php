@@ -27,7 +27,9 @@ class CategoriesFilterType extends AbstractType implements CategoriesFilter
     private $likeParent;
     private $exactParent;
 
-    private $limit=100;
+    private $limit = 100;
+
+    private $offset = 0;
 
     /**
      * @param FormBuilderInterface $builder
@@ -37,15 +39,15 @@ class CategoriesFilterType extends AbstractType implements CategoriesFilter
     {
         $builder
             ->add('language', EntityType::class, [
-            'class' => Language::class,
-            'choice_label' => 'name'])
-            ->add('likeCode', TextType::class, ['required'=>false])
-            ->add('likeParent', TextType::class, ['required'=>false])
-            ->add('exactParent', TextType::class, ['required'=>false])
-            ->add( 'limit', IntegerType::class  )
-            ->add('search', SubmitType::class );
+                'class' => Language::class,
+                'choice_label' => 'name'])
+            ->add('likeCode', TextType::class, ['required' => false])
+            ->add('likeParent', TextType::class, ['required' => false])
+            ->add('exactParent', TextType::class, ['required' => false])
+            ->add('limit', IntegerType::class)
+            ->add('search', SubmitType::class);
 
-        $builder->setMethod('get' );
+        $builder->setMethod('get');
     }
 
 
@@ -116,8 +118,9 @@ class CategoriesFilterType extends AbstractType implements CategoriesFilter
     /**
      * @return string
      */
-    public function getLanguageCode() {
-        if ( $this->language != null ) {
+    public function getLanguageCode()
+    {
+        if ($this->language != null) {
             return $this->language->getCode();
         }
         return self::DEFAULT_LANGUAGE_CODE;
@@ -137,5 +140,21 @@ class CategoriesFilterType extends AbstractType implements CategoriesFilter
     public function setExactParent($exactParent): void
     {
         $this->exactParent = $exactParent;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOffset()
+    {
+        return $this->offset;
+    }
+
+    /**
+     * @param mixed $offset
+     */
+    public function setOffset($offset): void
+    {
+        $this->offset = $offset;
     }
 }
