@@ -20,7 +20,7 @@
                         data-target="#filterCollapse"
                         aria-expanded="{{ isFilterFormSubmitted ? 'true' : 'false' }}"
                         aria-controls="filterCollapse" id="filterButton">
-                    Show Filters
+                    {{ isFilterFormSubmitted ? 'Hide Filters' : 'Show Filters' }}
                 </button>
             </div>
         </div>
@@ -91,3 +91,22 @@
         </div>
     </div>
 {% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#filterButton').click(function() {
+                var buttonText = $(this).text();
+                var filterCollapse = $('#filterCollapse');
+
+                if (filterCollapse.hasClass('show')) {
+                    $(this).text('Show Filters');
+                } else {
+                    $(this).text('Hide Filters');
+                }
+            });
+        });
+    </script>
+{% endblock  javascripts %}
+
