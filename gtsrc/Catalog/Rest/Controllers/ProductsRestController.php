@@ -1,16 +1,11 @@
 <?php
-/**
- * ProductsRestController.php
- * Created by Giedrius Tumelis.
- * Date: 2021-02-01
- * Time: 11:25
- */
 
 namespace Gt\Catalog\Rest\Controllers;
 
 
 use Catalog\B2b\Common\Data\Rest\ErrorResponse;
 use Catalog\B2b\Common\Data\Rest\RestResult;
+use Gt\Catalog\Dao\LanguageDao;
 use Gt\Catalog\Exception\CatalogErrorException;
 use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Services\Rest\CategoriesRestService;
@@ -48,13 +43,16 @@ class ProductsRestController  extends AbstractController {
     }
 
     /**
-     * @param string $lang
+     * @param string $language
      * @param CategoriesRestService $categoriesRestService
      * @return JsonResponse
      * @throws CatalogValidateException
      */
-    public function getCategoriesAction( $lang, CategoriesRestService $categoriesRestService ) {
-        $restCategories = $categoriesRestService->getRestCategories($lang);
+    public function getCategoriesAction( Request $request, $language, CategoriesRestService $categoriesRestService ) {
+
+        $limit = $request->get('limit', 500 );
+        $offset = $request->get('offset', 0 );
+        $restCategories = $categoriesRestService->getRestCategories($language, $offset, $limit);
         $response = new RestResult();
         $response->data= $restCategories;
         return new JsonResponse($response);
@@ -104,6 +102,14 @@ class ProductsRestController  extends AbstractController {
         $restCategory = $categoriesRestService->getCategoryLang($categoryCode, $lang);
         $response = new RestResult();
         $response->data= $restCategory;
+        return new JsonResponse($response);
+    }
+
+    public function getLanguagesAction(LanguageDao $languageDao) {
+        $languages = $languageDao->getLanguagesList(0, 100 );
+        $response = new RestResult();
+        $response->data= $languages;
+
         return new JsonResponse($response);
     }
 }

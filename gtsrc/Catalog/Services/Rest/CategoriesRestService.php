@@ -1,13 +1,6 @@
 <?php
-/**
- * CategoriesRestService.php
- * Created by Giedrius Tumelis.
- * Date: 2021-03-30
- * Time: 16:12
- */
 
 namespace Gt\Catalog\Services\Rest;
-
 
 use Gt\Catalog\Dao\LanguageDao;
 use Gt\Catalog\Data\SimpleCategoriesFilter;
@@ -52,10 +45,11 @@ class CategoriesRestService
      * @return RestCategory[]
      * @throws CatalogErrorException
      * @throws CatalogValidateException
-     * @deprecated because there are not limits given in the parameters
      */
-    public function getRestCategories($lang) {
+    public function getRestCategories(string $lang, $offset, $limit) {
         $categoriesFilter = new SimpleCategoriesFilter();
+        $categoriesFilter->setLimit($limit);
+        $categoriesFilter->setOffset($offset);
         $language = $this->languageDao->getLanguage($lang);
         if ( $language == null ) {
             throw new CatalogValidateException('Wrong language code '.$lang );

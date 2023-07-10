@@ -4,6 +4,7 @@ namespace Gt\Catalog\Form;
 
 use Gt\Catalog\Data\ProductsFilter;
 use Gt\Catalog\Entity\Language;
+use Gt\Catalog\Services\ProductsService;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -33,8 +34,16 @@ class ProductsFilterType extends AbstractType implements ProductsFilter
 
     private $limit = 100;
 
+    /**
+     * @var int changed in the setter
+     */
+    private $maxCsvLimit=10000;
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        /** @var ProductsFilterType $data */
+        $data = $options['data'];
+
         $builder->add('likeSku', TextType::class, ['required' => false])
             ->add('likeName', TextType::class, ['required' => false])
             ->add('limit', IntegerType::class)
@@ -52,7 +61,7 @@ class ProductsFilterType extends AbstractType implements ProductsFilter
                 ]
             )
             ->add('search', SubmitType::class)
-            ->add('csv', SubmitType::class)
+            ->add('csv', SubmitType::class, ['label'=>sprintf('Export to csv max %s', $data->getMaxCsvLimit())])
         ;
 
         $builder->setMethod('get');
@@ -179,5 +188,15 @@ class ProductsFilterType extends AbstractType implements ProductsFilter
     public function setNoLabel(?bool $noLabel): void
     {
         $this->noLabel = $noLabel;
+    }
+
+    public function getMaxCsvLimit()
+    {
+        return $this->maxCsvLimit;
+    }
+
+    public function setMaxCsvLimit($maxCsvLimit): void
+    {
+        $this->maxCsvLimit = $maxCsvLimit;
     }
 }

@@ -6,114 +6,63 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <h1>Products list</h1>
+                <h1>{% trans %}Products list{% endtrans %}</h1>
             </div>
         </div>
-
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <a href="{{ path('gt.catalog.import_products_form') }}" class="btn btn-primary">Import Products</a>
-            </div>
-            <div class="col-md-6 text-right">
-                <button class="btn btn-primary" type="button"
-                        data-toggle="collapse"
-                        data-target="#filterCollapse"
-                        aria-expanded="{{ isFilterFormSubmitted ? 'true' : 'false' }}"
-                        aria-controls="filterCollapse" id="filterButton">
-                    {{ isFilterFormSubmitted ? 'Hide Filters' : 'Show Filters' }}
-                </button>
-            </div>
-        </div>
-
-        <div class="row mb-3">
-            <div class="col-md-12">
-                <div class="collapse {{ isFilterFormSubmitted ? 'show' : '' }}" id="filterCollapse">
-                    {% include '@Catalog/products/list_filter_form.html.twig' %}
-                </div>
-            </div>
-        </div>
-
-        {% if categoriesLanguages is not empty %}
-            <div class="row">
-                <div class="col-md-12">
-                    Similar categories:
-                    {% for cl in categoriesLanguages %}
-                        <span>{{ cl.code }} : {{ cl.name }}</span> |
-                    {% endfor %}
-                </div>
-            </div>
-        {% endif %}
-
         <div class="row">
+            <div class="col-md-12"><a href="{{ path('gt.catalog.import_products_form') }}">Import</a></div>
             <div class="col-md-12">
+                {{ form(filterForm) }}
+            </div>
+            <div class="col-md-12">
+                Similar categories:
+                {% for cl in categoriesLanguages %}
+                    <span>{{ cl.code }} : {{ cl.name }}</span> |
+                {% endfor %}
+            </div>
+            <div class="col-md-12">
+                <p>Count: {{ productsCount }}</p>
                 <table class="table table-bordered">
                     <thead>
-                        <tr>
-                            <th style="width: 10%">SKU</th>
-                            <th style="width: 20%">Last Update</th>
-                            <th style="width: 5%" title="Version">Ver.</th>
-                            <th style="width: 35%">Name</th>
-                            <th style="width: 15%">Brand</th>
-                            <th style="width: 15%">Actions</th>
-                        </tr>
+                    <tr>
+                        <th style="width: 10%">{% trans %}SKU{% endtrans %}</th>
+                        <th style="width: 20%">{% trans %}Last update{% endtrans %}</th>
+                        <th style="width: 5%" title="Version">{% trans %}version{% endtrans %}</th>
+                        <th style="width: 35%">{% trans %}Name{% endtrans %}</th>
+                        <th style="width: 15%">{% trans %}Brand{% endtrans %}</th>
+                        <th style="width: 15%" colspan="3">{% trans %}Actions{% endtrans %}</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        {% for p in products %}
-                            <tr>
-                                <td>{{ p.sku }}</td>
-                                <td>{{ p.lastUpdate | date('Y-m-d H:i:s') }}</td>
-                                <td>{{ p.version }}</td>
-                                <td>{{ p.extractedName }}</td>
-                                <td>{{ p.brand }}</td>
-                                <td>
-                                    <a href="{{ path('gt.catalog.product_edit', {sku: p.sku, languageCode: languageCode }) }}"
-                                       class="btn btn-link p-1"
-                                       title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="{{ path('gt.catalog.product_pictures', {sku: p.sku }) }}"
-                                       class="btn btn-link p-1"
-                                       title="Pictures">
-                                        <i class="fas fa-image"></i>
-                                    </a>
-                                    <a href="{{ path('gt.catalog.product_categories_edit_form', {sku: p.sku }) }}"
-                                       class="btn btn-link p-1"
-                                       title="Categories">
-                                        <i class="fas fa-list"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        {% endfor %}
+                    {% for p in products %}
+                        <tr>
+                            <td>{{ p.sku }}</td>
+                            <td>{{ p.lastUpdate | date('Y-m-d H:i:s') }}</td>
+                            <td>{{ p.version }}</td>
+                            <td>{{ p.extractedName }}</td>
+                            <td>{{ p.brand }}</td>
+                            <td>
+                                <a href="{{ path('gt.catalog.product_edit', {sku: p.sku, languageCode: languageCode }) }}"
+                                   class="btn btn-link p-1"
+                                   title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{{ path('gt.catalog.product_pictures', {sku: p.sku }) }}"
+                                   class="btn btn-link p-1"
+                                   title="Pictures">
+                                    <i class="fas fa-image"></i>
+                                </a>
+                                <a href="{{ path('gt.catalog.product_categories_edit_form', {sku: p.sku }) }}"
+                                   class="btn btn-link p-1"
+                                   title="Categories">
+                                    <i class="fas fa-list"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('#filterButton').click(function() {
-                var buttonText = $(this).text();
-                var filterCollapse = $('#filterCollapse');
-
-                if (filterCollapse.hasClass('show')) {
-                    $(this).text('Show Filters');
-                } else {
-                    $(this).text('Hide Filters');
-                }
-            });
-        });
-    </script>
-{% endblock  javascripts %}
-
-{% block stylesheets %}
-    {{ parent() }}
-    <style>
-        .table td {
-            padding: 6px 12px 6px 12px;
-        }
-    </style>
 {% endblock %}

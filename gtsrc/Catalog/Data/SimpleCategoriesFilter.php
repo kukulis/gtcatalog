@@ -21,6 +21,8 @@ class SimpleCategoriesFilter implements CategoriesFilter
     /** @return Language */
     private $language;
 
+    private $offset;
+
     /**
      * @return mixed
      */
@@ -99,5 +101,15 @@ class SimpleCategoriesFilter implements CategoriesFilter
     public function setLanguage($language): void
     {
         $this->language = $language;
+    }
+
+    public function getOffset()
+    {
+        return $this->offset;
+    }
+
+    public function setOffset($offset): void
+    {
+        $this->offset = $offset;
     }
 }

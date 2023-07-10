@@ -39,6 +39,7 @@ class ProductsController extends AbstractController
         $logger->info('listAction called');
 
         $productsFilterType = new ProductsFilterType();
+        $productsFilterType->setMaxCsvLimit($productsService->getMaxCsv());
         $filterForm = $formFactory->create(ProductsFilterType::class, $productsFilterType);
         $filterForm->handleRequest($request);
 
@@ -83,6 +84,7 @@ class ProductsController extends AbstractController
                 'filterForm' => $filterForm->createView(),
                 'categories' => $categories,
                 'categoriesLanguages' => $categoriesLanguages,
+                'productsCount' => count($products),
                 'isFilterFormSubmitted' => $filterForm->isSubmitted(),
             ]
         );
