@@ -14,6 +14,8 @@ use Gt\Catalog\Services\CategoriesService;
 use Gt\Catalog\Services\ProductsService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormRendererInterface;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,14 +32,17 @@ class ProductsController extends AbstractController
         Request $request,
         LoggerInterface $logger,
         ProductsService $productsService,
-        CategoryDao $categoryDao
+        CategoryDao $categoryDao,
+        FormFactoryInterface $formFactory,
+        FormRendererInterface $formRenderer
     ) {
         $logger->info('listAction called');
 
         $productsFilterType = new ProductsFilterType();
-        $filterForm = $this->createForm(ProductsFilterType::class, $productsFilterType);
+        $filterForm = $formFactory->create(ProductsFilterType::class, $productsFilterType);
         $filterForm->handleRequest($request);
 
+        $formRenderer->setTheme($filterForm->createView(), '@Catalog/products/list_filter_form.html.twig');
 
         if ($filterForm->get('csv')->isClicked()) {
             $pls = $productsService->getProductsLanguagesForCsv($productsFilterType);
@@ -70,7 +75,6 @@ class ProductsController extends AbstractController
             );
         }
 
-
         return $this->render(
             '@Catalog/products/list.html.twig',
             [
@@ -79,6 +83,7 @@ class ProductsController extends AbstractController
                 'filterForm' => $filterForm->createView(),
                 'categories' => $categories,
                 'categoriesLanguages' => $categoriesLanguages,
+                'isFilterFormSubmitted' => $filterForm->isSubmitted(),
             ]
         );
     }
