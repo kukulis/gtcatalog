@@ -86,7 +86,6 @@
                         {% endfor %}
                     </tbody>
                 </table>
-
             </div>
         </div>
     </div>
@@ -110,3 +109,11 @@
     </script>
 {% endblock  javascripts %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .table td {
+            padding: 6px 12px 6px 12px;
+        }
+    </style>
+{% endblock %}
