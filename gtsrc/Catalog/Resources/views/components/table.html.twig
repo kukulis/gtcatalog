@@ -1,0 +1,49 @@
+<table class="{{ tableData.getTableOptions().tableClass }}">
+    <thead>
+    <tr>
+        {% for column in tableData.getColumns() %}
+            <th {% if column.width is defined %}style="width: {{ column.width }};"{% endif %}>{{ column.name }}</th>
+        {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+    {% for row in tableData.getRows() %}
+        <tr>
+            {% for column in tableData.getColumns() %}
+                <td>
+                    {% if column.property == 'actions' %}
+                        {% for action in column.actions %}
+                            {% set routeParams = {} %}
+                            {% for key, value in action.routeParams %}
+                                {% set routeParams = routeParams|merge({(key): attribute(row, value)}) %}
+                            {% endfor %}
+                            {% if languageCode is defined %}
+                                {% set routeParams = routeParams|merge({languageCode: languageCode}) %}
+                            {% endif %}
+                            <a href="{{ path(action.route, routeParams) }}"
+                                class="btn btn-link p-1"
+                                title="{{ action.title }}"
+                                {% if action.confirm is defined %}onclick="return confirm('{{ action.confirm }}')"{% endif %}
+                            >
+                                <i class="{{ action.icon }}"></i>
+                            </a>
+                        {% endfor %}
+                    {% elseif column.route is defined %}
+                        {% set routeParams = {} %}
+                        {% for key, value in column.routeParams %}
+                            {% set routeParams = routeParams|merge({(key): attribute(row, value)}) %}
+                        {% endfor %}
+                        <a href="{{ path(column.route, routeParams) }}">
+                            {{ attribute(row, column.property) }}
+                        </a>
+                    {% elseif column.type is defined and column.type == 'datetime' %}
+                        {{ attribute(row, column.property)|date('Y-m-d H:i') }}
+                    {% else %}
+                        {{ attribute(row, column.property) }}
+                    {% endif %}
+                </td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

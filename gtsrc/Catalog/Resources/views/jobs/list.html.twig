@@ -22,37 +22,8 @@
                 <div>
                     <a href="{{ path('gt.catalog.job_add_form') }}">Add</a>
                 </div>
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>id</th>
-                            <th>{% trans %}created at{% endtrans %}</th>
-                            <th>{% trans %}name{% endtrans %}</th>
-                            <th>{% trans %}status{% endtrans %}</th>
-                            <th>{% trans %}start time{% endtrans %}</th>
-                            <th>{% trans %}finish time{% endtrans %}</th>
-                            <th>{% trans %}total pictures{% endtrans %}</th>
-                            <th>{% trans %}imported pictures{% endtrans %}</th>
-                            <th>{% trans %}actions{% endtrans %}</th>
-                        </tr>
-                    </thead>
-                    {% for j in jobs %}
-                        <tr>
-                            <td>{{ j.id }}</td>
-                            <td>{{ j.createdTime | date ('Y-m-d H:i' ) }}</td>
-                            <td>{{ j.name }}</td>
-                            <td>{{ j.status }}</td>
-                            <td>{% if j.startTime is not empty %} {{ j.startTime | date ('Y-m-d H:i' ) }}{% else %}-{% endif %}</td>
-                            <td>{% if j.finishedTime is not empty %} {{ j.finishedTime | date ('Y-m-d H:i' ) }}{% else %}-{% endif %}</td>
-                            <td>{{ j.totalPictures }}</td>
-                            <td>{{ j.importedPictures }}</td>
-                            <td><a href="{{ path('gt.catalog.job_view', {id:j.id} ) }}">View (Edit?)</a>
-                                <a onclick="return confirm('Do you really want to delete job {{ j.id }}?')"
-                                        href="{{ path('gt.catalog.job_delete', {id:j.id} ) }}">Delete</a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </table>
+
+                {{ tableHtml|raw }}
             </div>
         </div>
     </div>

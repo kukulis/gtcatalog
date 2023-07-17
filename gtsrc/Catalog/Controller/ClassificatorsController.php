@@ -16,6 +16,8 @@ use Gt\Catalog\Form\ClassificatorFormType;
 use Gt\Catalog\Form\ClassificatorsListFilterType;
 use Gt\Catalog\Services\ClassificatorsService;
 use Gt\Catalog\Services\LanguagesService;
+use Gt\Catalog\Services\TableService;
+use Gt\Catalog\TableData\ClassificatorsTableData;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
@@ -27,6 +29,14 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ClassificatorsController extends AbstractController
 {
+    private $tableService;
+    private $tableData;
+
+    public function __construct(TableService $tableService, ClassificatorsTableData $tableData)
+    {
+        $this->tableService = $tableService;
+        $this->tableData = $tableData;
+    }
     public function listAction(Request $request, LoggerInterface $logger, ClassificatorsService $classificatorsService) {
 
         $classificatorsFilter = new ClassificatorsListFilterType();
@@ -45,10 +55,19 @@ class ClassificatorsController extends AbstractController
         $classificators = $classificatorsService->searchClassificators ( $classificatorsFilter );
         $classificatorsService->assignValues($classificators, $languageCode);
 
+        $tableData = $this->tableData->getTableData($classificators);
+
+        $tableHtml = $this->tableService->generateTableHtml(
+            $tableData->getRows(),
+            $tableData->getColumns(),
+            $tableData->getTableOptions(),
+            $languageCode,
+        );
+
         return $this->render('@Catalog/classificators/list.html.twig', [
+            'tableHtml' => $tableHtml,
             'form' => $form->createView(),
-            'classificators' => $classificators,
-            'languageCode' => $languageCode,
+            'languageCode' => $languageCode
         ]);
 
     }

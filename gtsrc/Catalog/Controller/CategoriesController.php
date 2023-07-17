@@ -7,6 +7,8 @@ use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Form\CategoriesFilterType;
 use Gt\Catalog\Form\CategoryFormType;
 use Gt\Catalog\Services\CategoriesService;
+use Gt\Catalog\Services\TableService;
+use Gt\Catalog\TableData\CategoriesTableData;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\File;
@@ -15,6 +17,14 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CategoriesController extends AbstractController
 {
+    private $tableService;
+    private $tableData;
+
+    public function __construct(TableService $tableService, CategoriesTableData $tableData)
+    {
+        $this->tableService = $tableService;
+        $this->tableData = $tableData;
+    }
     /**
      * @param string $code
      * @param string $languageCode
@@ -81,7 +91,18 @@ class CategoriesController extends AbstractController
             $languageCode = $categoriesFilter->getLanguageCode();
 
             $categoriesLanguages = $categoriesService->getCategoriesLanguages($categoriesFilter);
+
+            $tableData = $this->tableData->getTableData($categoriesLanguages);
+
+            $tableHtml = $this->tableService->generateTableHtml(
+                $tableData->getRows(),
+                $tableData->getColumns(),
+                $tableData->getTableOptions(),
+                $languageCode,
+            );
+
             return $this->render('@Catalog/categories/list.html.twig', [
+                'tableHtml' => $tableHtml,
                 'categoriesLanguages' => $categoriesLanguages,
                 'languageCode' => $languageCode,
                 'filterForm' => $filterForm->createView(),

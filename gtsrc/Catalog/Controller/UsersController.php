@@ -13,35 +13,54 @@ use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Form\UserAddFormType;
 use Gt\Catalog\Form\UserEditFormType;
 use Gt\Catalog\Form\UsersFilterFormType;
+use Gt\Catalog\Services\TableService;
 use Gt\Catalog\Services\UsersService;
+use Gt\Catalog\TableData\UsersTableData;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 
 class UsersController extends AbstractController
 {
-    public function listAction( Request  $request, LoggerInterface  $logger, UsersService  $usersService ) {
+    private $tableService;
+    private $tableData;
 
+    public function __construct(TableService $tableService, UsersTableData $tableData)
+    {
+        $this->tableService = $tableService;
+        $this->tableData = $tableData;
+    }
 
-        $logger->debug('listAction called' );
+    public function listAction(Request $request, LoggerInterface $logger, UsersService $usersService)
+    {
+        $logger->debug('listAction called');
 
         $filter = new UsersFilterFormType();
 
-        $form = $this->createForm( UsersFilterFormType::class, $filter );
+        $form = $this->createForm(UsersFilterFormType::class, $filter);
         $form->handleRequest($request);
 
         $users = $usersService->getFilteredUsers($filter);
 
+        $tableData = $this->tableData->getTableData($users);
+
+        $tableHtml = $this->tableService->generateTableHtml(
+            $tableData->getRows(),
+            $tableData->getColumns(),
+            $tableData->getTableOptions(),
+        );
+
         return $this->render('@Catalog/users/list.html.twig', [
-            'users' => $users,
+            'tableHtml' => $tableHtml,
             'filterForm' => $form->createView(),
         ]);
     }
 
-    public function editAction( Request $request, $id, UsersService  $usersService) {
+    public function editAction(Request $request, $id, UsersService $usersService)
+    {
 
         $user = $usersService->getUser($id);
-        if ( $user == null ) {
+        if ($user == null) {
             return $this->render('@Catalog/error/error.html.twig', [
                 'error' => 'There is no user with id',
             ]);
@@ -50,8 +69,8 @@ class UsersController extends AbstractController
         try {
             /** @var User $currentUser */
             $currentUser = $this->getUser();
-            if ( !$currentUser->isAdmin() && $currentUser->getId() != $user->getId() ) {
-                throw new CatalogValidateException('Only admin may edit other users' );
+            if (!$currentUser->isAdmin() && $currentUser->getId() != $user->getId()) {
+                throw new CatalogValidateException('Only admin may edit other users');
             }
 
             $userFormType = new UserEditFormType();
@@ -60,17 +79,19 @@ class UsersController extends AbstractController
             $userFormType->setEnabled($user->isEnabled());
             $userFormType->setRolesstr($user->getRolesStr());
 
-            $form = $this->createForm(UserEditFormType::class, $userFormType );
+            $form = $this->createForm(UserEditFormType::class, $userFormType);
 
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
-                if ( $currentUser->isAdmin()) {
+                if ($currentUser->isAdmin()) {
                     $user->setEnabled($userFormType->getEnabled());
 
-                    $roles = explode ( ',', $userFormType->getRolesstr());
-                    $rolesClean = array_map ( 'trim', $roles );
-                    $rolesFiltered = array_filter($rolesClean, function($role) {return !empty($role);});
+                    $roles = explode(',', $userFormType->getRolesstr());
+                    $rolesClean = array_map('trim', $roles);
+                    $rolesFiltered = array_filter($rolesClean, function ($role) {
+                        return !empty($role);
+                    });
                     $user->setRoles($rolesFiltered);
                 }
                 $usersService->storeUser($user);
@@ -85,14 +106,15 @@ class UsersController extends AbstractController
                 'id' => $id,
                 'form' => $form->createView(),
             ]);
-        } catch (CatalogValidateException $e ) {
+        } catch (CatalogValidateException $e) {
             return $this->render('@Catalog/error/error.html.twig', [
                 'error' => $e->getMessage(),
             ]);
         }
     }
 
-    public function addFormAction(Request  $request, UsersService  $usersService) {
+    public function addFormAction(Request $request, UsersService $usersService)
+    {
 
         try {
             $userAddFormType = new UserAddFormType();
@@ -108,11 +130,11 @@ class UsersController extends AbstractController
             return $this->render('@Catalog/users/add.html.twig', [
                 'form' => $form->createView(),
             ]);
-        } catch (CatalogValidateException $e ) {
+        } catch (CatalogValidateException $e) {
             return $this->render('@Catalog/error/error.html.twig', [
-            'error' => $e->getMessage(),
-        ]);
-}
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
 }

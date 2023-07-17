@@ -7,6 +7,8 @@ namespace Gt\Catalog\Controller;
 use Gt\Catalog\Entity\ClassificatorGroup;
 use Gt\Catalog\Form\ClassificatorGroupFormType;
 use Gt\Catalog\Services\ClassificatorGroupsService;
+use Gt\Catalog\Services\TableService;
+use Gt\Catalog\TableData\ClassificatorGroupsTableData;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -16,15 +18,22 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ClassificatorGroupsController extends AbstractController
 {
+    private $tableService;
+    private $tableData;
+
+    public function __construct(TableService $tableService, ClassificatorGroupsTableData $tableData)
+    {
+        $this->tableService = $tableService;
+        $this->tableData = $tableData;
+    }
+
     /**
      * @todo pakurti roles, pvz: ROLE_ADMIN_CLASSIFICATOR_GROUP
      *
      * @Route("/classificator_groups/new", name="classificator_group_new")
      *
-     * @param Request $request
-     * @param ClassificatorGroupsService $classificatorGroupsService
      */
-    public function newAction( Request $request, ClassificatorGroupsService $classificatorGroupsService)
+    public function newAction(Request $request, ClassificatorGroupsService $classificatorGroupsService)
     {
         $form = $this->createForm(ClassificatorGroupFormType::class);
         $form->handleRequest($request);
@@ -34,7 +43,7 @@ class ClassificatorGroupsController extends AbstractController
             return $this->redirectToRoute('gt.catalog.classificator_groups');
         }
 
-        return $this->render('@Catalog/classificator_groups/new.html.twig',[
+        return $this->render('@Catalog/classificator_groups/new.html.twig', [
             'classificatorGroupForm' => $form->createView()
         ]);
     }
@@ -53,8 +62,16 @@ class ClassificatorGroupsController extends AbstractController
 
         $classificatorGroups = $classificatorGroupsService->getClassificatorGroups($page);
 
+        $tableData = $this->tableData->getTableData($classificatorGroups);
+
+        $tableHtml = $this->tableService->generateTableHtml(
+            $tableData->getRows(),
+            $tableData->getColumns(),
+            $tableData->getTableOptions(),
+        );
+
         return $this->render('@Catalog/classificator_groups/list.html.twig', [
-            'classificatorGroups' => $classificatorGroups
+            'tableHtml' => $tableHtml
         ]);
     }
 

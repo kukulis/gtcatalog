@@ -46,46 +46,8 @@
         <div class="row">
             <div class="col-md-12">
                 <p>Count: {{ productsCount }}</p>
-                <table class="table table-bordered">
-                    <thead>
-                    <tr>
-                        <th style="width: 10%">{% trans %}SKU{% endtrans %}</th>
-                        <th style="width: 20%">{% trans %}Last update{% endtrans %}</th>
-                        <th style="width: 5%" title="Version">{% trans %}version{% endtrans %}</th>
-                        <th style="width: 35%">{% trans %}Name{% endtrans %}</th>
-                        <th style="width: 15%">{% trans %}Brand{% endtrans %}</th>
-                        <th style="width: 15%" colspan="3">{% trans %}Actions{% endtrans %}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for p in products %}
-                        <tr>
-                            <td>{{ p.sku }}</td>
-                            <td>{{ p.lastUpdate | date('Y-m-d H:i:s') }}</td>
-                            <td>{{ p.version }}</td>
-                            <td>{{ p.extractedName }}</td>
-                            <td>{{ p.brand }}</td>
-                            <td>
-                                <a href="{{ path('gt.catalog.product_edit', {sku: p.sku, languageCode: languageCode }) }}"
-                                   class="btn btn-link p-1"
-                                   title="Edit">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <a href="{{ path('gt.catalog.product_pictures', {sku: p.sku }) }}"
-                                   class="btn btn-link p-1"
-                                   title="Pictures">
-                                    <i class="fas fa-image"></i>
-                                </a>
-                                <a href="{{ path('gt.catalog.product_categories_edit_form', {sku: p.sku }) }}"
-                                   class="btn btn-link p-1"
-                                   title="Categories">
-                                    <i class="fas fa-list"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+
+                {{ tableHtml|raw }}
             </div>
         </div>
     </div>

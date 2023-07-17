@@ -15,6 +15,8 @@ use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Form\PicturesJobFilterFormType;
 use Gt\Catalog\Services\ImportPicturesService;
 use Gt\Catalog\Services\PicturesService;
+use Gt\Catalog\Services\TableService;
+use Gt\Catalog\TableData\ImagesImportTableData;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -23,48 +25,69 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ImagesImportController extends AbstractController
 {
-    public function jobList(Request  $request, ImportPicturesService $importPicturesService, LoggerInterface $logger) {
-        $logger->debug('jobList called' );
+    private $tableService;
+    private $tableData;
+
+    public function __construct(TableService $tableService, ImagesImportTableData $tableData)
+    {
+        $this->tableService = $tableService;
+        $this->tableData = $tableData;
+    }
+
+    public function jobList(Request $request, ImportPicturesService $importPicturesService, LoggerInterface $logger)
+    {
+        $logger->debug('jobList called');
 
         $picturesJobFilter = new PicturesJobFilterFormType();
-        $form = $this->createForm(PicturesJobFilterFormType::class, $picturesJobFilter );
+        $form = $this->createForm(PicturesJobFilterFormType::class, $picturesJobFilter);
         $form->handleRequest($request);
         $jobs = $importPicturesService->getJobs($picturesJobFilter);
 
+        $tableData = $this->tableData->getTableData($jobs);
+
+        $tableHtml = $this->tableService->generateTableHtml(
+            $tableData->getRows(),
+            $tableData->getColumns(),
+            $tableData->getTableOptions(),
+        );
+
         return $this->render('@Catalog/jobs/list.html.twig', [
-            'jobs' => $jobs,
+            'tableHtml' => $tableHtml,
             'filterForm' => $form->createView(),
         ]);
     }
 
-    public function jobAddForm() {
+    public function jobAddForm()
+    {
         return $this->render('@Catalog/jobs/add.html.twig', [
         ]);
     }
 
-    public function jobAdd( Request $request, ImportPicturesService $importPicturesService, LoggerInterface $logger ) {
+    public function jobAdd(Request $request, ImportPicturesService $importPicturesService, LoggerInterface $logger)
+    {
         try {
             $name = $request->get('name');
             $zipfile = $request->files->get('zipfile');
             $csvfile = $request->files->get('csvfile');
 
             $jobId = $importPicturesService->registerJob($name, $zipfile, $csvfile);
-            $logger->debug('Job added '.$jobId );
+            $logger->debug('Job added ' . $jobId);
 
-            return $this->redirectToRoute('gt.catalog.job_list' );
-        } catch (CatalogValidateException $e ) {
+            return $this->redirectToRoute('gt.catalog.job_list');
+        } catch (CatalogValidateException $e) {
             return $this->render('@Catalog/error/error.html.twig', [
                 'error' => $e->getMessage(),
             ]);
         }
     }
 
-    public function jobView($id, ImportPicturesService $importPicturesService) {
+    public function jobView($id, ImportPicturesService $importPicturesService)
+    {
         $job = $importPicturesService->getJob($id);
 
-        if ( $job == null ) {
+        if ($job == null) {
             return $this->render('@Catalog/error/error.html.twig', [
-                'error' => "Can't find job by id ".$id,
+                'error' => "Can't find job by id " . $id,
             ]);
         }
         return $this->render('@Catalog/jobs/edit.html.twig', [
@@ -73,31 +96,33 @@ class ImagesImportController extends AbstractController
 
     }
 
-    public function jobDelete($id, ImportPicturesService $importPicturesService) {
+    public function jobDelete($id, ImportPicturesService $importPicturesService)
+    {
         $job = $importPicturesService->getJob($id);
-        if ( $job == null ) {
+        if ($job == null) {
             return $this->render('@Catalog/error/error.html.twig', [
-                'error' => "Can't find job by id ".$id,
+                'error' => "Can't find job by id " . $id,
             ]);
         }
 
-        if ( $job->getStatus() == ImportPicturesJob::STATUS_PROCESSING ||
+        if ($job->getStatus() == ImportPicturesJob::STATUS_PROCESSING ||
             $job->getStatus() == ImportPicturesJob::STATUS_IN_QUEUE
         ) {
             return $this->render('@Catalog/error/error.html.twig', [
-                'error' => "Can't delete job ".$id.' in status '.$job->getStatus(),
+                'error' => "Can't delete job " . $id . ' in status ' . $job->getStatus(),
             ]);
         }
 
-        $importPicturesService->deleteJob ( $job );
+        $importPicturesService->deleteJob($job);
         return $this->redirectToRoute('gt.catalog.job_list');
     }
 
-    public function viewCsv ($id, ImportPicturesService $importPicturesService) {
+    public function viewCsv($id, ImportPicturesService $importPicturesService)
+    {
         $job = $importPicturesService->getJob($id);
-        if ( $job == null ) {
+        if ($job == null) {
             return $this->render('@Catalog/error/error.html.twig', [
-                'error' => "Can't find job by id ".$id,
+                'error' => "Can't find job by id " . $id,
             ]);
         }
 
@@ -114,11 +139,13 @@ class ImagesImportController extends AbstractController
     }
 
 
-    public function jobCancel() {
+    public function jobCancel()
+    {
         // TODO
     }
 
-    public function importImagesFormMeta() {
+    public function importImagesFormMeta()
+    {
         return $this->render('@Catalog/pictures/images_meta_form.html.twig',
             [
             ]
@@ -130,7 +157,8 @@ class ImagesImportController extends AbstractController
      * @param PicturesService $picturesService
      * @return Response
      */
-    public function importImagesMeta(Request $request, PicturesService $picturesService)  {
+    public function importImagesMeta(Request $request, PicturesService $picturesService)
+    {
         try {
             /** @var  UploadedFile $csvFileObject */
             $csvFileObject = $request->files->get('csvfile');
@@ -140,7 +168,7 @@ class ImagesImportController extends AbstractController
                     'count' => $count,
                 ]
             );
-        } catch (CatalogBaseException $e ) {
+        } catch (CatalogBaseException $e) {
             return $this->render('@Catalog/error/error.html.twig', [
                 'error' => $e->getMessage(),
             ]);

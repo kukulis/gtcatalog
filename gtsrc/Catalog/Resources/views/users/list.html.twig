@@ -12,28 +12,8 @@
                 <div>
                     <a href="{{ path('gt.catalog.users_add_form') }}">Add</a>
                 </div>
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>id</th>
-                            <th>login/email</th>
-                            <th>name</th>
-                            <th>roles</th>
-                            <th>enabled</th>
-                            <th>actions</th>
-                        </tr>
-                    </thead>
-                    {% for u in users %}
-                        <tr>
-                            <td>{{ u.id }}</td>
-                            <td>{{ u.email }}</td>
-                            <td>{{ u.name }}</td>
-                            <td>{{ u.rolesstr }}</td>
-                            <td>{{ u.enabled }}</td>
-                            <td><a href="{{ path( 'gt.catalog.users_edit', {id:u.id}) }}">Edit</a></td>
-                        </tr>
-                    {% endfor %}
-                </table>
+
+                {{ tableHtml|raw }}
             </div>
         </div>
     </div>

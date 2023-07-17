@@ -17,36 +17,7 @@
                 {{ form(filterForm) }}
             </div>
             <div class="col-md-12">
-                <table class="table table-bordered" >
-                    <tr>
-                        <th>Code</th>
-                        <th>Parent code</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th colspan="3">Actions</th>
-                    </tr>
-                    {% for cl in categoriesLanguages %}
-                        <tr>
-                            <td><a href="{{ path('gt.catalog.categories', {search_category: cl.category.code}) }}"> {{ cl.category.code }}</a></td>
-                            <td><a href="{{ path('gt.catalog.categories', {search_category: cl.category.parentCode}) }}">{{ cl.category.parentCode }}</a></td>
-                            <td>{{ cl.name }}</td>
-                            <td>{{ cl.description }}</td>
-                            <td><a href="{{ path('gt.catalog.category_edit', {code: cl.category.code, languageCode: languageCode}) }}">Edit</a></td>
-                            <td><a href="{{ path('gt.catalog.categories', {search_parent: cl.category.code}) }}">Children</a></td>
-                            <td><a href="{{ path('gt.catalog.categories_assigned_products', {code: cl.category.code}) }}">Products</a></td>
-                        </tr>
-                    {% endfor %}
-{#                    {% for p in products %}#}
-{#                        <tr>#}
-{#                            <td>{{ p.sku }}</td>#}
-{#                            <td>{{ p.lastUpdate | date('Y-m-d H:i:s') }}</td>#}
-{#                            <td>{{ p.version }}</td>#}
-{#                            <td>{{ p.extractedName }}</td>#}
-{#                            <td><a href="{{ path('gt.catalog.product_edit', {sku: p.sku, languageCode: languageCode }) }}">Edit</a></td>#}
-{#                            <td><a href="{{ path('gt.catalog.product_pictures', {sku: p.sku }) }}">Pictures</a></td>#}
-{#                        </tr>#}
-{#                    {% endfor %}#}
-                </table>
+                {{ tableHtml|raw }}
             </div>
         </div>
     </div>

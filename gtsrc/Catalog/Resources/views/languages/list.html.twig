@@ -2,34 +2,17 @@
 {% block title %}{% trans %}Languages{% endtrans %}{% endblock %}
 
 {% block body %}
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <h1>{% trans %}Languages{% endtrans %}</h1>
-            <div>
-                <a href="{{ path('gt.catalog.language_new') }}" class="btn btn-primary">{% trans %}Add new language{% endtrans %}</a>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>{% trans %}Languages{% endtrans %}</h1>
+                <div class="mb-3">
+                    <a href="{{ path('gt.catalog.language_new') }}"
+                       class="btn btn-primary">{% trans %}Add new language{% endtrans %}</a>
+                </div>
+
+                {{ tableHtml|raw }}
             </div>
-            <table class="table">
-            <tr>
-                    <th>{% trans %}Code{% endtrans %}</th>
-                    <th>{% trans %}Name{% endtrans %}</th>
-                    <th>{% trans %}Locale code{% endtrans %}</th>
-                    <th>Actions</th>
-                </tr>
-            {% for l in languages %}
-                <tr>
-                    <td>{{ l.code }}</td>
-                    <td>{{ l.name }}</td>
-                    <td>{{ l.localeCode }}</td>
-                    <td>
-                        <a href="{{ path('gt.catalog.language_edit', {code: l.code}) }}" class="btn btn-primary">
-                            {% trans %}Edit{% endtrans %}
-                        </a>
-                    </td>
-                </tr>
-            {% endfor %}
-            </table>
         </div>
     </div>
-</div>
 {% endblock %}

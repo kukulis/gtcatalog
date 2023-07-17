@@ -8,6 +8,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Gt\Catalog\Entity\Language;
 use Gt\Catalog\Form\LanguageFormType;
 use Gt\Catalog\Services\LanguagesService;
+use Gt\Catalog\Services\TableService;
+use Gt\Catalog\TableData\LanguagesTableData;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -18,6 +20,14 @@ use Symfony\Component\Routing\Annotation\Route;
 class LanguagesController extends AbstractController
 {
 
+    private $tableService;
+    private $tableData;
+
+    public function __construct(TableService $tableService, LanguagesTableData $tableData)
+    {
+        $this->tableService = $tableService;
+        $this->tableData = $tableData;
+    }
     /**
      * @todo pakurti roles, pvz: ROLE_ADMIN_LANGUAGE
      *
@@ -55,8 +65,16 @@ class LanguagesController extends AbstractController
 
         $languages = $languagesService->getLanguages($page);
 
+        $tableData = $this->tableData->getTableData($languages);
+
+        $tableHtml = $this->tableService->generateTableHtml(
+            $tableData->getRows(),
+            $tableData->getColumns(),
+            $tableData->getTableOptions(),
+        );
+
         return $this->render('@Catalog/languages/list.html.twig', [
-            'languages' => $languages
+            'tableHtml' => $tableHtml
         ]);
     }
 

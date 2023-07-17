@@ -12,6 +12,8 @@ use Gt\Catalog\Form\ProductFormType;
 use Gt\Catalog\Form\ProductsFilterType;
 use Gt\Catalog\Services\CategoriesService;
 use Gt\Catalog\Services\ProductsService;
+use Gt\Catalog\Services\TableService;
+use Gt\Catalog\TableData\ProductsTableData;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -23,6 +25,14 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ProductsController extends AbstractController
 {
+    private $tableService;
+    private $tableData;
+
+    public function __construct(TableService $tableService, ProductsTableData $tableData)
+    {
+        $this->tableService = $tableService;
+        $this->tableData = $tableData;
+    }
 
     /**
      * @param Request $request
@@ -42,7 +52,7 @@ class ProductsController extends AbstractController
         $productsFilterType->setMaxCsvLimit($productsService->getMaxCsv());
         $filterForm = $formFactory->create(ProductsFilterType::class, $productsFilterType);
         $filterForm->handleRequest($request);
-        
+
         if ($filterForm->get('csv')->isClicked()) {
             $pls = $productsService->getProductsLanguagesForCsv($productsFilterType);
             $csvContent = $productsService->buildCsv($pls);
@@ -56,9 +66,18 @@ class ProductsController extends AbstractController
             );
         }
 
+        $languageCode = $productsFilterType->getLanguageCode();
+
         $products = $productsService->getProducts($productsFilterType);
 
-        $languageCode = $productsFilterType->getLanguageCode();
+        $tableData = $this->tableData->getTableData($products);
+
+        $tableHtml = $this->tableService->generateTableHtml(
+            $tableData->getRows(),
+            $tableData->getColumns(),
+            $tableData->getTableOptions(),
+            $languageCode,
+        );
 
         $categories = [];
         $categoriesLanguages = [];
@@ -77,7 +96,7 @@ class ProductsController extends AbstractController
         return $this->render(
             '@Catalog/products/list.html.twig',
             [
-                'products' => $products,
+                'tableHtml' => $tableHtml,
                 'languageCode' => $languageCode,
                 'filterForm' => $filterForm->createView(),
                 'categories' => $categories,
@@ -97,12 +116,13 @@ class ProductsController extends AbstractController
      * @throws CatalogDetailedException
      */
     public function editAction(
-        Request $request,
-        $sku,
-        $languageCode,
+        Request         $request,
+                        $sku,
+                        $languageCode,
         ProductsService $productsService,
-        string $pdfGeneratorUrl
-    ) {
+        string          $pdfGeneratorUrl
+    )
+    {
         $messages = [];
         $message = '';
         $suggestions = [];
@@ -235,7 +255,7 @@ class ProductsController extends AbstractController
                     throw new CatalogValidateException('ungiven action');
                 }
             }
-        } catch (CatalogValidateException | CatalogErrorException $e) {
+        } catch (CatalogValidateException|CatalogErrorException $e) {
             return $this->render(
                 '@Catalog/error/error.html.twig',
                 [
@@ -249,7 +269,8 @@ class ProductsController extends AbstractController
         $sku,
         ProductsService $productsService,
         CategoriesService $categoriesService
-    ) {
+    )
+    {
         try {
             $product = $productsService->getProduct($sku);
 
@@ -267,7 +288,7 @@ class ProductsController extends AbstractController
                     'productCategories' => $productCategories,
                 ]
             );
-        } catch (CatalogValidateException | CatalogErrorException $e) {
+        } catch (CatalogValidateException|CatalogErrorException $e) {
             return $this->render(
                 '@Catalog/error/error.html.twig',
                 [
@@ -284,7 +305,7 @@ class ProductsController extends AbstractController
             $count = $categoriesService->updateProductCategories($sku, $categoriesStr);
 
             return new Response('Updated product ' . $sku . ' categories ' . $count);
-        } catch (CatalogValidateException | CatalogErrorException $e) {
+        } catch (CatalogValidateException|CatalogErrorException $e) {
             return $this->render(
                 '@Catalog/error/error.html.twig',
                 [
