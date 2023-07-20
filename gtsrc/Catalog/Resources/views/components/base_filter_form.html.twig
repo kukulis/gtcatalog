@@ -1,0 +1,51 @@
+<div class="row mb-3">
+    <div class="col-md-6">
+        {% block top_left_buttons %}
+        {% endblock %}
+    </div>
+    <div class="col-md-6 text-right">
+        <button class="btn btn-primary" type="button"
+                data-toggle="collapse"
+                data-target="#filterCollapse"
+                aria-expanded="{{ isFilterFormSubmitted ? 'true' : 'false' }}"
+                aria-controls="filterCollapse" id="filterButton">
+            {{ isFilterFormSubmitted ? 'Hide Filters' : 'Show Filters' }}
+        </button>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-12">
+        <div class="collapse {{ isFilterFormSubmitted ? 'show' : '' }}" id="filterCollapse">
+            <form action="{{ formAction }}" method="get" id="filterForm" class="filter-form">
+                {{ form_row(filterForm._token) }}
+
+                <div class="row">
+                    <div class="col-md-4">
+                        {% block first_column_filter_fields %}
+                        {% endblock %}
+                    </div>
+                    <div class="col-md-4">
+                        {% block second_column_filter_fields %}
+                        {% endblock %}
+                    </div>
+                    <div class="col-md-4">
+                        {% block third_column_filter_fields %}
+                        {% endblock %}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        {% block bottom_left_buttons %}
+                        {% endblock %}
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <button class="btn btn-primary" id="searchButton" type="submit" form="filterForm">Search</button>
+
+                        <a href="{{ clearPath }}" class="btn btn-outline-dark">Clear</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

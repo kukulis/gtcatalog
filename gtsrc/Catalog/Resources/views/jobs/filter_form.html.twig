@@ -1,0 +1,25 @@
+{% extends '@Catalog/components/base_filter_form.html.twig' %}
+
+{% set formAction = path('gt.catalog.job_list') %}
+{% set clearPath = path('gt.catalog.job_list') %}
+
+{% block top_left_buttons %}
+    <a class="btn btn-primary" href="{{ path('gt.catalog.job_add_form') }}">Add New Job</a>
+{% endblock %}
+
+{% block first_column_filter_fields %}
+    <div class="form-group">
+        {{ form_label(filterForm.limit, 'Limit') }}
+        {{ form_widget(filterForm.limit, { 'attr': {'class': 'form-control'} }) }}
+    </div>
+{% endblock %}
+
+{% block second_column_filter_fields %}
+    <div class="form-group">
+        {{ form_label(filterForm.status, 'Status') }}
+        {{ form_widget(filterForm.status, { 'attr': {'class': 'form-control'} }) }}
+    </div>
+{% endblock %}
+
+{% block third_column_filter_fields %}
+{% endblock %}

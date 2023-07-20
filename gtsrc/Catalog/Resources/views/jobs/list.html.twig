@@ -10,19 +10,10 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-12">
-                {{ form(filterForm) }}
-            </div>
-        </div>
+        {% include '@Catalog/jobs/filter_form.html.twig' %}
 
         <div class="row">
-
             <div class="col-md-12">
-                <div>
-                    <a href="{{ path('gt.catalog.job_add_form') }}">Add</a>
-                </div>
-
                 {{ tableHtml|raw }}
             </div>
         </div>

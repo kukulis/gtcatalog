@@ -54,6 +54,7 @@ class ImagesImportController extends AbstractController
         return $this->render('@Catalog/jobs/list.html.twig', [
             'tableHtml' => $tableHtml,
             'filterForm' => $form->createView(),
+            'isFilterFormSubmitted' => $form->isSubmitted()
         ]);
     }
 

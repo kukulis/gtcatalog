@@ -1,0 +1,51 @@
+{% extends '@Catalog/components/base_filter_form.html.twig' %}
+
+{% set formAction = path('gt.catalog.product_list') %}
+{% set clearPath = path('gt.catalog.product_list') %}
+
+{% block top_left_buttons %}
+    <a href="{{ path('gt.catalog.import_products_form') }}" class="btn btn-primary">Import Products</a>
+{% endblock %}
+
+{% block first_column_filter_fields %}
+    <div class="form-group">
+        {{ form_label(filterForm.likeSku, 'Like SKU') }}
+        {{ form_widget(filterForm.likeSku, { 'attr': {'class': 'form-control'} }) }}
+    </div>
+    <div class="form-group">
+        {{ form_label(filterForm.likeName, 'Like Name') }}
+        {{ form_widget(filterForm.likeName, { 'attr': {'class': 'form-control'} }) }}
+    </div>
+{% endblock %}
+
+{% block second_column_filter_fields %}
+    <div class="form-group">
+        {{ form_label(filterForm.dateFrom, 'Date From') }}
+        {{ form_widget(filterForm.dateFrom, { 'attr': {'class': 'form-control'} }) }}
+    </div>
+    <div class="form-group">
+        {{ form_label(filterForm.dateTill, 'Date To') }}
+        {{ form_widget(filterForm.dateTill, { 'attr': {'class': 'form-control'} }) }}
+    </div>
+{% endblock %}
+
+{% block third_column_filter_fields %}
+    <div class="form-group">
+        {{ form_label(filterForm.brand, 'Brand') }}
+        {{ form_widget(filterForm.brand, { 'attr': {'class': 'form-control'} }) }}
+    </div>
+    <div class="form-group">
+        {{ form_label(filterForm.category, 'Category') }}
+        {{ form_widget(filterForm.category, { 'attr': {'class': 'form-control'} }) }}
+    </div>
+    <div class="form-group">
+        {{ form_widget(filterForm.noLabel, { 'attr': {'class': 'form-check-input'} }) }}
+        {{ form_label(filterForm.noLabel, 'No Label', { 'label_attr': {'class': 'form-check-label'} }) }}
+    </div>
+{% endblock %}
+
+{% block bottom_left_buttons %}
+    <button type="submit" id="products_filter_csv" name="products_filter[csv]" class="btn btn-secondary btn">
+        Download CSV
+    </button>
+{% endblock %}

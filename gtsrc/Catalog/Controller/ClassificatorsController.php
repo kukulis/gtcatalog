@@ -66,8 +66,9 @@ class ClassificatorsController extends AbstractController
 
         return $this->render('@Catalog/classificators/list.html.twig', [
             'tableHtml' => $tableHtml,
-            'form' => $form->createView(),
-            'languageCode' => $languageCode
+            'filterForm' => $form->createView(),
+            'languageCode' => $languageCode,
+            'isFilterFormSubmitted' => $form->isSubmitted()
         ]);
 
     }

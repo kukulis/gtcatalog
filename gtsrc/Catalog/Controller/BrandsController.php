@@ -30,7 +30,6 @@ class BrandsController extends AbstractController
 
     public function listAction(BrandsService $brandsService, Request $request)
     {
-
         $brandsFilter = new BrandsFilterFormType();
         $form = $this->createForm(BrandsFilterFormType::class, $brandsFilter);
         $form->handleRequest($request);
@@ -49,6 +48,7 @@ class BrandsController extends AbstractController
             [
                 'tableHtml' => $tableHtml,
                 'filterForm' => $form->createView(),
+                'isFilterFormSubmitted' => $form->isSubmitted()
             ]
         );
     }

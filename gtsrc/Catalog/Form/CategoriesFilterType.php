@@ -44,6 +44,7 @@ class CategoriesFilterType extends AbstractType implements CategoriesFilter
             ->add('likeCode', TextType::class, ['required' => false])
             ->add('likeParent', TextType::class, ['required' => false])
             ->add('exactParent', TextType::class, ['required' => false])
+            ->add('offset', IntegerType::class)
             ->add('limit', IntegerType::class)
             ->add('search', SubmitType::class);
 

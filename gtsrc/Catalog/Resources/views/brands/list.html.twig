@@ -10,13 +10,9 @@
             </div>
         </div>
 
+        {% include '@Catalog/brands/filter_form.html.twig' %}
+
         <div class="row">
-            <div class="col-md-12">
-                {{ form(filterForm) }}
-            </div>
-            <div class="col-md-12">
-                <a href="{{ path('gt.catalog.brand_add') }}">{% trans %}New brand{% endtrans %}</a>
-            </div>
             <div class="col-md-12">
                 {{ tableHtml|raw }}
             </div>

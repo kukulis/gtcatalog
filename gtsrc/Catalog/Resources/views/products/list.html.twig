@@ -9,28 +9,8 @@
                 <h1>{% trans %}Products list{% endtrans %}</h1>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-6">
-                <a href="{{ path('gt.catalog.import_products_form') }}" class="btn btn-primary">Import Products</a>
-            </div>
-            <div class="col-md-6 text-right">
-                <button class="btn btn-primary" type="button"
-                        data-toggle="collapse"
-                        data-target="#filterCollapse"
-                        aria-expanded="{{ isFilterFormSubmitted ? 'true' : 'false' }}"
-                        aria-controls="filterCollapse" id="filterButton">
-                    Show Filters
-                </button>
-            </div>
-        </div>
 
-        <div class="row mb-3">
-            <div class="col-md-12">
-                <div class="collapse {{ isFilterFormSubmitted ? 'show' : '' }}" id="filterCollapse">
-                    {% include '@Catalog/products/list_filter_form.html.twig' %}
-                </div>
-            </div>
-        </div>
+        {% include '@Catalog/products/filter_form.html.twig' %}
 
         {% if categoriesLanguages is not empty %}
             <div class="row">

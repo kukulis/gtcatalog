@@ -106,6 +106,7 @@ class CategoriesController extends AbstractController
                 'categoriesLanguages' => $categoriesLanguages,
                 'languageCode' => $languageCode,
                 'filterForm' => $filterForm->createView(),
+                'isFilterFormSubmitted' => $filterForm->isSubmitted()
             ]);
         } catch (CatalogErrorException $e ) {
             return $this->render('@Catalog/error/error.html.twig', [

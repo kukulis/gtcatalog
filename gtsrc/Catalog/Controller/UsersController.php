@@ -53,6 +53,7 @@ class UsersController extends AbstractController
         return $this->render('@Catalog/users/list.html.twig', [
             'tableHtml' => $tableHtml,
             'filterForm' => $form->createView(),
+            'isFilterFormSubmitted' => $form->isSubmitted()
         ]);
     }
 
