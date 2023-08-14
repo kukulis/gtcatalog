@@ -17,7 +17,6 @@ use Gt\Catalog\TableData\ProductsTableData;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormRendererInterface;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,9 +44,10 @@ class ProductsController extends AbstractController
         LoggerInterface $logger,
         ProductsService $productsService,
         CategoryDao $categoryDao,
-        FormFactoryInterface $formFactory,
-        FormRendererInterface $formRenderer
-    ) {
+        FormFactoryInterface $formFactory
+//        FormRendererInterface $formRenderer
+    )
+    {
         $logger->info('listAction called');
 
         $productsFilterType = new ProductsFilterType();
@@ -70,7 +70,7 @@ class ProductsController extends AbstractController
 
         $languageCode = $productsFilterType->getLanguageCode();
 
-        if ( $productsFilterType->getLimit() == 0 || $productsFilterType->getLimit() < self::DEFAULT_PRODUCTS_LIMIT ) {
+        if ($productsFilterType->getLimit() == 0 || $productsFilterType->getLimit() < self::DEFAULT_PRODUCTS_LIMIT) {
             $productsFilterType->setLimit(self::DEFAULT_PRODUCTS_LIMIT);
         }
 
@@ -122,13 +122,12 @@ class ProductsController extends AbstractController
      * @throws CatalogDetailedException
      */
     public function editAction(
-        Request         $request,
-                        $sku,
-                        $languageCode,
+        Request $request,
+        $sku,
+        $languageCode,
         ProductsService $productsService,
-        string          $pdfGeneratorUrl
-    )
-    {
+        string $pdfGeneratorUrl
+    ) {
         $messages = [];
         $message = '';
         $suggestions = [];
@@ -261,7 +260,7 @@ class ProductsController extends AbstractController
                     throw new CatalogValidateException('ungiven action');
                 }
             }
-        } catch (CatalogValidateException|CatalogErrorException $e) {
+        } catch (CatalogValidateException | CatalogErrorException $e) {
             return $this->render(
                 '@Catalog/error/error.html.twig',
                 [
@@ -275,8 +274,7 @@ class ProductsController extends AbstractController
         $sku,
         ProductsService $productsService,
         CategoriesService $categoriesService
-    )
-    {
+    ) {
         try {
             $product = $productsService->getProduct($sku);
 
@@ -294,7 +292,7 @@ class ProductsController extends AbstractController
                     'productCategories' => $productCategories,
                 ]
             );
-        } catch (CatalogValidateException|CatalogErrorException $e) {
+        } catch (CatalogValidateException | CatalogErrorException $e) {
             return $this->render(
                 '@Catalog/error/error.html.twig',
                 [
@@ -311,7 +309,7 @@ class ProductsController extends AbstractController
             $count = $categoriesService->updateProductCategories($sku, $categoriesStr);
 
             return new Response('Updated product ' . $sku . ' categories ' . $count);
-        } catch (CatalogValidateException|CatalogErrorException $e) {
+        } catch (CatalogValidateException | CatalogErrorException $e) {
             return $this->render(
                 '@Catalog/error/error.html.twig',
                 [
