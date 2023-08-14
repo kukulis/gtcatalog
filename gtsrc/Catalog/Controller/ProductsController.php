@@ -57,6 +57,10 @@ class ProductsController extends AbstractController
         $filterForm->handleRequest($request);
 
         if ($filterForm->get('csv')->isClicked()) {
+            if ($productsFilterType->getLimit() == 0 || $productsFilterType->getLimit() > self::MAX_PRODUCTS_LIMIT) {
+                $productsFilterType->setLimit(self::MAX_PRODUCTS_LIMIT);
+            }
+
             $pls = $productsService->getProductsLanguagesForCsv($productsFilterType);
             $csvContent = $productsService->buildCsv($pls);
 
@@ -71,11 +75,11 @@ class ProductsController extends AbstractController
 
         $languageCode = $productsFilterType->getLanguageCode();
 
-        if ($productsFilterType->getLimit() == 0  ) {
+        if ($productsFilterType->getLimit() == 0) {
             $productsFilterType->setLimit(self::DEFAULT_PRODUCTS_LIMIT);
         }
 
-        if(  $productsFilterType->getLimit() > self::MAX_PRODUCTS_LIMIT) {
+        if ($productsFilterType->getLimit() > self::MAX_PRODUCTS_LIMIT) {
             $productsFilterType->setLimit(self::MAX_PRODUCTS_LIMIT);
         }
 
