@@ -24,7 +24,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ProductsController extends AbstractController
 {
-    const DEFAULT_PRODUCTS_LIMIT = 10000;
+    const MAX_PRODUCTS_LIMIT = 10000;
+    const DEFAULT_PRODUCTS_LIMIT = 100;
 
     private $tableService;
     private $tableData;
@@ -70,8 +71,12 @@ class ProductsController extends AbstractController
 
         $languageCode = $productsFilterType->getLanguageCode();
 
-        if ($productsFilterType->getLimit() == 0 || $productsFilterType->getLimit() < self::DEFAULT_PRODUCTS_LIMIT) {
+        if ($productsFilterType->getLimit() == 0  ) {
             $productsFilterType->setLimit(self::DEFAULT_PRODUCTS_LIMIT);
+        }
+
+        if(  $productsFilterType->getLimit() > self::MAX_PRODUCTS_LIMIT) {
+            $productsFilterType->setLimit(self::MAX_PRODUCTS_LIMIT);
         }
 
         $products = $productsService->getProducts($productsFilterType);
