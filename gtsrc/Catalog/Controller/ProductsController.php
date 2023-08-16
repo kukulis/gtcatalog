@@ -68,7 +68,9 @@ class ProductsController extends AbstractController
 
         $languageCode = $productsFilterType->getLanguageCode();
 
-        $products = $productsService->getProducts($productsFilterType);
+        $limit = $request->get('limit', 10000);
+
+        $products = $productsService->getProducts($productsFilterType, $limit);
 
         $tableData = $this->tableData->getTableData($products);
 

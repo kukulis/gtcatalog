@@ -43,7 +43,7 @@ class CatalogDao extends BaseDao
      * @param ProductsFilter $filter
      * @return Product[]
      */
-    public function getProductsListByFilter(ProductsFilter $filter)
+    public function getProductsListByFilter(ProductsFilter $filter, int $limit = null)
     {
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
@@ -54,7 +54,11 @@ class CatalogDao extends BaseDao
 
         $this->appendProductConditionsFromFilter($builder, $filter);
 
-        $builder->setMaxResults($filter->getLimit());
+        if ($limit) {
+            $builder->setMaxResults($limit);
+        } else {
+            $builder->setMaxResults($filter->getLimit());
+        }
 
         /** @var Product[] $products */
         $products = $builder->getQuery()->getResult();
@@ -62,7 +66,7 @@ class CatalogDao extends BaseDao
         return $products;
     }
 
-    public function getProductsLangListByFilter(ProductsFilter $filter)
+    public function getProductsLangListByFilter(ProductsFilter $filter, int $limit = null)
     {
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
@@ -90,10 +94,13 @@ class CatalogDao extends BaseDao
             $builder->andWhere( "(pl.label = '' or pl.label is null)");
         }
 
-        if ( $filter->getLimit() > 0 ) {
-            $builder->setMaxResults($filter->getLimit());
+        if ($limit) {
+            $builder->setMaxResults($limit);
+        } else {
+            if ($filter->getLimit() > 0) {
+                $builder->setMaxResults($filter->getLimit());
+            }
         }
-
 
         /** @var ProductLanguage[] $productsLanguages */
         $productsLanguages = $builder->getQuery()->getResult();
