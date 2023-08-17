@@ -43,7 +43,7 @@ class CatalogDao extends BaseDao
      * @param ProductsFilter $filter
      * @return Product[]
      */
-    public function getProductsListByFilter(ProductsFilter $filter, int $limit = null)
+    public function getProductsListByFilter(ProductsFilter $filter)
     {
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
