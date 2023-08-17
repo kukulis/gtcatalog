@@ -90,10 +90,9 @@ class CatalogDao extends BaseDao
             $builder->andWhere( "(pl.label = '' or pl.label is null)");
         }
 
-        if ( $filter->getLimit() > 0 ) {
+        if ($filter->getLimit() > 0) {
             $builder->setMaxResults($filter->getLimit());
         }
-
 
         /** @var ProductLanguage[] $productsLanguages */
         $productsLanguages = $builder->getQuery()->getResult();

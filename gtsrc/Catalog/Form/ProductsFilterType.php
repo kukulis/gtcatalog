@@ -51,6 +51,7 @@ class ProductsFilterType extends AbstractType implements ProductsFilter
             ->add('dateTill', TextType::class, ['required' => false])
             ->add('brand', TextType::class, ['required' => false])
             ->add('category', TextType::class, ['required' => false])
+            ->add('limit', IntegerType::class)
             ->add('noLabel', CheckboxType::class, ['required' => false])
             ->add(
                 'language',
