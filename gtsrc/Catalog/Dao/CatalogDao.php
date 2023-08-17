@@ -54,11 +54,7 @@ class CatalogDao extends BaseDao
 
         $this->appendProductConditionsFromFilter($builder, $filter);
 
-        if ($limit) {
-            $builder->setMaxResults($limit);
-        } else {
-            $builder->setMaxResults($filter->getLimit());
-        }
+        $builder->setMaxResults($filter->getLimit());
 
         /** @var Product[] $products */
         $products = $builder->getQuery()->getResult();
@@ -94,12 +90,8 @@ class CatalogDao extends BaseDao
             $builder->andWhere( "(pl.label = '' or pl.label is null)");
         }
 
-        if ($limit) {
-            $builder->setMaxResults($limit);
-        } else {
-            if ($filter->getLimit() > 0) {
-                $builder->setMaxResults($filter->getLimit());
-            }
+        if ($filter->getLimit() > 0) {
+            $builder->setMaxResults($filter->getLimit());
         }
 
         /** @var ProductLanguage[] $productsLanguages */

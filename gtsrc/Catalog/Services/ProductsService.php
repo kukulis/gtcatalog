@@ -79,13 +79,13 @@ class ProductsService extends ProductsBaseService
      * @param int $page
      * @return Product[]
      */
-    public function getProducts(ProductsFilter $filter, int $limit = null)
+    public function getProducts(ProductsFilter $filter)
     {
         if (!empty($filter->getLikeName()) || $filter->getNoLabel()) {
-            $productsLanguages = $this->catalogDao->getProductsLangListByFilter($filter, $limit);
+            $productsLanguages = $this->catalogDao->getProductsLangListByFilter($filter);
             $products = array_map(fn(ProductLanguage $pl) => $pl->getProduct(), $productsLanguages);
         } else {
-            $products = $this->catalogDao->getProductsListByFilter($filter, $limit);
+            $products = $this->catalogDao->getProductsListByFilter($filter);
             $skus = array_map(fn(Product $p) => $p->getSku(), $products);
             $productsLanguages = $this->catalogDao->getProductsLangs($skus, $filter->getLanguageCode());
         }
