@@ -62,7 +62,7 @@ class CatalogDao extends BaseDao
         return $products;
     }
 
-    public function getProductsLangListByFilter(ProductsFilter $filter, int $limit = null)
+    public function getProductsLangListByFilter(ProductsFilter $filter)
     {
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
