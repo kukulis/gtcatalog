@@ -115,7 +115,6 @@ class ProductsService extends ProductsBaseService
     public function getProductsLanguagesForCsv(ProductsFilter $filter): array
     {
         $oldLimit = $filter->getLimit();
-        $filter->setLimit($this->maxCsv);
         $productsLanguages = $this->catalogDao->getProductsLangListByFilter($filter);
 
         if ( !empty($filter->getLikeSku()) ) {

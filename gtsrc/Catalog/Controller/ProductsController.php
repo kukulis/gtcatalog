@@ -51,9 +51,17 @@ class ProductsController extends AbstractController
     {
         $logger->info('listAction called');
 
+        $languages = $productsService->getAllLanguages();
+        $languages = array_combine(
+            array_map(function ($language) { return $language->getCode(); }, $languages),
+            $languages
+        );
+
         $productsFilterType = new ProductsFilterType();
         $productsFilterType->setMaxCsvLimit($productsService->getMaxCsv());
-        $filterForm = $formFactory->create(ProductsFilterType::class, $productsFilterType);
+        $filterForm = $formFactory->create(ProductsFilterType::class, $productsFilterType, [
+            'languages' => $languages
+        ]);
         $filterForm->handleRequest($request);
 
         if ($filterForm->get('csv')->isClicked()) {

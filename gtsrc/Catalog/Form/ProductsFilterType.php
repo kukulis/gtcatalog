@@ -4,14 +4,14 @@ namespace Gt\Catalog\Form;
 
 use Gt\Catalog\Data\ProductsFilter;
 use Gt\Catalog\Entity\Language;
-use Gt\Catalog\Services\ProductsService;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductsFilterType extends AbstractType implements ProductsFilter
 {
@@ -55,10 +55,18 @@ class ProductsFilterType extends AbstractType implements ProductsFilter
             ->add('noLabel', CheckboxType::class, ['required' => false])
             ->add(
                 'language',
-                EntityType::class,
+                ChoiceType::class,
                 [
-                    'class' => Language::class,
-                    'choice_label' => 'name'
+                    'choices' => $options['languages'],
+                    'choice_label' => function ($language) {
+                        return $language ? $language->getName() : ''; // Check for null
+                    },
+                    'choice_value' => function ($language) {
+                        return $language ? $language->getCode() : '';
+                    },
+                    'data' => isset($options['languages']['en']) ? $options['languages']['en'] : null,
+                    'required' => false,
+                    'placeholder' => false
                 ]
             )
             ->add('search', SubmitType::class)
@@ -199,5 +207,13 @@ class ProductsFilterType extends AbstractType implements ProductsFilter
     public function setMaxCsvLimit($maxCsvLimit): void
     {
         $this->maxCsvLimit = $maxCsvLimit;
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'data_class' => ProductsFilterType::class,
+            'languages' => [] // Define a new option
+        ]);
     }
 }
