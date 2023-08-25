@@ -16,58 +16,43 @@ use Gt\Catalog\Entity\ProductLanguage;
 use Gt\Catalog\Entity\ProductPicture;
 use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Services\PicturesService;
+use Gt\Catalog\Transformer\ProductTransformer;
 use Gt\Catalog\Utils\BatchRunner;
 use Gt\Catalog\Utils\ProductsHelper;
 use Psr\Log\LoggerInterface;
 
 class ProductsRestService
 {
-    const MAX_PORTION = 500;
-    const STEP = 100;
+    private const MAX_PORTION = 500;
+    private const STEP = 100;
 
-    /** @var LoggerInterface */
-    private $logger;
+    private LoggerInterface $logger;
+    private CatalogDao $catalogDao;
+    private CategoryDao $categoryDao;
+    private LanguageDao $languageDao;
+    private PicturesDao $picturesDao;
+    private PicturesService $picturesService;
+    private ProductTransformer $productTransformer;
 
-    /** @var CatalogDao */
-    private $catalogDao;
+    private array $languagesMap = [];
 
-    /** @var CategoryDao */
-    private $categoryDao;
-
-    /** @var PicturesDao */
-    private $picturesDao;
-
-    /** @var PicturesService */
-    private $picturesSevice;
-
-    /** @var array   initialized dynamicaly */
-    private $languagesMap = null;
-
-    /** @var LanguageDao */
-    private $languageDao;
-
-    /**
-     * ProductsRestService constructor.
-     * @param LoggerInterface $logger
-     * @param CatalogDao $catalogDao
-     * @param CategoryDao $categoryDao
-     */
     public function __construct(
         LoggerInterface $logger,
         CatalogDao $catalogDao,
         CategoryDao $categoryDao,
         PicturesDao $picturesDao,
         PicturesService $picturesService,
-        LanguageDao $languageDao
+        LanguageDao $languageDao,
+        ProductTransformer $productTransformer
     ) {
         $this->logger = $logger;
         $this->catalogDao = $catalogDao;
         $this->categoryDao = $categoryDao;
-        $this->picturesDao = $picturesDao;
-        $this->picturesSevice = $picturesService;
         $this->languageDao = $languageDao;
+        $this->picturesDao = $picturesDao;
+        $this->picturesService = $picturesService;
+        $this->productTransformer = $productTransformer;
     }
-
 
     /**
      * @param string[] $skus
@@ -113,7 +98,7 @@ class ProductsRestService
             $productsPicturesArraysMap[$sku] = [];
         }
         foreach ($productsPictures as $pp) {
-            $path = $this->picturesSevice->calculatePicturePath(
+            $path = $this->picturesService->calculatePicturePath(
                 $pp->getPicture()->getId(),
                 $pp->getPicture()->getName()
             );
@@ -283,22 +268,17 @@ class ProductsRestService
     }
 
     /**
-     * @param string[] $skus
-     * @param string $lang
      * @return \Catalog\B2b\Common\Data\Catalog\Product[]
      */
-    public function getRestProducts($skus, $lang)
+    public function getRestProducts(array $skus, string $language): array
     {
-        $productsLanguages = $this->getProductsLanguages($skus, $lang);
+        $productsByLanguage = $this->getProductsLanguages($skus, $language);
 
-        /** @var \Catalog\B2b\Common\Data\Catalog\Product[] $rez */
-        $rez = [];
-
-        foreach ($productsLanguages as $pl) {
-            $p = ProductsHelper::transformToRestProduct($pl);
-            $rez [] = $p;
+        $transformedProducts = [];
+        foreach ($productsByLanguage as $productLanguage) {
+            $transformedProducts[] = $this->productTransformer->transformToRestProduct($productLanguage);
         }
-        return $rez;
-    }
 
+        return $transformedProducts;
+    }
 }

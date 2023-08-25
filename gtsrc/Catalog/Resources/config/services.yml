@@ -170,6 +170,10 @@ services:
             - [setRootPath, ['%kernel.project_dir%']]
             - [setBaseDir, ['img']]
 
+    Gt\Catalog\Transformer\ProductTransformer:
+        arguments:
+            - '@gt.catalog.categories_service'
+
 
     # ----------------- REST -----------------------------------
     gt.catalog.products_rest_service:
@@ -181,8 +185,7 @@ services:
             - '@gt.catalog.pictures_dao'
             - '@gt.catalog.pictures_service'
             - '@gt.catalog.language_dao'
-#        calls:
-#            - [setLanguagesMap,['%gt.catalog.languages_map%']]
+            - '@Gt\Catalog\Transformer\ProductTransformer'
 
     Gt\Catalog\Rest\Controllers\ProductsLegacyRestController:
         tags:

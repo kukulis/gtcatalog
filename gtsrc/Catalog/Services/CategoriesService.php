@@ -20,6 +20,7 @@ use Gt\Catalog\Utils\CategoriesHelper;
 use Gt\Catalog\Utils\CategoriesTree;
 use Gt\Catalog\Utils\CsvUtils;
 use Psr\Log\LoggerInterface;
+use Catalog\B2b\Common\Data\Catalog\Category as CatalogCategory;
 
 
 class CategoriesService extends ProductsBaseService
@@ -338,6 +339,25 @@ class CategoriesService extends ProductsBaseService
 
     public function getProductCategories ( $sku ) {
         return $this->categoryDao->getProductCategories($sku);
+    }
+
+    public function getTransformedProductCategories(string $sku, string $languageCode): array {
+        $productCategories = $this->getProductCategories($sku);
+
+        $categories = [];
+        foreach ($productCategories as $productCategory) {
+            $categoryLanguage = $this->categoryDao->getCategoryLanguage($productCategory->getCategory()->getCode(), $languageCode);
+
+            $category = new CatalogCategory();
+            $category->code = $categoryLanguage->getCode();
+            $category->name = $categoryLanguage->getName();
+            $category->description = $categoryLanguage->getDescription();
+            $category->language = $categoryLanguage->getLanguageCode();
+
+            $categories[] = $category;
+        }
+
+        return $categories;
     }
 
     /**

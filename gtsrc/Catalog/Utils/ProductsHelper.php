@@ -126,59 +126,6 @@ class ProductsHelper
     }
 
     /**
-     * @param ProductLanguage $productLanguage
-     * @return \Catalog\B2b\Common\Data\Catalog\Product
-     */
-    public static function transformToRestProduct(ProductLanguage $productLanguage) {
-        $restProduct = new \Catalog\B2b\Common\Data\Catalog\Product();
-        $product = $productLanguage->getProduct();
-
-        $restProduct->sku                          = $product->getSku();
-        $restProduct->lastUpdate                   = self::getFormatedDate( $product->getLastUpdate(),self::DATE_FORMAT);
-        $restProduct->version                      = $product->getVersion();
-        $restProduct->brand                        = $product->getBrand();
-        $restProduct->line                         = $product->getLine();
-        $restProduct->parentSku                    = $product->getParentSku();
-        $restProduct->originCountryCode            = $product->getOriginCountryCode();
-        $restProduct->vendor                       = $product->getVendor();
-        $restProduct->manufacturer                 = $product->getManufacturer();
-        $restProduct->type                         = self::getClassificatorCode($product->getType() );
-        $restProduct->purpose                      = self::getClassificatorCode($product->getPurpose() );
-        $restProduct->measure                      = self::getClassificatorCode($product->getMeasure() );
-        $restProduct->color                        = $product->getColor();
-        $restProduct->forMale                      = $product->getForMale();
-        $restProduct->forFemale                    = $product->getForFemale();
-        $restProduct->size                         = $product->getSize();
-        $restProduct->packSize                     = $product->getPackSize();
-        $restProduct->packAmount                   = $product->getPackAmount();
-        $restProduct->weight                       = $product->getWeight();
-        $restProduct->length                       = $product->getLength();
-        $restProduct->height                       = $product->getHeight();
-        $restProduct->width                        = $product->getWidth();
-        $restProduct->deliveryTime                 = $product->getDeliveryTime();
-        $restProduct->depositCode                  = $product->getDepositCode();
-        $restProduct->codeFromCustom               = $product->getCodeFromCustom();
-        $restProduct->guaranty                     = $product->getGuaranty();
-        $restProduct->codeFromSupplier             = $product->getCodeFromSupplier();
-        $restProduct->codeFromVendor               = $product->getCodeFromVendor();
-        $restProduct->productgroup                 = self::getClassificatorCode($product->getProductgroup());
-        $restProduct->priority                     = $product->getPriority();
-        $restProduct->googleProductCategoryId      = $product->getGoogleProductCategoryId();
-        $restProduct->ean                          = $product->getSku(); // may be getEan later
-        $restProduct->language                     = $productLanguage->getLanguage()->getCode();
-        $restProduct->name                         = $productLanguage->getName();
-        $restProduct->description                  = $productLanguage->getDescription();
-        $restProduct->label                        = $productLanguage->getLabel();
-        $restProduct->variantName                  = $productLanguage->getVariantName();
-        $restProduct->tags                         = $productLanguage->getTags();
-        $restProduct->labelSize                    = $productLanguage->getLabelSize();
-        $restProduct->distributor                  = $productLanguage->getDistributor();
-        $restProduct->composition                  = $productLanguage->getComposition();
-
-        return $restProduct;
-    }
-
-    /**
      * @param Classificator|null $c
      * @return string|null
      */
@@ -195,7 +142,7 @@ class ProductsHelper
      * @param string $format
      * @return string
      */
-    public static function getFormatedDate ( DateTime $dateTime=null, $format ) {
+    public static function getFormattedDate ( DateTime $dateTime=null, $format ) {
         if ( $dateTime==null) {
             return '';
         }
