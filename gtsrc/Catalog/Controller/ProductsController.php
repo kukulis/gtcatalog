@@ -52,6 +52,7 @@ class ProductsController extends AbstractController
         $logger->info('listAction called');
 
         $languages = $productsService->getAllLanguages();
+        // TODO if possible to avoid index
         $languages = array_combine(
             array_map(function ($language) { return $language->getCode(); }, $languages),
             $languages

@@ -64,6 +64,7 @@ class ProductsFilterType extends AbstractType implements ProductsFilter
                     'choice_value' => function ($language) {
                         return $language ? $language->getCode() : '';
                     },
+                    // TODO fix later somehow
                     'data' => isset($options['languages']['en']) ? $options['languages']['en'] : null,
                     'required' => false,
                     'placeholder' => false
