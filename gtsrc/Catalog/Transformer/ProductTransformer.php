@@ -12,6 +12,7 @@ class ProductTransformer {
 
     private CategoriesService $categoriesService;
 
+    // FIXME do not inject outside service
     public function __construct(CategoriesService $categoriesService) {
         $this->categoriesService = $categoriesService;
     }
@@ -62,6 +63,7 @@ class ProductTransformer {
         $restProduct->ean = $productLanguage->getProduct()->getSku();
     }
 
+    // TODO move loading of categories out of this class
     private function assignCategories(CatalogProduct &$restProduct, string $languageCode): void {
         $categories = $this->categoriesService->getTransformedProductCategories($restProduct->sku, $languageCode);
         $restProduct->categories = $categories;

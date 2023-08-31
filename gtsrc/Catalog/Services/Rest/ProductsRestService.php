@@ -277,6 +277,7 @@ class ProductsRestService
         $transformedProducts = [];
         foreach ($productsByLanguage as $productLanguage) {
             $transformedProducts[] = $this->productTransformer->transformToRestProduct($productLanguage);
+            // /a/ab/abc
         }
 
         return $transformedProducts;
