@@ -274,10 +274,13 @@ class ProductsRestService
     {
         $productsByLanguage = $this->getProductsLanguages($skus, $language);
 
+        // TODO load categories by many skus
+        // TODO put to 'map' with MapBuilder
+
         $transformedProducts = [];
         foreach ($productsByLanguage as $productLanguage) {
             $transformedProducts[] = $this->productTransformer->transformToRestProduct($productLanguage);
-            // /a/ab/abc
+            // TODO attach category by product sku from 'map'
         }
 
         return $transformedProducts;
