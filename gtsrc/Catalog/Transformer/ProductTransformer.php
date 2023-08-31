@@ -25,7 +25,8 @@ class ProductTransformer {
         return $restProduct;
     }
 
-    private function mapProductToRestProduct(Product $product, CatalogProduct &$restProduct): void {
+    // TODO check if works without &
+    private function mapProductToRestProduct(Product $product, CatalogProduct $restProduct): void {
         $directMappings = [
             'sku', 'version', 'brand', 'line', 'parentSku', 'originCountryCode',
             'vendor', 'manufacturer', 'color', 'forMale', 'forFemale', 'size',
