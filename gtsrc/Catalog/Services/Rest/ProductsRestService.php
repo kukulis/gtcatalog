@@ -15,6 +15,7 @@ use Gt\Catalog\Entity\ProductCategory;
 use Gt\Catalog\Entity\ProductLanguage;
 use Gt\Catalog\Entity\ProductPicture;
 use Gt\Catalog\Exception\CatalogValidateException;
+use Gt\Catalog\Services\CategoriesService;
 use Gt\Catalog\Services\PicturesService;
 use Gt\Catalog\Transformer\ProductTransformer;
 use Gt\Catalog\Utils\BatchRunner;
@@ -29,6 +30,7 @@ class ProductsRestService
     private LoggerInterface $logger;
     private CatalogDao $catalogDao;
     private CategoryDao $categoryDao;
+    private CategoriesService $categoriesService;
     private LanguageDao $languageDao;
     private PicturesDao $picturesDao;
     private PicturesService $picturesService;
@@ -40,6 +42,7 @@ class ProductsRestService
         LoggerInterface $logger,
         CatalogDao $catalogDao,
         CategoryDao $categoryDao,
+        CategoriesService $categoriesService,
         PicturesDao $picturesDao,
         PicturesService $picturesService,
         LanguageDao $languageDao,
@@ -48,6 +51,7 @@ class ProductsRestService
         $this->logger = $logger;
         $this->catalogDao = $catalogDao;
         $this->categoryDao = $categoryDao;
+        $this->categoriesService = $categoriesService;
         $this->languageDao = $languageDao;
         $this->picturesDao = $picturesDao;
         $this->picturesService = $picturesService;
@@ -274,13 +278,20 @@ class ProductsRestService
     {
         $productsByLanguage = $this->getProductsLanguages($skus, $language);
 
-        // TODO load categories by many skus
-        // TODO put to 'map' with MapBuilder
+        $productSkus = array_map(fn ($productLanguage) => $productLanguage->getProduct()->getSku(), $productsByLanguage);
+
+        $categories = $this->categoriesService->getTransformedProductCategories($productSkus, $language);
 
         $transformedProducts = [];
         foreach ($productsByLanguage as $productLanguage) {
-            $transformedProducts[] = $this->productTransformer->transformToRestProduct($productLanguage);
-            // TODO attach category by product sku from 'map'
+            $restProduct = $this->productTransformer->transformToRestProduct($productLanguage);
+
+            $restProduct->categories = array_filter(
+                $categories,
+                fn($category) => $category->sku === $productLanguage->getProduct()->getSku()
+            );
+
+            $transformedProducts[] = $restProduct;
         }
 
         return $transformedProducts;

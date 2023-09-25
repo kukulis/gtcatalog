@@ -341,8 +341,14 @@ class CategoriesService extends ProductsBaseService
         return $this->categoryDao->getProductCategories($sku);
     }
 
-    public function getTransformedProductCategories(string $sku, string $languageCode): array {
-        $productCategories = $this->getProductCategories($sku);
+    public function getProductCategoriesBatch(array $skus): array
+    {
+        return $this->categoryDao->getProductCategoriesBatch($skus);
+    }
+
+    public function getTransformedProductCategories(array $skus, string $languageCode): array {
+        /** @var ProductCategory[] $productCategories */
+        $productCategories = $this->getProductCategoriesBatch($skus);
 
         $categories = [];
         foreach ($productCategories as $productCategory) {
@@ -353,6 +359,7 @@ class CategoriesService extends ProductsBaseService
             $category->name = $categoryLanguage->getName();
             $category->description = $categoryLanguage->getDescription();
             $category->language = $categoryLanguage->getLanguageCode();
+            $category->sku = $productCategory->getProduct()->getSku();
 
             $categories[] = $category;
         }

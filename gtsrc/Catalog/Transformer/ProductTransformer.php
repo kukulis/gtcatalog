@@ -9,19 +9,10 @@ use Gt\Catalog\Services\CategoriesService;
 use Gt\Catalog\Utils\ProductsHelper;
 
 class ProductTransformer {
-
-    private CategoriesService $categoriesService;
-
-    // FIXME do not inject outside service
-    public function __construct(CategoriesService $categoriesService) {
-        $this->categoriesService = $categoriesService;
-    }
-
     public function transformToRestProduct(ProductLanguage $productLanguage): CatalogProduct {
         $restProduct = new CatalogProduct();
         $this->mapProductToRestProduct($productLanguage->getProduct(), $restProduct);
         $this->mapProductLanguageToRestProduct($productLanguage, $restProduct);
-        $this->assignCategories($restProduct, $productLanguage->getLanguageCode());
 
         return $restProduct;
     }
@@ -50,7 +41,7 @@ class ProductTransformer {
         $restProduct->productgroup = ProductsHelper::getClassificatorCode($product->getProductgroup());
     }
 
-    private function mapProductLanguageToRestProduct(ProductLanguage $productLanguage, CatalogProduct &$restProduct): void {
+    private function mapProductLanguageToRestProduct(ProductLanguage $productLanguage, CatalogProduct $restProduct): void {
         $restProduct->language = $productLanguage->getLanguage()->getCode();
         $restProduct->name = $productLanguage->getName();
         $restProduct->description = $productLanguage->getDescription();
@@ -61,11 +52,5 @@ class ProductTransformer {
         $restProduct->distributor = $productLanguage->getDistributor();
         $restProduct->composition = $productLanguage->getComposition();
         $restProduct->ean = $productLanguage->getProduct()->getSku();
-    }
-
-    // TODO move loading of categories out of this class
-    private function assignCategories(CatalogProduct &$restProduct, string $languageCode): void {
-        $categories = $this->categoriesService->getTransformedProductCategories($restProduct->sku, $languageCode);
-        $restProduct->categories = $categories;
     }
 }
