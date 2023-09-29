@@ -17,8 +17,10 @@ use Gt\Catalog\Entity\ProductPicture;
 use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Services\CategoriesService;
 use Gt\Catalog\Services\PicturesService;
+use Gt\Catalog\Transformer\CategoryTransformer;
 use Gt\Catalog\Transformer\ProductTransformer;
 use Gt\Catalog\Utils\BatchRunner;
+use Gt\Catalog\Utils\MapBuilder;
 use Gt\Catalog\Utils\ProductsHelper;
 use Psr\Log\LoggerInterface;
 
@@ -30,6 +32,8 @@ class ProductsRestService
     private LoggerInterface $logger;
     private CatalogDao $catalogDao;
     private CategoryDao $categoryDao;
+
+    // TODO unused service
     private CategoriesService $categoriesService;
     private LanguageDao $languageDao;
     private PicturesDao $picturesDao;
@@ -82,7 +86,7 @@ class ProductsRestService
         // 1) load all data from database
         $productsLanguages = $this->catalogDao->batchGetProductsLangsWithSubobjects($skus, $langCode, self::STEP);
 
-        $additionalProductLanguages= BatchRunner::runBatchArrayResult(
+        $additionalProductLanguages = BatchRunner::runBatchArrayResult(
             $skus,
             100,
             fn($part) => $this->catalogDao->loadProductLanguagesLazy($part, $addidionalLanguages),
@@ -220,14 +224,14 @@ class ProductsRestService
      * @param ProductLanguage[] $productLanguages
      * @return array
      */
-    public static function buildAdditionalNameLanguageData(array $productLanguages) : array {
-
+    public static function buildAdditionalNameLanguageData(array $productLanguages): array
+    {
         $result = [];
 
         foreach ($productLanguages as $pl) {
             $sku = $pl->getProduct()->getSku();
 
-            if ( !array_key_exists($pl->getProduct()->getSku(), $result)) {
+            if (!array_key_exists($pl->getProduct()->getSku(), $result)) {
                 $result[$sku] = [];
             }
 
@@ -278,22 +282,66 @@ class ProductsRestService
     {
         $productsByLanguage = $this->getProductsLanguages($skus, $language);
 
-        $productSkus = array_map(fn ($productLanguage) => $productLanguage->getProduct()->getSku(), $productsByLanguage);
+        $transformedProducts = array_map(
+            fn($pl) => $this->productTransformer->transformToRestProduct($pl),
+            $productsByLanguage
+        );
 
-        $categories = $this->categoriesService->getTransformedProductCategories($productSkus, $language);
-
-        $transformedProducts = [];
-        foreach ($productsByLanguage as $productLanguage) {
-            $restProduct = $this->productTransformer->transformToRestProduct($productLanguage);
-
-            $restProduct->categories = array_filter(
-                $categories,
-                fn($category) => $category->sku === $productLanguage->getProduct()->getSku()
-            );
-
-            $transformedProducts[] = $restProduct;
-        }
+        $this->assignCategories($transformedProducts, $language);
 
         return $transformedProducts;
+    }
+
+    /**
+     * @param \Catalog\B2b\Common\Data\Catalog\Product[] $products
+     */
+    private function assignCategories(array $products, string $language)
+    {
+        $skus = array_map(fn($p) => $p->sku, $products);
+        $productsCategories = $this->categoryDao->getProductsCategories($skus);
+
+        $categoriesCodes = array_unique(array_map(fn($pc) => $pc->getCategory()->getCode(), $productsCategories));
+        $categoriesLanguages = $this->categoryDao->getCategoriesLanguages($categoriesCodes, $language);
+
+        /** @var CategoryLanguage[] $categoriesLanguagesMap indexed by category code */
+        $categoriesLanguagesMap = MapBuilder::buildMap(
+            $categoriesLanguages,
+            fn(CategoryLanguage $cl) => $cl->getCode()
+        );
+
+
+        $restProductsMap = MapBuilder::buildMap($products, fn(\Catalog\B2b\Common\Data\Catalog\Product $p) => $p->sku);
+
+        foreach ($productsCategories as $productCategory) {
+            if (!array_key_exists($productCategory->getProduct()->getSku(), $restProductsMap)) {
+                // If impossible then delete this 'if' block
+                $this->logger->error(
+                    sprintf(
+                        'No rest product found for sku %s (category %s)',
+                        $productCategory->getProduct()->getSku(),
+                        $productCategory->getCategory()->getCode()
+                    )
+                );
+                continue;
+            }
+
+            $restProduct = $restProductsMap[$productCategory->getProduct()->getSku()];
+
+            if (!array_key_exists($productCategory->getCategory()->getCode(), $categoriesLanguagesMap)) {
+                $this->logger->error(
+                    sprintf(
+                        'No category language found for category %s language %s product %s ',
+                        $productCategory->getCategory()->getCode(),
+                        $language,
+                        $productCategory->getProduct()->getSku(),
+
+                    )
+                );
+                continue;
+            }
+
+            $cl = $categoriesLanguagesMap[$productCategory->getCategory()->getCode()];
+            $restProduct->categories[] = CategoryTransformer::transformToRest($cl);
+        }
     }
 }

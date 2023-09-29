@@ -5,7 +5,6 @@ namespace Gt\Catalog\Transformer;
 use Catalog\B2b\Common\Data\Catalog\Product as CatalogProduct;
 use Gt\Catalog\Entity\Product;
 use Gt\Catalog\Entity\ProductLanguage;
-use Gt\Catalog\Services\CategoriesService;
 use Gt\Catalog\Utils\ProductsHelper;
 
 class ProductTransformer {

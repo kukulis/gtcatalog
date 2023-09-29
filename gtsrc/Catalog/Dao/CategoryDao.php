@@ -307,28 +307,6 @@ class CategoryDao extends BaseDao
     }
 
     /**
-     * @return ProductCategory[]
-     */
-    public function getProductCategoriesBatch(array $skus): array
-    {
-        /** @var EntityManager $em */
-        $em = $this->doctrine->getManager();
-        $class = ProductCategory::class;
-
-        $dql = /** @lang DQL */
-            "SELECT pc FROM $class pc
-             JOIN pc.product p
-             WHERE p.sku IN (:skus)";
-        $query = $em->createQuery($dql);
-        $query->setParameter('skus', $skus);
-
-        /** @var ProductCategory[] $productCategories */
-        $productCategories = $query->getResult();
-
-        return $productCategories;
-    }
-
-    /**
      * @param string[] $skus
      * @return ProductCategory[]
      */
