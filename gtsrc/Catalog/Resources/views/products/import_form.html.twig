@@ -53,10 +53,30 @@
                     <li>categories (codes separated with spaces)</li>
                     <li>categories_del (codes separated with spaces)</li>
                 </ul>
-                <form method="post" enctype="multipart/form-data" action="{{ path('gt.catalog.import_products') }}">
-                    <input type="file" name="csvfile" /><br/>
-                    <input type="submit" name="import" value="Importuoti" /><br/>
-                    <input type="submit" name="import_classificators" value="Importuoti klasifikatorius" /><br/>
+                <form method="post" enctype="multipart/form-data" action="{{ path('gt.catalog.import_products') }}" class="col-xs-12">
+                    <div class="row form-group">
+                        <label for="csvfile" class="col-xs-2 control-label">
+                            CSV failas
+                        </label>
+                        <div class="col-xs-10">
+                            <input type="file" name="csvfile" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <label for="delimiter" class="col-xs-2 control-label">
+                            Pasirinkite CSV skyriklį
+                        </label>
+                        <div class="col-xs-10">
+                            <select name="delimiter" id="delimiter" class="form-control">
+                                <option value=",">Kablelis (,)</option>
+                                <option value=";">Kabliataškis (;)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <p>
+                    <input type="submit" name="import" value="Importuoti" class="btn btn-primary"/>
+                    <input type="submit" name="import_classificators" value="Importuoti klasifikatorius" class="btn btn-primary"/><br/>
+                    </p>
                 </form>
             </div>
         </div>

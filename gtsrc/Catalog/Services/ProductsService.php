@@ -117,7 +117,7 @@ class ProductsService extends ProductsBaseService
         $oldLimit = $filter->getLimit();
         $productsLanguages = $this->catalogDao->getProductsLangListByFilter($filter);
 
-        if ( !empty($filter->getLikeSku()) ) {
+        if (!empty($filter->getLikeSku())) {
             $products = $this->catalogDao->getProductsListByFilter($filter);
             // join both
             $plsMap = MapBuilder::buildMap($productsLanguages, fn(ProductLanguage $pl) => $pl->getSku());
@@ -133,8 +133,7 @@ class ProductsService extends ProductsBaseService
 
                 $plResult[] = $pl;
             }
-        }
-        else {
+        } else {
             $plResult = $productsLanguages;
         }
 
@@ -196,45 +195,45 @@ class ProductsService extends ProductsBaseService
 
         foreach ($productsLanguages as $pl) {
 //            try {
-                fputcsv($f, [
-                    $pl->getSku(),
-                    $pl->getLanguageCode(),
+            fputcsv($f, [
+                $pl->getSku(),
+                $pl->getLanguageCode(),
 
-                    $pl->getName(),
-                    $pl->getDescription(),
-                    $pl->getLabel(),
-                    $pl->getLabelSize(),
-                    $pl->getVariantName(),
-                    $pl->getInfoProvider(),
-                    $pl->getTags(),
+                $pl->getName(),
+                $pl->getDescription(),
+                $pl->getLabel(),
+                $pl->getLabelSize(),
+                $pl->getVariantName(),
+                $pl->getInfoProvider(),
+                $pl->getTags(),
 
-                    $pl->getProduct()->getLastUpdate()->format('Y-m-d H:i:s'),
-                    $pl->getProduct()->getVersion(),
-                    $pl->getProduct()->getBrand(),
-                    $pl->getProduct()->getLine(),
-                    $pl->getProduct()->getParentSku(),
-                    $pl->getProduct()->getOriginCountryCode(),
-                    $pl->getProduct()->getVendor(),
-                    $pl->getProduct()->getManufacturer(),
-                    $pl->getProduct()->getPurposeCode(),
-                    $pl->getProduct()->getTypeCode(),
-                    $pl->getProduct()->getMeasureCode(),
-                    $pl->getProduct()->getColor(),
-                    $pl->getProduct()->getForMale(),
-                    $pl->getProduct()->getForFemale(),
-                    $pl->getProduct()->getSize(),
-                    $pl->getProduct()->getPackSize(),
-                    $pl->getProduct()->getPackAmount(),
-                    $pl->getProduct()->getWeight(),
-                    $pl->getProduct()->getLength(),
-                    $pl->getProduct()->getHeight(),
-                    $pl->getProduct()->getWidth(),
-                    $pl->getProduct()->getDeliveryTime(),
-                    $pl->getProduct()->getPriority(),
-                    $pl->getProduct()->getGoogleProductCategoryId(),
-                    $pl->getProduct()->getInfoProvider(),
-                    $pl->getProduct()->getIngredients(),
-                ]);
+                $pl->getProduct()->getLastUpdate()->format('Y-m-d H:i:s'),
+                $pl->getProduct()->getVersion(),
+                $pl->getProduct()->getBrand(),
+                $pl->getProduct()->getLine(),
+                $pl->getProduct()->getParentSku(),
+                $pl->getProduct()->getOriginCountryCode(),
+                $pl->getProduct()->getVendor(),
+                $pl->getProduct()->getManufacturer(),
+                $pl->getProduct()->getPurposeCode(),
+                $pl->getProduct()->getTypeCode(),
+                $pl->getProduct()->getMeasureCode(),
+                $pl->getProduct()->getColor(),
+                $pl->getProduct()->getForMale(),
+                $pl->getProduct()->getForFemale(),
+                $pl->getProduct()->getSize(),
+                $pl->getProduct()->getPackSize(),
+                $pl->getProduct()->getPackAmount(),
+                $pl->getProduct()->getWeight(),
+                $pl->getProduct()->getLength(),
+                $pl->getProduct()->getHeight(),
+                $pl->getProduct()->getWidth(),
+                $pl->getProduct()->getDeliveryTime(),
+                $pl->getProduct()->getPriority(),
+                $pl->getProduct()->getGoogleProductCategoryId(),
+                $pl->getProduct()->getInfoProvider(),
+                $pl->getProduct()->getIngredients(),
+            ]);
 //            } catch (\Error $e) {
 //                throw $e;
 //            }
@@ -355,16 +354,17 @@ class ProductsService extends ProductsBaseService
 
     /**
      * @param $csvFile
-     * @return int
-     * @throws CatalogValidateException
+     * @param string $delimiter
+     * @return mixed
      * @throws CatalogErrorException
+     * @throws CatalogValidateException
      */
-    public function importProducts($csvFile)
+    public function importProducts($csvFile, string $delimiter = ',')
     {
         $f = fopen($csvFile, 'r');
 
         // read head
-        $head = fgetcsv($f);
+        $head = fgetcsv($f, null, $delimiter);
         $this->validateHead($head);
 
         $headMap = array_flip($head);
@@ -375,7 +375,7 @@ class ProductsService extends ProductsBaseService
         // read all data to memory
 
         $lines = [];
-        while (($line = fgetcsv($f)) != null) {
+        while (($line = fgetcsv($f, null, $delimiter)) != null) {
             $lines[] = $line;
         }
         fclose($f);
@@ -625,22 +625,24 @@ class ProductsService extends ProductsBaseService
 
 
     /**
-     * @param string $csvFile
+     * @param $csvFile
+     * @param string $delimiter
      * @return int
      * @throws CatalogErrorException
+     * @throws CatalogValidateException
      */
-    public function importClassificatorsFromProductsCsv($csvFile)
+    public function importClassificatorsFromProductsCsv($csvFile, string $delimiter = ',')
     {
         $f = fopen($csvFile, 'r');
 
         // read head
-        $head = fgetcsv($f);
+        $head = fgetcsv($f, null, $delimiter);
         $headMap = array_flip($head);
 
         // read all data to memory
 
         $lines = [];
-        while (($line = fgetcsv($f)) != null) {
+        while (($line = fgetcsv($f, null, $delimiter)) != null) {
             $lines[] = $line;
         }
         fclose($f);
