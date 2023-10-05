@@ -54,7 +54,9 @@ class ProductsController extends AbstractController
         $languages = $productsService->getAllLanguages();
         // TODO if possible to avoid index
         $languages = array_combine(
-            array_map(function ($language) { return $language->getCode(); }, $languages),
+            array_map(function ($language) {
+                return $language->getCode();
+            }, $languages),
             $languages
         );
 
@@ -248,6 +250,7 @@ class ProductsController extends AbstractController
 
         $import = $r->get('import');
         $import_classificators = $r->get('import_classificators');
+        $delimiter = $r->get('delimiter', ',');
 
         try {
             if (empty($csvFileObj)) {
@@ -256,7 +259,7 @@ class ProductsController extends AbstractController
             $file = $csvFileObj->getPathname();
 
             if (!empty($import)) {
-                $count = $productsService->importProducts($file);
+                $count = $productsService->importProducts($file, $delimiter);
 
                 return $this->render(
                     '@Catalog/products/import_products_results.html.twig',
@@ -266,7 +269,7 @@ class ProductsController extends AbstractController
                 );
             } else {
                 if (!empty($import_classificators)) {
-                    $count = $productsService->importClassificatorsFromProductsCsv($file);
+                    $count = $productsService->importClassificatorsFromProductsCsv($file, $delimiter);
 
                     return $this->render(
                         '@Catalog/products/import_classificators_from_productscsv_result.html.twig',
@@ -278,7 +281,7 @@ class ProductsController extends AbstractController
                     throw new CatalogValidateException('ungiven action');
                 }
             }
-        } catch (CatalogValidateException | CatalogErrorException $e) {
+        } catch (CatalogValidateException|CatalogErrorException $e) {
             return $this->render(
                 '@Catalog/error/error.html.twig',
                 [
@@ -310,7 +313,7 @@ class ProductsController extends AbstractController
                     'productCategories' => $productCategories,
                 ]
             );
-        } catch (CatalogValidateException | CatalogErrorException $e) {
+        } catch (CatalogValidateException|CatalogErrorException $e) {
             return $this->render(
                 '@Catalog/error/error.html.twig',
                 [
@@ -327,7 +330,7 @@ class ProductsController extends AbstractController
             $count = $categoriesService->updateProductCategories($sku, $categoriesStr);
 
             return new Response('Updated product ' . $sku . ' categories ' . $count);
-        } catch (CatalogValidateException | CatalogErrorException $e) {
+        } catch (CatalogValidateException|CatalogErrorException $e) {
             return $this->render(
                 '@Catalog/error/error.html.twig',
                 [
