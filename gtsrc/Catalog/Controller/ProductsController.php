@@ -145,8 +145,7 @@ class ProductsController extends AbstractController
         Request $request,
         $sku,
         $languageCode,
-        ProductsService $productsService,
-        string $pdfGeneratorUrl
+        ProductsService $productsService
     ) {
         $messages = [];
         $message = '';
@@ -200,12 +199,6 @@ class ProductsController extends AbstractController
             );
         }
 
-        $fixedPdfGeneratorUrl = str_replace(
-            ['EAN_HOLDER', 'LANG_HOLDER'],
-            [$sku, $productLanguage->getLanguage()->getLocaleCode()],
-            $pdfGeneratorUrl
-        );
-
         return $this->render(
             '@Catalog/products/edit.html.twig',
             [
@@ -216,7 +209,7 @@ class ProductsController extends AbstractController
                 'languages' => $allLanguages,
                 'sku' => $sku,
                 'languageCode' => $languageCode,
-                'pdfUrl' => $fixedPdfGeneratorUrl,
+                'productLanguageCode' => $productLanguage->getLanguage()->getLocaleCode()
             ]
         );
     }
@@ -338,5 +331,35 @@ class ProductsController extends AbstractController
                 ]
             );
         }
+    }
+
+    /**
+     * @param $sku
+     * @param $languageCode
+     * @return Response
+     */
+    public function viewLabelPdf(
+        $sku,
+        $languageCode,
+        string $pdfGeneratorUrl
+    ) {
+        $showProductLabelPdfUrl = str_replace(
+            ['URL_HOLDER', 'EAN_HOLDER', 'LANG_HOLDER'],
+            [$pdfGeneratorUrl, $sku, $languageCode],
+            $pdfGeneratorUrl.'api/ezp/v2/product/EAN_HOLDER/view_label_pdf/LANG_HOLDER'
+        );
+
+        $filename = basename(file_get_contents($showProductLabelPdfUrl));
+
+        $response = new Response(
+            file_get_contents($showProductLabelPdfUrl),
+            200,
+            [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => sprintf('attachment; filename="%s"', 'label.pdf'),
+            ]
+        );
+
+        return $response;
     }
 }

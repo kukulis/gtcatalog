@@ -1,34 +1,39 @@
 gt.catalog.product_list:
-    path: "/products"
-    controller: Gt\Catalog\Controller\ProductsController::listAction
-    methods: GET
+  path: "/products"
+  controller: Gt\Catalog\Controller\ProductsController::listAction
+  methods: GET
 
 gt.catalog.product_edit:
-    path: "/product/edit/{sku}/l/{languageCode}"
-    controller: Gt\Catalog\Controller\ProductsController::editAction
-    methods: [GET, POST]
+  path: "/product/edit/{sku}/l/{languageCode}"
+  controller: Gt\Catalog\Controller\ProductsController::editAction
+  methods: [ GET, POST ]
 
 gt.catalog.product_delete:
-    path: "/product/delete/{sku}"
-    controller: Gt\Catalog\Controller\ProductsController::deleteAction
-    methods: DELETE
+  path: "/product/delete/{sku}"
+  controller: Gt\Catalog\Controller\ProductsController::deleteAction
+  methods: DELETE
 
 gt.catalog.import_products_form:
-    path: "/products/import_form"
-    controller: Gt\Catalog\Controller\ProductsController::importProductsFormAction
-    methods: GET
+  path: "/products/import_form"
+  controller: Gt\Catalog\Controller\ProductsController::importProductsFormAction
+  methods: GET
 
 gt.catalog.import_products:
-    path: "/products/import"
-    controller: Gt\Catalog\Controller\ProductsController::importProductsAction
-    methods: POST
+  path: "/products/import"
+  controller: Gt\Catalog\Controller\ProductsController::importProductsAction
+  methods: POST
 
 gt.catalog.product_categories_edit_form:
-    path: "/product/{sku}/categories_edit_form"
-    controller: Gt\Catalog\Controller\ProductsController::editProductCategoriesFormAction
-    methods: GET
+  path: "/product/{sku}/categories_edit_form"
+  controller: Gt\Catalog\Controller\ProductsController::editProductCategoriesFormAction
+  methods: GET
 
 gt.catalog.update_product_categories:
   path: "/product/{sku}/update_categories"
   controller: Gt\Catalog\Controller\ProductsController::updateProductCategoriesAction
   methods: POST
+
+gt.catalog.view_product_label_pdf:
+  path: "/product/{sku}/view_label_pdf/{languageCode}"
+  controller: Gt\Catalog\Controller\ProductsController::viewLabelPdf
+  methods: GET
