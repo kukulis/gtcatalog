@@ -70,7 +70,9 @@
                 {% include '@Catalog/products/edit_form.html.twig' %}
 
                 <div class="text-right mb-4">
-                    <a class="btn-outline-primary btn" id="pdf_button" href="{{ pdfUrl }}">View label pdf</a>
+                    <a class="btn-outline-primary btn" id="pdf_button"
+                       href="{{ path('gt.catalog.view_product_label_pdf', {sku: sku, languageCode: productLanguageCode }) }}">View
+                        label pdf</a>
                 </div>
             </div>
         </div>
@@ -82,16 +84,16 @@
     {{ parent() }}
     <script type="text/javascript">
         $(document).ready(function () {
-            $('#product_form_pl_label').keyup( function(){
+            $('#product_form_pl_label').keyup(function () {
                 disableViewPdfButton()
             });
 
-            $('#product_form_pl_label_size').keyup( function(){
+            $('#product_form_pl_label_size').keyup(function () {
                 disableViewPdfButton()
             });
 
-            $("#pdf_button").on("click", function(event){
-                if ($(this).attr("disabled") == 'disabled' ) {
+            $("#pdf_button").on("click", function (event) {
+                if ($(this).attr("disabled") == 'disabled') {
                     event.preventDefault();
                 }
             });
