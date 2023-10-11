@@ -362,9 +362,9 @@ class ProductsController extends AbstractController
 
             return $response;
         } catch (\Exception $e ) {
-            $logger->debug('Klaida gaunant produkto label PDF: '.$e->getMessage());
+            $logger->debug('Klaida gaunant produkto PDF failą: '.$e->getMessage());
             return $this->render('@Catalog/error/error.html.twig', [
-                'error' => $e->getMessage(),
+                'error' => 'Klaida generuojant etiketę. Gali būti, kad tokio produkto nėra.',
             ]);
         }
     }
