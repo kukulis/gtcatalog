@@ -341,7 +341,8 @@ class ProductsController extends AbstractController
     public function viewLabelPdf(
         $sku,
         $languageCode,
-        string $pdfGeneratorUrl
+        string $pdfGeneratorUrl,
+        LoggerInterface $logger
     ) {
         $showProductLabelPdfUrl = str_replace(
             ['URL_HOLDER', 'EAN_HOLDER', 'LANG_HOLDER'],
@@ -349,17 +350,22 @@ class ProductsController extends AbstractController
             $pdfGeneratorUrl.'api/ezp/v2/product/EAN_HOLDER/view_label_pdf/LANG_HOLDER'
         );
 
-        $filename = basename(file_get_contents($showProductLabelPdfUrl));
+        try {
+            $response = new Response(
+                file_get_contents($showProductLabelPdfUrl),
+                200,
+                [
+                    'Content-Type' => 'application/pdf',
+                    'Content-Disposition' => sprintf('attachment; filename="%s"', 'label.pdf'),
+                ]
+            );
 
-        $response = new Response(
-            file_get_contents($showProductLabelPdfUrl),
-            200,
-            [
-                'Content-Type' => 'application/pdf',
-                'Content-Disposition' => sprintf('attachment; filename="%s"', 'label.pdf'),
-            ]
-        );
-
-        return $response;
+            return $response;
+        } catch (\Exception $e ) {
+            $logger->debug('Klaida gaunant produkto PDF failą: '.$e->getMessage());
+            return $this->render('@Catalog/error/error.html.twig', [
+                'error' => 'Klaida generuojant etiketę. Gali būti, kad tokio produkto nėra.',
+            ]);
+        }
     }
 }
