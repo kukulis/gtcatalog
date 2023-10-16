@@ -351,8 +351,16 @@ class ProductsController extends AbstractController
         );
 
         try {
+            // TODO use guzzle
+            $result = file_get_contents($showProductLabelPdfUrl);
+
+            if ( !$result ) {
+                return $this->render('@Catalog/error/error.html.twig', [
+                    'error' => 'Klaida generuojant etiketę. Gali būti, kad tokio produkto nėra.',
+                ]);
+            }
             $response = new Response(
-                file_get_contents($showProductLabelPdfUrl),
+                $result,
                 200,
                 [
                     'Content-Type' => 'application/pdf',
