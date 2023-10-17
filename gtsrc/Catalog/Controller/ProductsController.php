@@ -14,6 +14,7 @@ use Gt\Catalog\Services\CategoriesService;
 use Gt\Catalog\Services\ProductsService;
 use Gt\Catalog\Services\TableService;
 use Gt\Catalog\TableData\ProductsTableData;
+use GuzzleHttp\Client;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -30,10 +31,19 @@ class ProductsController extends AbstractController
     private $tableService;
     private $tableData;
 
-    public function __construct(TableService $tableService, ProductsTableData $tableData)
+    /** @var \GuzzleHttp\Client $guzzleClient */
+    private $guzzleClient;
+
+    /**
+     * @param TableService $tableService
+     * @param ProductsTableData $tableData
+     * @param Client $guzzleClient
+     */
+    public function __construct(TableService $tableService, ProductsTableData $tableData, Client $guzzleClient)
     {
         $this->tableService = $tableService;
         $this->tableData = $tableData;
+        $this->guzzleClient = $guzzleClient;
     }
 
     /**
@@ -347,25 +357,33 @@ class ProductsController extends AbstractController
         $showProductLabelPdfUrl = str_replace(
             ['URL_HOLDER', 'EAN_HOLDER', 'LANG_HOLDER'],
             [$pdfGeneratorUrl, $sku, $languageCode],
-            $pdfGeneratorUrl.'api/ezp/v2/product/EAN_HOLDER/view_label_pdf/LANG_HOLDER'
+            $pdfGeneratorUrl . 'api/ezp/v2/product/EAN_HOLDER/view_label_pdf/LANG_HOLDER'
         );
 
         try {
+            $result = $this->guzzleClient->request('GET', $showProductLabelPdfUrl);
+            if ($result->getStatusCode() == 200) {
+                $response = new Response(
+                    $result->getBody(),
+                    200,
+                    [
+                        'Content-Type' => 'application/pdf',
+                        'Content-Disposition' => sprintf('attachment; filename="%s"', 'label.pdf'),
+                    ]
+                );
+            } else {
+                $response = new Response(
+                    $result->getBody(),
+                    $result->getStatusCode()
+                );
+            }
+        } catch (\Exception $e) {
+            $logger->debug('Klaida gaunant produkto PDF failą: ' . $e->getMessage());
             $response = new Response(
-                file_get_contents($showProductLabelPdfUrl),
-                200,
-                [
-                    'Content-Type' => 'application/pdf',
-                    'Content-Disposition' => sprintf('attachment; filename="%s"', 'label.pdf'),
-                ]
+                $e->getMessage(),
+                404
             );
-
-            return $response;
-        } catch (\Exception $e ) {
-            $logger->debug('Klaida gaunant produkto PDF failą: '.$e->getMessage());
-            return $this->render('@Catalog/error/error.html.twig', [
-                'error' => 'Klaida generuojant etiketę. Gali būti, kad tokio produkto nėra.',
-            ]);
         }
+        return $response;
     }
 }

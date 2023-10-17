@@ -13,6 +13,21 @@
             opacity: 0.5;
             text-decoration: none;
         }
+
+        pre {
+            display: block;
+            padding: 9.5px;
+            margin: 0 0 10px;
+            font-size: 13px;
+            line-height: 1.42857143;
+            color: #333;
+            word-break: break-all;
+            word-wrap: break-word;
+            background-color: #f5f5f5;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
     </style>
 {% endblock %}
 
@@ -92,9 +107,36 @@
                 disableViewPdfButton()
             });
 
+            function downloadFile(fileBlob) {
+                var url = window.URL.createObjectURL(fileBlob);
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = "label.pdf";
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            }
+            function showError(errorMessage) {
+                $("#pdf_button").before('<pre>' + errorMessage + '</pre>')
+            }
             $("#pdf_button").on("click", function (event) {
                 if ($(this).attr("disabled") == 'disabled') {
                     event.preventDefault();
+                } else {
+                    var href = $("#pdf_button").attr('href');
+                    fetch(href)
+                        .then((response) => {
+                            if (response.status === 200) {
+                                response.blob().then(function (fileBlob) {
+                                    return downloadFile(fileBlob);
+                                });
+                            } else {
+                                response.text().then(function (errorMessage) {
+                                    return showError(errorMessage);
+                                });
+                            }
+                        });
+                    return false;
                 }
             });
         });
