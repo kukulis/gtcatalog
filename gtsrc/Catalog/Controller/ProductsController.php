@@ -373,14 +373,16 @@ class ProductsController extends AbstractController
                 );
             } else {
                 $response = new Response(
-                    $result->getBody(),
+                    $result->getBody()->getContents(),
                     $result->getStatusCode()
                 );
             }
-        } catch (\Exception $e) {
-            $logger->debug('Klaida gaunant produkto PDF failą: ' . $e->getMessage());
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            $response = $e->getResponse();
+            $responseBodyAsString = $response->getBody()->getContents();
+            $logger->debug('Klaida gaunant produkto PDF failą: ' . $responseBodyAsString);
             $response = new Response(
-                $e->getMessage(),
+                $responseBodyAsString,
                 404
             );
         }
