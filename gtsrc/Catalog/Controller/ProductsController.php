@@ -14,6 +14,8 @@ use Gt\Catalog\Services\CategoriesService;
 use Gt\Catalog\Services\ProductsService;
 use Gt\Catalog\Services\TableService;
 use Gt\Catalog\TableData\ProductsTableData;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -30,10 +32,19 @@ class ProductsController extends AbstractController
     private $tableService;
     private $tableData;
 
-    public function __construct(TableService $tableService, ProductsTableData $tableData)
+    /** @var \GuzzleHttp\Client $guzzleClient */
+    private $guzzleClient;
+
+    /**
+     * @param TableService $tableService
+     * @param ProductsTableData $tableData
+     * @param Client $guzzleClient
+     */
+    public function __construct(TableService $tableService, ProductsTableData $tableData, Client $guzzleClient)
     {
         $this->tableService = $tableService;
         $this->tableData = $tableData;
+        $this->guzzleClient = $guzzleClient;
     }
 
     /**
@@ -54,17 +65,24 @@ class ProductsController extends AbstractController
         $languages = $productsService->getAllLanguages();
         // TODO if possible to avoid index
         $languages = array_combine(
-            array_map(function ($language) {
-                return $language->getCode();
-            }, $languages),
+            array_map(
+                function ($language) {
+                    return $language->getCode();
+                },
+                $languages
+            ),
             $languages
         );
 
         $productsFilterType = new ProductsFilterType();
         $productsFilterType->setMaxCsvLimit($productsService->getMaxCsv());
-        $filterForm = $formFactory->create(ProductsFilterType::class, $productsFilterType, [
-            'languages' => $languages
-        ]);
+        $filterForm = $formFactory->create(
+            ProductsFilterType::class,
+            $productsFilterType,
+            [
+                'languages' => $languages
+            ]
+        );
         $filterForm->handleRequest($request);
 
         if ($filterForm->get('csv')->isClicked()) {
@@ -274,7 +292,7 @@ class ProductsController extends AbstractController
                     throw new CatalogValidateException('ungiven action');
                 }
             }
-        } catch (CatalogValidateException|CatalogErrorException $e) {
+        } catch (CatalogValidateException | CatalogErrorException $e) {
             return $this->render(
                 '@Catalog/error/error.html.twig',
                 [
@@ -306,7 +324,7 @@ class ProductsController extends AbstractController
                     'productCategories' => $productCategories,
                 ]
             );
-        } catch (CatalogValidateException|CatalogErrorException $e) {
+        } catch (CatalogValidateException | CatalogErrorException $e) {
             return $this->render(
                 '@Catalog/error/error.html.twig',
                 [
@@ -323,7 +341,7 @@ class ProductsController extends AbstractController
             $count = $categoriesService->updateProductCategories($sku, $categoriesStr);
 
             return new Response('Updated product ' . $sku . ' categories ' . $count);
-        } catch (CatalogValidateException|CatalogErrorException $e) {
+        } catch (CatalogValidateException | CatalogErrorException $e) {
             return $this->render(
                 '@Catalog/error/error.html.twig',
                 [
@@ -347,33 +365,35 @@ class ProductsController extends AbstractController
         $showProductLabelPdfUrl = str_replace(
             ['URL_HOLDER', 'EAN_HOLDER', 'LANG_HOLDER'],
             [$pdfGeneratorUrl, $sku, $languageCode],
-            $pdfGeneratorUrl.'api/ezp/v2/product/EAN_HOLDER/view_label_pdf/LANG_HOLDER'
+            $pdfGeneratorUrl . 'api/ezp/v2/product/EAN_HOLDER/view_label_pdf/LANG_HOLDER'
         );
 
         try {
-            // TODO use guzzle
-            $result = file_get_contents($showProductLabelPdfUrl);
-
-            if ( !$result ) {
-                return $this->render('@Catalog/error/error.html.twig', [
-                    'error' => 'Klaida generuojant etiketę. Gali būti, kad tokio produkto nėra.',
-                ]);
+            $result = $this->guzzleClient->request('GET', $showProductLabelPdfUrl);
+            if ($result->getStatusCode() == 200) {
+                $response = new Response(
+                    $result->getBody(),
+                    200,
+                    [
+                        'Content-Type' => 'application/pdf',
+                        'Content-Disposition' => sprintf('attachment; filename="%s"', 'label.pdf'),
+                    ]
+                );
+            } else {
+                $response = new Response(
+                    $result->getBody()->getContents(),
+                    $result->getStatusCode()
+                );
             }
+        } catch (ClientException $e) {
+            $response = $e->getResponse();
+            $responseBodyAsString = $response->getBody()->getContents();
+            $logger->debug('Klaida gaunant produkto PDF failą: ' . $responseBodyAsString);
             $response = new Response(
-                $result,
-                200,
-                [
-                    'Content-Type' => 'application/pdf',
-                    'Content-Disposition' => sprintf('attachment; filename="%s"', 'label.pdf'),
-                ]
+                $responseBodyAsString,
+                404
             );
-
-            return $response;
-        } catch (\Exception $e ) {
-            $logger->debug('Klaida gaunant produkto PDF failą: '.$e->getMessage());
-            return $this->render('@Catalog/error/error.html.twig', [
-                'error' => 'Klaida generuojant etiketę. Gali būti, kad tokio produkto nėra.',
-            ]);
         }
+        return $response;
     }
 }
