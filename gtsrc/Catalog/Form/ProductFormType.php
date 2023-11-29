@@ -76,6 +76,7 @@ class ProductFormType extends AbstractType
             ->add('p_code_from_custom', TextType::class, ['required' => false, 'label' => 'Customs code'])
             ->add('pl_language', TextType::class, ['disabled' => true, 'label' => 'Language'])
             ->add('pl_name', TextType::class, ['label' => 'Name'])
+            ->add('pl_short_description', TextType::class, ['required' => false, 'label' => 'Short description'])
             ->add('pl_description', TextType::class, ['required' => false, 'label' => 'Description'])
             ->add('pl_label', TextType::class, ['required' => false, 'label' => 'Label'])
             ->add('pl_label_size', TextType::class, ['required' => false, 'label' => 'Label size'])
@@ -571,6 +572,17 @@ class ProductFormType extends AbstractType
     public function setPLName(string $name = null): void
     {
         $this->productLanguage->setName($name);
+    }
+
+
+    public function getPLShortDescription(): ?string
+    {
+        return $this->productLanguage->getShortDescription();
+    }
+
+    public function setPLShortDescription(string $shortDescription = null): void
+    {
+        $this->productLanguage->setShortDescription($shortDescription);
     }
 
     /**

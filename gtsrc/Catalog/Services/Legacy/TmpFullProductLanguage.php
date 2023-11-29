@@ -14,6 +14,7 @@ class TmpFullProductLanguage
     public $sku;
     public $language;
     public $name;
+    public $short_description;
     public $description;
     public $label;
     public $variant_name;

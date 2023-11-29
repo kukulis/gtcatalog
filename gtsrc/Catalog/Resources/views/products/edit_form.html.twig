@@ -198,6 +198,11 @@
                     {{ form_widget(form.pl_name, { 'attr': {'class': 'form-control-sm'} }) }}
                 </div>
 
+                <label for="{{ form.pl_short_description.vars.id }}" class="col-sm-4 col-form-label">Short Description</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.pl_short_description, { 'attr': {'class': 'form-control-sm'} }) }}
+                </div>
+
                 <label for="{{ form.pl_description.vars.id }}" class="col-sm-4 col-form-label">Description</label>
                 <div class="col-sm-8">
                     {{ form_widget(form.pl_description, { 'attr': {'class': 'form-control-sm'} }) }}
