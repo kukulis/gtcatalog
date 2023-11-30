@@ -157,6 +157,7 @@ class ProductsService extends ProductsBaseService
                 'language',
 
                 'name',
+                'short_description',
                 'description',
                 'label',
                 'label_size',
@@ -200,6 +201,7 @@ class ProductsService extends ProductsBaseService
                 $pl->getLanguageCode(),
 
                 $pl->getName(),
+                $pl->getShortDescription(),
                 $pl->getDescription(),
                 $pl->getLabel(),
                 $pl->getLabelSize(),

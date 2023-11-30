@@ -63,6 +63,7 @@ class TmpDao
         'sku',
         'language',
         'name',
+        'short_description',
         'description',
         'label',
         'variant_name',

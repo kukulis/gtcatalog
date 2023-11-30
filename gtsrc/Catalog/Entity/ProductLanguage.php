@@ -54,6 +54,12 @@ class ProductLanguage
      * @var string
      * @ORM\Column(type="text", nullable=true)
      */
+    private $shortDescription;
+
+    /**
+     * @var string
+     * @ORM\Column(type="text", nullable=true)
+     */
     private $description;
 
     /**
@@ -159,6 +165,17 @@ class ProductLanguage
         $this->name = $name;
 
         return $this;
+    }
+
+
+    public function getShortDescription(): ?string
+    {
+        return $this->shortDescription;
+    }
+
+    public function setShortDescription(string $shortDescription = null): void
+    {
+        $this->shortDescription = $shortDescription;
     }
 
     /**
