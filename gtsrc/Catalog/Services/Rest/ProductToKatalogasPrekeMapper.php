@@ -104,6 +104,7 @@ class ProductToKatalogasPrekeMapper
         $kp->categories = $categoriesClassificators;
 
         $kp->Aprasymas->pavadinimas            = $pl->getName();
+        $kp->Aprasymas->short_description      = $pl->getShortDescription();
         $kp->Aprasymas->aprasymas              = $pl->getDescription();
         $kp->Aprasymas->ilgas_aprasymas        = $pl->getDescription();
         $kp->Aprasymas->etiketes_tekstas       = $pl->getLabel();
