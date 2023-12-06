@@ -19,6 +19,7 @@ class ProductLanguage
 {
     const ALLOWED_FIELDS = [
         'name',
+        'short_description',
         'description',
         'label',
         'label_size', // TODO not translatable
