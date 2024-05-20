@@ -54,6 +54,7 @@ class Product
         'pack_size',
         'pack_amount',
         'weight',
+        'weight_bruto',
         'length',
         'height',
         'width',
@@ -185,6 +186,14 @@ class Product
      * @ORM\Column(type="decimal", scale=2, precision=10, options={"default":0} )
      */
     private $weight=0;
+
+    /**
+     * @var float
+     * @ORM\Column(type="decimal", scale=2, precision=10, options={"default": 0})
+     */
+    private $weightBruto = 0;
+    // Svoris, mato vienetas (pvz deze, palete, maiselis), barkodas
+    //
     /**
      * @var float
      * @ORM\Column(type="decimal", scale=2, precision=10, options={"default":0} )
