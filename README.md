@@ -50,5 +50,9 @@ When running composer inside container do:
 
     expot HOME=/var/www/html
 
+# GUI
+
+    http://localhost:8003
+
 
     

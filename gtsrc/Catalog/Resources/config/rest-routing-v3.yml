@@ -3,10 +3,10 @@ gt.catalog.rest.products:
     controller: Gt\Catalog\Rest\Controllers\ProductsRestController::getProductsAction
     methods: GET|POST
 
-gt.catalog.rest.products.store:
-    path: "/products/store"
-    controller: Gt\Catalog\Rest\Controllers\ProductsRestController::store
-    methods: POST
+#gt.catalog.rest.products.store:
+#    path: "/products/store"
+#    controller: Gt\Catalog\Rest\Controllers\ProductsRestController::store
+#    methods: POST
 
 gt.catalog.rest.categories: # deprecated
     path: "/categories/{language}"
