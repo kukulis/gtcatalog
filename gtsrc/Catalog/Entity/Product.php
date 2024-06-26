@@ -63,6 +63,7 @@ class Product
         'google_product_category_id',
         'info_provider',
         'ingredients',
+        'code_from_custom'
     ];
 
 
