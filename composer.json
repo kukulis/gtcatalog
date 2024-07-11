@@ -23,6 +23,7 @@
         "guzzlehttp/guzzle": "*",
         "jms/serializer-bundle": "^5.2",
         "kukulis/b2bcommon": "dev-master",
+        "lexik/jwt-authentication-bundle": "^2.21",
         "phpdocumentor/reflection-docblock": "^5.3",
         "sensio/framework-extra-bundle": "^5.1",
         "symfony/asset": "5.4.*",
