@@ -20,3 +20,10 @@ _gt.catalog.rest:
 _gt.catalog.rest_v3:
     resource: "rest-routing-v3.yml"
     prefix: '/api/v3'
+
+# Authentication
+
+gt.catalog.login_check:
+    path: "/api/login_check"
+    controller: Gt\Catalog\Rest\Controllers::getTokenUser
+    methods: POST
