@@ -70,4 +70,10 @@ Paprašė slaptažodžio, įvedžiau Labas123
 Paprašė slaptažodžio, įvedžiau tą patį.
 
 
-    
+# Migrations
+
+    bin/console doctrine:migrations:migrate
+
+rollbackas:
+
+    bin/console doctrine:migrations:migrate prev
