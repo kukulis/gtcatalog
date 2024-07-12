@@ -193,8 +193,7 @@ class Product
      * @ORM\Column(type="decimal", scale=2, precision=10, options={"default": 0})
      */
     private $weightBruto = 0;
-    // Svoris, mato vienetas (pvz deze, palete, maiselis), barkodas
-    //
+
     /**
      * @var float
      * @ORM\Column(type="decimal", scale=2, precision=10, options={"default":0} )
@@ -592,6 +591,17 @@ class Product
     public function setWeight(float $weight): void
     {
         $this->weight = $weight;
+    }
+
+    public function getWeightBruto()
+    {
+        return $this->weightBruto;
+    }
+
+    public function setWeightBruto($weightBruto)
+    {
+        $this->weightBruto = $weightBruto;
+        return $this;
     }
 
     /**
