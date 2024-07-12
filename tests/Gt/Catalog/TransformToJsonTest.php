@@ -23,6 +23,9 @@ class TransformToJsonTest extends TestCase
 
         $allProductsArray = $serializer->toArray($products);
 
+//        $json = $serializer->serialize($products, 'json');
+//        echo "Json=".$json."\n";
+
         $this->assertArrayHasKey($testedIndex, $allProductsArray);
 
         $singleProductArray = $allProductsArray[$testedIndex];
@@ -97,5 +100,4 @@ class TransformToJsonTest extends TestCase
         ];
     }
 
-// TODO transform from json to objects.
 }
