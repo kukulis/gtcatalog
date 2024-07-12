@@ -21,7 +21,7 @@ class ProductTransformer {
         $directMappings = [
             'sku', 'version', 'brand', 'line', 'parentSku', 'originCountryCode',
             'vendor', 'manufacturer', 'color', 'forMale', 'forFemale', 'size',
-            'packSize', 'packAmount', 'weight', 'weightBrutto', 'length', 'height', 'width',
+            'packSize', 'packAmount', 'weight', 'weightBruto', 'length', 'height', 'width',
             'deliveryTime', 'depositCode', 'codeFromCustom', 'guaranty', 'codeFromSupplier',
             'codeFromVendor', 'priority', 'googleProductCategoryId'
         ];
