@@ -118,6 +118,9 @@ class ProductsRestController extends AbstractController
         return new JsonResponse($response);
     }
 
+    /**
+     * @deprecated not required business logic
+     */
     public function store(Request $request, ProductsService $service, EntityManagerInterface $em)
     {
         $nomNr = $request->get('nomNr');
@@ -137,4 +140,11 @@ class ProductsRestController extends AbstractController
             Response::HTTP_CREATED
         );
     }
+
+
+    public function updateSpecial(Request $request) {
+
+    }
+
+
 }

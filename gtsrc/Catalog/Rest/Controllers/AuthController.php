@@ -12,6 +12,11 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+/**
+ * Class AuthController
+ * @package Gt\Catalog\Rest\Controllers
+ * @deprecated  unfinished
+ */
 class AuthController extends ApiController
 {
     private $em;

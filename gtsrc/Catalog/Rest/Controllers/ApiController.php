@@ -6,6 +6,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Class ApiController
+ * @package Gt\Catalog\Rest\Controllers
+ * @deprecated  unfinished
+ */
 class ApiController extends AbstractController
 {
 
