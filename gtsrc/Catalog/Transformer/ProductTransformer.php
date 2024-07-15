@@ -21,7 +21,6 @@ class ProductTransformer
         return $restProduct;
     }
 
-    // TODO check if works without &
     private function mapProductToRestProduct(Product $product, CatalogProduct $restProduct): void
     {
         $directMappings = [
@@ -129,9 +128,8 @@ class ProductTransformer
             /** @var PackageType[] $packagesTypesByCode */
             $packagesTypesByCode = MapBuilder::buildMap($packagesTypes, fn(PackageType $type) => $type->getCode());
 
-            $productsPackages = [];
 
-            // TODO use lambda later
+            $productsPackages = [];
             foreach ($dtoProduct->getPackages() as $package) {
                 if (!array_key_exists($package->typeCode, $packagesTypesByCode)) {
                     continue;
