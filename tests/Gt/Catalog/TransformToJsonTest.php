@@ -6,6 +6,7 @@ use Catalog\B2b\Common\Data\Catalog\Package;
 use Catalog\B2b\Common\Data\Catalog\Product;
 use JMS\Serializer\SerializerBuilder;
 use PHPUnit\Framework\TestCase;
+use DateTime;
 
 class TransformToJsonTest extends TestCase
 {
@@ -96,7 +97,33 @@ class TransformToJsonTest extends TestCase
                         ]
                     ]
                 ]
-            ]
+            ],
+            'test with date' => [
+                'products' => [
+                    (new Product())
+                        ->setSku('abc123')
+                        ->setWeight(10)
+                        ->setWeightBruto(10.5)
+                        ->setLastUpdate(DateTime::createFromFormat('Y-m-d H:i:s', '2024-06-01 12:15:00'))
+                ],
+                'testedIndex' => 0,
+
+                'productJsonArray' => [
+                    'sku' => 'abc123',
+                    'weight' => 10.0,
+                    'weight_bruto' => 10.5,
+                    'version' => 0,
+                    'for_male' => false,
+                    'for_female' => false,
+                    'length' => 0.0,
+                    'height' => 0.0,
+                    'width' => 0.0,
+                    'google_product_category_id' => 0,
+                    'tags' => '',
+                    'stock' => 0,
+                    'last_update' => '2024-06-01 12:15:00'
+                ]
+            ],
         ];
     }
 

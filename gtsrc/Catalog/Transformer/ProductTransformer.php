@@ -49,7 +49,8 @@ class ProductTransformer
             'codeFromSupplier',
             'codeFromVendor',
             'priority',
-            'googleProductCategoryId'
+            'googleProductCategoryId',
+            'lastUpdate'
         ];
 
         foreach ($directMappings as $property) {
@@ -59,10 +60,10 @@ class ProductTransformer
             }
         }
 
-        $restProduct->lastUpdate = ProductsHelper::getFormattedDate(
-            $product->getLastUpdate(),
-            ProductsHelper::DATE_FORMAT
-        );
+//        $restProduct->lastUpdate = ProductsHelper::getFormattedDate(
+//            $product->getLastUpdate(),
+//            ProductsHelper::DATE_FORMAT
+//        );
         $restProduct->type = ProductsHelper::getClassificatorCode($product->getType());
         $restProduct->purpose = ProductsHelper::getClassificatorCode($product->getPurpose());
         $restProduct->measure = ProductsHelper::getClassificatorCode($product->getMeasure());
