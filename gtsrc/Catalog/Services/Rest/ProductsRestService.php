@@ -352,5 +352,11 @@ class ProductsRestService
         //
 
         $skus = array_map (fn($p)=>$p->sku, $dtoProducts);
+
+        // 1) load products from the local database
+        // 2) check if the required values are not null
+        // 3) make an update query ? ( write these fields that needs to be updated )
+        // 4) log updated fields results
+
     }
 }

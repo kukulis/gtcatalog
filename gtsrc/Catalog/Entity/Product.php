@@ -929,4 +929,5 @@ class Product
     {
         $this->productCategories = $productCategories;
     }
+
 }

@@ -6,6 +6,7 @@ use Catalog\B2b\Common\Data\Catalog\Product as CatalogProduct;
 use Gt\Catalog\Entity\Product;
 use Gt\Catalog\Entity\ProductLanguage;
 use Gt\Catalog\Utils\ProductsHelper;
+use Psr\Log\LoggerInterface;
 
 class ProductTransformer {
     public function transformToRestProduct(ProductLanguage $productLanguage): CatalogProduct {
@@ -51,5 +52,14 @@ class ProductTransformer {
         $restProduct->distributor = $productLanguage->getDistributor();
         $restProduct->composition = $productLanguage->getComposition();
         $restProduct->ean = $productLanguage->getProduct()->getSku();
+    }
+
+    /**
+     * Updates db product from dto product. The updated fields written in the array and returned for logging purposes.
+     *
+     * @return string[] updated fields names
+     */
+    public static function updateSpecialProduct( \Catalog\B2b\Common\Data\Catalog\Product $dtoProduct, Product $dbProduct) : array {
+        return [];
     }
 }
