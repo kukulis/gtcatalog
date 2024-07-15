@@ -3,6 +3,7 @@
 namespace Gt\Catalog\Rest\Controllers;
 
 
+use Catalog\B2b\Common\Data\Catalog\Product;
 use Catalog\B2b\Common\Data\Rest\ErrorResponse;
 use Catalog\B2b\Common\Data\Rest\RestResult;
 use Doctrine\ORM\EntityManagerInterface;
@@ -12,6 +13,7 @@ use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Services\ProductsService;
 use Gt\Catalog\Services\Rest\CategoriesRestService;
 use Gt\Catalog\Services\Rest\ProductsRestService;
+use JMS\Serializer\Serializer;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -141,9 +143,18 @@ class ProductsRestController extends AbstractController
         );
     }
 
+    public function updateSpecial(Request $request, Serializer $serializer) : Response {
+        // 1) get body
+        // 2) get list of DTO products
 
-    public function updateSpecial(Request $request) {
+        $content = $request->getContent();
 
+        /** @var Product [] $products */
+        $products = $serializer->deserialize($content, sprintf('array<%s>', Product::class ), 'json');
+
+        $this->productsRestService->updateSpecial($products);
+
+        return new JsonResponse('ok');
     }
 
 

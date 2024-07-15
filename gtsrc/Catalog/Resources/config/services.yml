@@ -181,7 +181,7 @@ services:
             - '@logger'
             - '@gt.catalog.catalog_dao'
             - '@gt.catalog.category_dao'
-            - '@gt.catalog.categories_service'
+#            - '@gt.catalog.categories_service'
             - '@gt.catalog.pictures_dao'
             - '@gt.catalog.pictures_service'
             - '@gt.catalog.language_dao'
@@ -202,6 +202,7 @@ services:
             $productsRestService: '@gt.catalog.products_rest_service'
             $categoriesRestService: '@gt.catalog.categories_rest_service'
             $languageDao: '@gt.catalog.language_dao'
+            $serializer: '@jms_serializer'
 
     Gt\Catalog\Rest\Controllers\PackagesRestController:
         tags:

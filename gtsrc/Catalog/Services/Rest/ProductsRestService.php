@@ -15,7 +15,6 @@ use Gt\Catalog\Entity\ProductCategory;
 use Gt\Catalog\Entity\ProductLanguage;
 use Gt\Catalog\Entity\ProductPicture;
 use Gt\Catalog\Exception\CatalogValidateException;
-use Gt\Catalog\Services\CategoriesService;
 use Gt\Catalog\Services\PicturesService;
 use Gt\Catalog\Transformer\CategoryTransformer;
 use Gt\Catalog\Transformer\ProductTransformer;
@@ -34,7 +33,7 @@ class ProductsRestService
     private CategoryDao $categoryDao;
 
     // TODO unused service
-    private CategoriesService $categoriesService;
+//    private CategoriesService $categoriesService;
     private LanguageDao $languageDao;
     private PicturesDao $picturesDao;
     private PicturesService $picturesService;
@@ -46,7 +45,7 @@ class ProductsRestService
         LoggerInterface $logger,
         CatalogDao $catalogDao,
         CategoryDao $categoryDao,
-        CategoriesService $categoriesService,
+//        CategoriesService $categoriesService,
         PicturesDao $picturesDao,
         PicturesService $picturesService,
         LanguageDao $languageDao,
@@ -55,7 +54,7 @@ class ProductsRestService
         $this->logger = $logger;
         $this->catalogDao = $catalogDao;
         $this->categoryDao = $categoryDao;
-        $this->categoriesService = $categoriesService;
+//        $this->categoriesService = $categoriesService;
         $this->languageDao = $languageDao;
         $this->picturesDao = $picturesDao;
         $this->picturesService = $picturesService;
@@ -280,6 +279,7 @@ class ProductsRestService
      */
     public function getRestProducts(array $skus, string $language): array
     {
+        // TODO get product data even if it has no translaton
         $productsByLanguage = $this->getProductsLanguages($skus, $language);
 
         $transformedProducts = array_map(
@@ -343,5 +343,14 @@ class ProductsRestService
             $cl = $categoriesLanguagesMap[$productCategory->getCategory()->getCode()];
             $restProduct->categories[] = CategoryTransformer::transformToRest($cl);
         }
+    }
+
+    /**
+     * @param \Catalog\B2b\Common\Data\Catalog\Product[] $dtoProducts
+     */
+    public function updateSpecial(array $dtoProducts) {
+        //
+
+        $skus = array_map (fn($p)=>$p->sku, $dtoProducts);
     }
 }
