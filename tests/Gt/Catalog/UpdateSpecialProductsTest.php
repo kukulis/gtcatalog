@@ -8,6 +8,7 @@ use Catalog\B2b\Common\Data\Catalog\Product;
 use Gt\Catalog\Entity\PackageType;
 use Gt\Catalog\Entity\ProductPackage;
 use Gt\Catalog\Transformer\ProductTransformer;
+use Gt\Catalog\Utils\MapBuilder;
 use PHPUnit\Framework\TestCase;
 
 class UpdateSpecialProductsTest extends TestCase
@@ -26,7 +27,10 @@ class UpdateSpecialProductsTest extends TestCase
         \Gt\Catalog\Entity\Product $expectedProduct,
         array $expectedFields
     ) {
-        $updatedFields = ProductTransformer::updateSpecialProduct($dto, $product, $packagesTypes);
+        /** @var PackageType[] $packagesTypesByCode */
+        $packagesTypesByCode = MapBuilder::buildMap($packagesTypes, fn(PackageType $type) => $type->getCode());
+
+        $updatedFields = ProductTransformer::updateSpecialProduct($dto, $product, $packagesTypesByCode);
 
         $this->assertEquals($expectedFields, $updatedFields);
         $this->assertEquals($expectedProduct, $product);

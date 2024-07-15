@@ -5,12 +5,11 @@ namespace Gt\Catalog\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass=Gt\Catalog\Repository\PackageTypeRepository::class)
  * @ORM\Table(name="packages_types")
  */
 class PackageType
 {
-
     /**
      * @var string
      * @ORM\Column(type="string", length=32)

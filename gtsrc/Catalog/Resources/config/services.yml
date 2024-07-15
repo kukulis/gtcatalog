@@ -186,6 +186,7 @@ services:
             - '@gt.catalog.pictures_service'
             - '@gt.catalog.language_dao'
             - '@Gt\Catalog\Transformer\ProductTransformer'
+            - '@Gt\Catalog\Repository\PackageTypeRepository'
 
     Gt\Catalog\Rest\Controllers\ProductsLegacyRestController:
         tags:
@@ -442,3 +443,8 @@ services:
 
     gt.catalog.table_data.users:
         class: 'Gt\Catalog\TableData\UsersTableData'
+
+
+    Gt\Catalog\Repository\PackageTypeRepository:
+        tags: [ 'doctrine.repository_service' ]
+

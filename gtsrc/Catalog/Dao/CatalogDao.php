@@ -10,7 +10,6 @@ use Gt\Catalog\Data\ProductsFilter;
 use Gt\Catalog\Entity\Classificator;
 use Gt\Catalog\Entity\ClassificatorLanguage;
 use Gt\Catalog\Entity\Product;
-use Gt\Catalog\Entity\ProductCategory;
 use Gt\Catalog\Entity\ProductLanguage;
 use Gt\Catalog\Exception\CatalogDetailedException;
 use Gt\Catalog\Exception\CatalogErrorException;
@@ -735,5 +734,43 @@ class CatalogDao extends BaseDao
         }
 
         return $queryBuilder->getQuery()->getResult();
+    }
+
+    /**
+     * @param string[] $skus
+     * @return Product[]
+     */
+    public function loadProductsBySkus(array $skus) : array {
+        $class = Product::class;
+        $dql = /** @lang DQL */
+            "SELECT  p from $class p 
+        where p.sku in (:skus)";
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        $query = $em->createQuery($dql);
+
+        $query->setParameter('skus', $skus);
+
+        /** @var Product[] $productLanguages */
+        $productLanguages = $query->getResult();
+
+        return $productLanguages;
+    }
+
+
+    /**
+     * @param Product[] $products
+     */
+    public function updateMultipleProducts(array $products) {
+        // should we refactor to upsert?
+
+        /** @var EntityManager $em */
+        $em =  $this->doctrine->getManager();
+        foreach ($products as $product) {
+            $em->persist($product);
+        }
+
+        $em->flush();
     }
 }

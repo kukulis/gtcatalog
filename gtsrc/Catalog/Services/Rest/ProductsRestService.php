@@ -15,6 +15,7 @@ use Gt\Catalog\Entity\ProductCategory;
 use Gt\Catalog\Entity\ProductLanguage;
 use Gt\Catalog\Entity\ProductPicture;
 use Gt\Catalog\Exception\CatalogValidateException;
+use Gt\Catalog\Repository\PackageTypeRepository;
 use Gt\Catalog\Services\PicturesService;
 use Gt\Catalog\Transformer\CategoryTransformer;
 use Gt\Catalog\Transformer\ProductTransformer;
@@ -38,6 +39,7 @@ class ProductsRestService
     private PicturesDao $picturesDao;
     private PicturesService $picturesService;
     private ProductTransformer $productTransformer;
+    private PackageTypeRepository $packageTypeRepository;
 
     private array $languagesMap = [];
 
@@ -49,7 +51,8 @@ class ProductsRestService
         PicturesDao $picturesDao,
         PicturesService $picturesService,
         LanguageDao $languageDao,
-        ProductTransformer $productTransformer
+        ProductTransformer $productTransformer,
+        PackageTypeRepository $packageTypeRepository
     ) {
         $this->logger = $logger;
         $this->catalogDao = $catalogDao;
@@ -59,6 +62,7 @@ class ProductsRestService
         $this->picturesDao = $picturesDao;
         $this->picturesService = $picturesService;
         $this->productTransformer = $productTransformer;
+        $this->packageTypeRepository = $packageTypeRepository;
     }
 
     /**
@@ -348,15 +352,39 @@ class ProductsRestService
     /**
      * @param \Catalog\B2b\Common\Data\Catalog\Product[] $dtoProducts
      */
-    public function updateSpecial(array $dtoProducts) {
-        //
+    public function updateSpecial(array $dtoProducts): int
+    {
+        $skus = array_map(fn($p) => $p->sku, $dtoProducts);
 
-        $skus = array_map (fn($p)=>$p->sku, $dtoProducts);
+        $products = $this->catalogDao->loadProductsBySkus($skus);
 
-        // 1) load products from the local database
-        // 2) check if the required values are not null
-        // 3) make an update query ? ( write these fields that needs to be updated )
-        // 4) log updated fields results
+        /** @var Product[] $productsIndexed */
+        $productsIndexed = MapBuilder::buildMap($products, fn(Product $product) => $product->getSku());
 
+        $packagesTypes = $this->packageTypeRepository->findAll();
+
+        $updatedProducts = [];
+        foreach ($dtoProducts as $dtoProduct) {
+            if (!array_key_exists($dtoProduct->sku, $productsIndexed)) {
+                continue;
+            }
+            $dbProduct = $productsIndexed[$dtoProduct->sku];
+            $fieldsToUpdate = ProductTransformer::updateSpecialProduct($dtoProduct, $dbProduct, $packagesTypes);
+            if (count($fieldsToUpdate) > 0) {
+                $this->logger->debug(
+                    sprintf(
+                        'For product [%s] fields will be updated : [%s]',
+                        $dbProduct->getSku(),
+                        join(',', $fieldsToUpdate)
+                    )
+                );
+
+                $updatedProducts[] = $dbProduct;
+            }
+        }
+
+        $this->catalogDao->updateMultipleProducts($updatedProducts);
+
+        return count($updatedProducts);
     }
 }

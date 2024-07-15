@@ -144,18 +144,13 @@ class ProductsRestController extends AbstractController
     }
 
     public function updateSpecial(Request $request, Serializer $serializer) : Response {
-        // 1) get body
-        // 2) get list of DTO products
-
         $content = $request->getContent();
 
         /** @var Product [] $products */
         $products = $serializer->deserialize($content, sprintf('array<%s>', Product::class ), 'json');
 
-        $this->productsRestService->updateSpecial($products);
+        $updatedCount = $this->productsRestService->updateSpecial($products);
 
-        return new JsonResponse('ok');
+        return new JsonResponse($updatedCount);
     }
-
-
 }

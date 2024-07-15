@@ -7,7 +7,6 @@ use Gt\Catalog\Entity\PackageType;
 use Gt\Catalog\Entity\Product;
 use Gt\Catalog\Entity\ProductLanguage;
 use Gt\Catalog\Entity\ProductPackage;
-use Gt\Catalog\Utils\MapBuilder;
 use Gt\Catalog\Utils\ProductsHelper;
 
 class ProductTransformer
@@ -94,7 +93,7 @@ class ProductTransformer
      * - code_from_custom
      * - packages
      *
-     * @param PackageType[] $packagesTypes
+     * @param PackageType[] $packagesTypesByCode indexed by a type code.
      *
      * @return string[] updated fields names
      *
@@ -102,7 +101,7 @@ class ProductTransformer
     public static function updateSpecialProduct(
         \Catalog\B2b\Common\Data\Catalog\Product $dtoProduct,
         Product $dbProduct,
-        array $packagesTypes
+        array $packagesTypesByCode
     ): array {
         $updatedFields = [];
 
@@ -125,10 +124,6 @@ class ProductTransformer
         }
 
         if ($dtoProduct->getPackages() && count($dbProduct->getPackages()) == 0) {
-            /** @var PackageType[] $packagesTypesByCode */
-            $packagesTypesByCode = MapBuilder::buildMap($packagesTypes, fn(PackageType $type) => $type->getCode());
-
-
             $productsPackages = [];
             foreach ($dtoProduct->getPackages() as $package) {
                 if (!array_key_exists($package->typeCode, $packagesTypesByCode)) {
