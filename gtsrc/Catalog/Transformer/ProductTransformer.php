@@ -102,7 +102,9 @@ class ProductTransformer
     public static function updateSpecialProduct(
         \Catalog\B2b\Common\Data\Catalog\Product $dtoProduct,
         Product $dbProduct,
-        array $packagesTypesByCode
+        array $packagesTypesByCode,
+        // will be used later
+        bool $prioritizeNewData = false
     ): array {
         $updatedFields = [];
 
