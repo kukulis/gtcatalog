@@ -10,6 +10,7 @@ use Gt\Catalog\Dao\PicturesDao;
 use Gt\Catalog\Entity\CategoryLanguage;
 use Gt\Catalog\Entity\Classificator;
 use Gt\Catalog\Entity\ClassificatorLanguage;
+use Gt\Catalog\Entity\PackageType;
 use Gt\Catalog\Entity\Product;
 use Gt\Catalog\Entity\ProductCategory;
 use Gt\Catalog\Entity\ProductLanguage;
@@ -358,10 +359,14 @@ class ProductsRestService
 
         $products = $this->catalogDao->loadProductsBySkus($skus);
 
+        $this->catalogDao->assignPackages( $products );
+
         /** @var Product[] $productsIndexed */
         $productsIndexed = MapBuilder::buildMap($products, fn(Product $product) => $product->getSku());
 
         $packagesTypes = $this->packageTypeRepository->findAll();
+
+        $packagesTypesByCode = MapBuilder::buildMap($packagesTypes, fn(PackageType $packageType) => $packageType->getCode());
 
         $updatedProducts = [];
         foreach ($dtoProducts as $dtoProduct) {
@@ -369,7 +374,7 @@ class ProductsRestService
                 continue;
             }
             $dbProduct = $productsIndexed[$dtoProduct->sku];
-            $fieldsToUpdate = ProductTransformer::updateSpecialProduct($dtoProduct, $dbProduct, $packagesTypes);
+            $fieldsToUpdate = ProductTransformer::updateSpecialProduct($dtoProduct, $dbProduct, $packagesTypesByCode);
             if (count($fieldsToUpdate) > 0) {
                 $this->logger->debug(
                     sprintf(

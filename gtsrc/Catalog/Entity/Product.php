@@ -971,4 +971,11 @@ class Product
         return $this;
     }
 
+    public function addProductPackage(ProductPackage $pp): self
+    {
+        $this->packages[] = $pp;
+
+        return $this;
+    }
+
 }
