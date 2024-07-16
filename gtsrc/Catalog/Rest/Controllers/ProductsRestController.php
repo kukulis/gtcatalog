@@ -32,6 +32,7 @@ class ProductsRestController extends AbstractController
 
     public function getProductsAction(Request $request, string $language, Serializer $serializer): Response
     {
+        // TODO use additional parameter to decide if must load product categories or not.
         $skus = $serializer->deserialize($request->getContent(), 'array<string>', 'json');
         $restProducts = $this->productsRestService->getRestProducts($skus, $language);
         $response = new RestResultProducts();

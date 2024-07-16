@@ -11,9 +11,18 @@ security:
                 class: Gt\Catalog\Entity\User
                 property: email
     firewalls:
+        login:
+            pattern: ^/api/login
+            stateless: true
+            json_login:
+                check_path: /api/login_check
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+
         main:
 #            anonymous: true
             lazy: true
@@ -27,12 +36,12 @@ security:
                 path: app_logout
                 # where to redirect after logout
                 # target: app_any_route
-            json_login:
-                check_path: /api/login_check
-                #                username_path: email
-                #                password_path: password
-                success_handler: lexik_jwt_authentication.handler.authentication_success
-                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+#            json_login:
+#                check_path: /api/login_check
+#                #                username_path: email
+#                #                password_path: password
+#                success_handler: lexik_jwt_authentication.handler.authentication_success
+#                failure_handler: lexik_jwt_authentication.handler.authentication_failure
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
 
@@ -47,7 +56,7 @@ security:
 #            provider: app_user_provider
 #                guard:
 #                    authenticators:
-#                        - lexik_jwt_authentication.jwt_token_authenticator
+#                        - lexik_jwt_authentication.security.jwt_authenticator
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
@@ -60,7 +69,7 @@ security:
 #    gt.catalog.rest.languages                      GET|POST          ANY      ANY    /api/v3/languages
     access_control:
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
-        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
+#        - { path: ^/api/v3/products_update_special, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/admin/language/edit, roles: ROLE_ADMIN }
         - { path: ^/admin/language/new, roles: ROLE_ADMIN }
         - { path: ^/admin/classificator_group/edit, roles: ROLE_ADMIN }

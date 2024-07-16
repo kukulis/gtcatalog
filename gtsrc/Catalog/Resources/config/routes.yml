@@ -25,5 +25,5 @@ _gt.catalog.rest_v3:
 
 gt.catalog.login_check:
     path: "/api/login_check"
-    controller: Gt\Catalog\Rest\Controllers::getTokenUser
+    controller: Gt\Catalog\Rest\Controllers\AuthController::getTokenUser
     methods: POST
