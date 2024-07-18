@@ -31,7 +31,14 @@ final class Version20240712081943_product_package_data extends AbstractMigration
         );
 
         $this->addSql(
-        /** @lang MySQL */ "INSERT into products_packages (sku, type_code, weight )
+        /** @lang MySQL */ "INSERT IGNORE into products (sku, last_update)
+            values
+                ('0000-01660', now()),
+                ('0000-02063', now());"
+        );
+
+        $this->addSql(
+        /** @lang MySQL */ "INSERT IGNORE into products_packages (sku, type_code, weight )
             values 
                 ('0000-01660', 'plastic', '0.5'),
                 ('0000-01660', 'paper', '0.4'),
