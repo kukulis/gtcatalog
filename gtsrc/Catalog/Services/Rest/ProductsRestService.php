@@ -271,7 +271,7 @@ class ProductsRestService
     {
         /** @var ProductLanguage[] $rez */
         $rez = [];
-        for ($i = 0; $i < self::STEP; $i += self::STEP) {
+        for ($i = 0; $i < count($skus); $i += self::STEP) {
             $part = array_slice($skus, $i, self::STEP);
             $pls = $this->catalogDao->getProductsLangs($part, $lang);
             $rez = array_merge($rez, $pls);
@@ -284,6 +284,7 @@ class ProductsRestService
      */
     public function getRestProducts(array $skus, string $language): array
     {
+        $this->logger->debug(sprintf('Loading products by %s skus', count($skus)));
         // TODO get product data even if it has no translaton
         $productsByLanguage = $this->getProductsLanguages($skus, $language);
 
