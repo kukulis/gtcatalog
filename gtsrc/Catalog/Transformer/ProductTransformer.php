@@ -137,11 +137,12 @@ class ProductTransformer
                 $productPackage->setWeight($package->weight);
                 $productPackage->setPackageType($packagesTypesByCode[$package->typeCode]);
 
-                $productsPackages[] = $productPackage;
+                // using typeCode in a key to avoid duplicate records with the same package type
+                $productsPackages[$package->typeCode] = $productPackage;
             }
 
             if (count($productsPackages) != 0) {
-                $dbProduct->setPackages($productsPackages);
+                $dbProduct->setPackages(array_values($productsPackages));
 
                 $updatedFields[] = 'packages';
             }
