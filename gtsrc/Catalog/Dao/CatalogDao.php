@@ -836,7 +836,7 @@ class CatalogDao extends BaseDao
         return $builder->getQuery()->getResult();
     }
 
-    public function getSkus (string $fromSku, string $limit ) {
+    public function getSkus (string $fromSku, int $limit ) {
         /** @var EntityManager $em */
         $em =  $this->doctrine->getManager();
         $builder =  $em->createQueryBuilder();

@@ -396,7 +396,7 @@ class ProductsRestService
         return count($updatedProducts);
     }
 
-    public function getSkus(string $fromSku, string $limit): array
+    public function getSkus(string $fromSku, int $limit): array
     {
         $skusRecords = $this->catalogDao->getSkus($fromSku, $limit);
 

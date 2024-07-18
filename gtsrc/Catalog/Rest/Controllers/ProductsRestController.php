@@ -115,7 +115,7 @@ class ProductsRestController extends AbstractController
         $response = new RestResult();
         $response->data = $languages;
 
-        // TODO use serializer
+        // TODO use serializer ?
         return new JsonResponse($response);
     }
 
@@ -137,7 +137,10 @@ class ProductsRestController extends AbstractController
 
         $skus = $this->productsRestService->getSkus($fromSKU, $limit);
 
-        return new JsonResponse($skus);
+        $response = new RestResult();
+        $response->data = $skus;
+
+        return new JsonResponse($response);
     }
 
 }
