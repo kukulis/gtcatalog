@@ -359,14 +359,17 @@ class ProductsRestService
 
         $products = $this->catalogDao->loadProductsBySkus($skus);
 
-        $this->catalogDao->assignPackages( $products );
+        $this->catalogDao->assignPackages($products);
 
         /** @var Product[] $productsIndexed */
         $productsIndexed = MapBuilder::buildMap($products, fn(Product $product) => $product->getSku());
 
         $packagesTypes = $this->packageTypeRepository->findAll();
 
-        $packagesTypesByCode = MapBuilder::buildMap($packagesTypes, fn(PackageType $packageType) => $packageType->getCode());
+        $packagesTypesByCode = MapBuilder::buildMap(
+            $packagesTypes,
+            fn(PackageType $packageType) => $packageType->getCode()
+        );
 
         $updatedProducts = [];
         foreach ($dtoProducts as $dtoProduct) {
@@ -391,5 +394,12 @@ class ProductsRestService
         $this->catalogDao->updateMultipleProducts($updatedProducts);
 
         return count($updatedProducts);
+    }
+
+    public function getSkus(string $fromSku, string $limit): array
+    {
+        $skusRecords = $this->catalogDao->getSkus($fromSku, $limit);
+
+        return array_map(fn(array $record) => reset($record), $skusRecords);
     }
 }

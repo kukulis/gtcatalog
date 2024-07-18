@@ -23,6 +23,8 @@ class ProductsRestController extends AbstractController
     private const DEFAULT_LIMIT = 500;
     private const DEFAULT_OFFSET = 0;
 
+    private const MAX_SKU_LIMIT = 10000;
+
     private ProductsRestService $productsRestService;
 
     public function __construct(ProductsRestService $productsRestService)
@@ -41,6 +43,7 @@ class ProductsRestController extends AbstractController
 
         return new Response($json, 200, ['Content-Type'=>'application/json']);
     }
+
 
     public function getCategoriesAction(
         Request $request,
@@ -126,4 +129,15 @@ class ProductsRestController extends AbstractController
 
         return new JsonResponse($updatedCount);
     }
+
+    public function getSkusAction(Request $request) : Response {
+        $fromSKU = $request->query->get('fromsku', self::DEFAULT_LIMIT);
+        $limit = intval($request->query->get('limit'));
+        $limit = min( self::MAX_SKU_LIMIT, $limit );
+
+        $skus = $this->productsRestService->getSkus($fromSKU, $limit);
+
+        return new JsonResponse($skus);
+    }
+
 }

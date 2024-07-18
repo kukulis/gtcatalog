@@ -835,4 +835,17 @@ class CatalogDao extends BaseDao
 
         return $builder->getQuery()->getResult();
     }
+
+    public function getSkus (string $fromSku, string $limit ) {
+        /** @var EntityManager $em */
+        $em =  $this->doctrine->getManager();
+        $builder =  $em->createQueryBuilder();
+        $builder->select('p.sku')
+            ->from(Product::class, 'p')
+            ->andWhere('p.sku > :fromSku')
+            ->setParameter('fromSku', $fromSku)
+            ->setMaxResults($limit);
+
+        return $builder->getQuery()->getResult();
+    }
 }

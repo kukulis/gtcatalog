@@ -36,3 +36,8 @@ gt.catalog.rest.products.update_special:
     controller: Gt\Catalog\Rest\Controllers\ProductsRestController::updateSpecial
     methods: POST
 
+gt.catalog.rest.products.skus:
+    path: "/skus"
+    controller: Gt\Catalog\Rest\Controllers\ProductsRestController::getSkusAction
+    methods: GET
+
