@@ -6,7 +6,6 @@ namespace DoctrineMigrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Gt\Catalog\Entity\PackageType;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
@@ -27,7 +26,9 @@ final class Version20240712081943_product_package_data extends AbstractMigration
                ('plastic', 'Plastikas'),
                ('metal', 'Metalas'),
                ('glass', 'Stiklas'),
-               ('paper', 'Popierius')"
+               ('paper', 'Popierius'),
+               ('wood', 'Medis'),
+               ('combined', 'Kombinuota')"
         );
 
         $this->addSql(
