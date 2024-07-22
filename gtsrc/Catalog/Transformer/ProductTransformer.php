@@ -2,6 +2,7 @@
 
 namespace Gt\Catalog\Transformer;
 
+use Catalog\B2b\Common\Data\Catalog\Package;
 use Catalog\B2b\Common\Data\Catalog\Product as CatalogProduct;
 use Gt\Catalog\Entity\PackageType;
 use Gt\Catalog\Entity\Product;
@@ -68,6 +69,16 @@ class ProductTransformer
         $restProduct->purpose = ProductsHelper::getClassificatorCode($product->getPurpose());
         $restProduct->measure = ProductsHelper::getClassificatorCode($product->getMeasure());
         $restProduct->productgroup = ProductsHelper::getClassificatorCode($product->getProductgroup());
+
+        $restPackages = array_map(
+            fn(ProductPackage $pp) => (new Package())
+                ->setTypeCode($pp->getPackageType()->getCode())
+                ->setWeight($pp->getWeight())
+            ,
+            $product->getPackages()
+        );
+
+        $restProduct->setPackages($restPackages);
     }
 
     private function mapProductLanguageToRestProduct(
