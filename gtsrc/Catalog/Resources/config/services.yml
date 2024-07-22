@@ -204,6 +204,7 @@ services:
             $categoriesRestService: '@gt.catalog.categories_rest_service'
             $languageDao: '@gt.catalog.language_dao'
             $serializer: '@jms_serializer'
+            $secretToken: '%env(SECRET_TOKEN)%'
 
     Gt\Catalog\Rest\Controllers\PackagesRestController:
         tags:

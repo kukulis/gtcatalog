@@ -17,6 +17,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class ProductsRestController extends AbstractController
 {
@@ -122,7 +123,13 @@ class ProductsRestController extends AbstractController
         return new JsonResponse($response);
     }
 
-    public function updateSpecial(Request $request, Serializer $serializer) : Response {
+    public function updateSpecial(Request $request, Serializer $serializer, string $secretToken) : Response {
+
+        $receivedSecretToken = $request->headers->get('secret-token');
+        if ( $receivedSecretToken != $secretToken) {
+            throw new AccessDeniedHttpException('Invalid secret token');
+        }
+
         $content = $request->getContent();
 
         /** @var Product [] $products */
