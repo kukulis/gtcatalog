@@ -186,29 +186,29 @@ class Product
      * @var float
      * @ORM\Column(type="decimal", scale=2, precision=10, options={"default":0} )
      */
-    private $weight = 0;
+    private $weight = 0.0;
 
     /**
      * @var float
      * @ORM\Column(type="decimal", scale=2, precision=10, options={"default": 0})
      */
-    private $weightBruto = 0;
+    private $weightBruto = 0.0;
 
     /**
      * @var float
      * @ORM\Column(type="decimal", scale=2, precision=10, options={"default":0} )
      */
-    private $length = 0;
+    private $length = 0.0;
     /**
      * @var float
      * @ORM\Column(type="decimal", scale=2, precision=10, options={"default":0} )
      */
-    private $height = 0;
+    private $height = 0.0;
     /**
      * @var float
      * @ORM\Column(type="decimal", scale=2, precision=10, options={"default":0} )
      */
-    private $width = 0;
+    private $width = 0.0;
 
     /**
      * @var string
@@ -304,7 +304,7 @@ class Product
     /**
      * @return string
      */
-    public function getSku(): string
+    public function getSku(): ?string
     {
         return $this->sku;
     }

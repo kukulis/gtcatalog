@@ -74,12 +74,12 @@ class ProductTransformer
         ProductLanguage $productLanguage,
         CatalogProduct $restProduct
     ): void {
-        $restProduct->language = $productLanguage->getLanguage()->getCode();
+        $restProduct->language = $productLanguage->getLanguageCode();
         $restProduct->name = $productLanguage->getName();
         $restProduct->description = $productLanguage->getDescription();
         $restProduct->label = $productLanguage->getLabel();
         $restProduct->variantName = $productLanguage->getVariantName();
-        $restProduct->tags = $productLanguage->getTags();
+        $restProduct->tags = $productLanguage->getTagsArray();
         $restProduct->labelSize = $productLanguage->getLabelSize();
         $restProduct->distributor = $productLanguage->getDistributor();
         $restProduct->composition = $productLanguage->getComposition();

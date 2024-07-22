@@ -282,11 +282,16 @@ class ProductsRestService
     /**
      * @return \Catalog\B2b\Common\Data\Catalog\Product[]
      */
-    public function getRestProducts(array $skus, string $language, $skipCategories = false): array
+    public function getRestProducts(array $skus, string $language, $skipCategories = false, $skipPackages=false): array
     {
         $this->logger->debug(sprintf('Loading products by %s skus', count($skus)));
         // TODO get product data even if it has no translaton
         $productsByLanguage = $this->getProductsLanguages($skus, $language);
+
+        if ( !$skipPackages) {
+            $products = array_map(fn(ProductLanguage $pl) => $pl->getProduct(), $productsByLanguage);
+            $this->catalogDao->assignPackages($products);
+        }
 
         $transformedProducts = array_map(
             fn($pl) => $this->productTransformer->transformToRestProduct($pl),
@@ -294,6 +299,7 @@ class ProductsRestService
         );
 
         if (!$skipCategories) {
+            // assigning categories after transforming
             $this->assignCategories($transformedProducts, $language);
         }
 
