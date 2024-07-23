@@ -1,0 +1,21 @@
+{% extends 'admin_base.html.twig' %}
+{% block title %}
+    {% trans %}Brands list{% endtrans %}
+{% endblock %}
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>{% trans %}Brands{% endtrans %}</h1>
+            </div>
+        </div>
+
+        {% include '@Catalog/brands/filter_form.html.twig' %}
+
+        <div class="row">
+            <div class="col-md-12">
+                {{ tableHtml|raw }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

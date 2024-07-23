@@ -41,6 +41,10 @@ brands_routes:
     resource: '@CatalogBundle/Resources/config/brands_routes.yml'
     prefix: '/admin'
 
+product_log_routes:
+    resource: '@CatalogBundle/Resources/config/product_log_routes.yml'
+    prefix: '/admin'
+
 
 customs_keywords_routes:
     resource: '@CatalogBundle/Resources/config/customs_keywords_routes.yml'

@@ -18,6 +18,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\File\File;
@@ -35,16 +36,24 @@ class ProductsController extends AbstractController
     /** @var \GuzzleHttp\Client $guzzleClient */
     private $guzzleClient;
 
+    private EventDispatcherInterface $eventDispatcher;
+
     /**
      * @param TableService $tableService
      * @param ProductsTableData $tableData
      * @param Client $guzzleClient
      */
-    public function __construct(TableService $tableService, ProductsTableData $tableData, Client $guzzleClient)
+    public function __construct(
+        TableService $tableService,
+        ProductsTableData $tableData,
+        Client $guzzleClient,
+        EventDispatcherInterface $eventDispatcher
+    )
     {
         $this->tableService = $tableService;
         $this->tableData = $tableData;
         $this->guzzleClient = $guzzleClient;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -198,6 +207,8 @@ class ProductsController extends AbstractController
                 $saveSubmit = $form->get('save');
 
                 if ($saveSubmit->isSubmitted()) {
+                    $this->eventDispatcher->dispatch(new Event(),'product.edit');
+
                     $productsService->storeProduct($product);
                     $productsService->storeProductLanguage($productLanguage);
                 }
@@ -234,6 +245,8 @@ class ProductsController extends AbstractController
 
     public function deleteAction()
     {
+        $this->eventDispatcher->dispatch('product.remove');
+
         return new Response('TODO delete product');
     }
 

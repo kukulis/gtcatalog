@@ -1,0 +1,4 @@
+gt.catalog.product_log:
+  path: "/logs"
+  controller: Gt\Catalog\Controller\ProductLogController::listAction
+  methods: GET

@@ -1,0 +1,6 @@
+services:
+  gt.catalog.product_log_service:
+    class: 'Gt\Catalog\Services\ProductLogService'
+    arguments:
+      - '@logger'
+      - '@doctrine.orm.entity_manager'
