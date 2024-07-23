@@ -41,6 +41,7 @@ class ProductLog
     /**
      * @ORM\Column(type="integer")
      */
+    // TODO (FF) change to sku
     private $productId;
 
     /**

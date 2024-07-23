@@ -25,6 +25,7 @@ class ProductChangeListener
         $details = json_encode($changes);
 
         $log = new ProductLog();
+        // TODO (FF) man rodo, kad nei vienos iš šitų funkcijų nėra.
         $log->setAction('update');
         $log->setTimestamp(new \DateTime());
         $log->setDetails($details);

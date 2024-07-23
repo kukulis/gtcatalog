@@ -207,6 +207,8 @@ class ProductsController extends AbstractController
                 $saveSubmit = $form->get('save');
 
                 if ($saveSubmit->isSubmitted()) {
+                    // TODO (FF) undefined class Event, čia turėta omeny new ProductStoredEvent ?
+                    // TODO (FF) product.edit pakeisti į 'product.stored' ? ir tada services.yaml kur yra listeneris taip pat pakeisti
                     $this->eventDispatcher->dispatch(new Event(),'product.edit');
 
                     $productsService->storeProduct($product);
@@ -245,7 +247,8 @@ class ProductsController extends AbstractController
 
     public function deleteAction()
     {
-        $this->eventDispatcher->dispatch('product.remove');
+        // TODO (FF) pass event data through parameters
+        $this->eventDispatcher->dispatch( 'TODO event object' ,'product.remove');
 
         return new Response('TODO delete product');
     }

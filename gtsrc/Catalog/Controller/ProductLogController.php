@@ -2,8 +2,8 @@
 
 namespace Gt\Catalog\Controller;
 
-use Gt\Catalog\Entity\ProductLog;
 use Gt\Catalog\Form\ProductLogFormType;
+use Gt\Catalog\Services\ProductLogService;
 use Gt\Catalog\TableData\ProductLogTableData;
 use Gt\Catalog\Services\TableService;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,12 +21,13 @@ class ProductLogController extends AbstractController
         $this->tableData = $tableData;
     }
 
-    public function listAction(ProductLogService $brandsService, Request $request)
+
+    public function listAction(ProductLogService $productLogService, Request $request)
     {
         $brandsFilter = new ProductLogFormType();
         $form = $this->createForm(ProductLogFormType::class, $brandsFilter);
         $form->handleRequest($request);
-        $brands = $brandsService->getList($brandsFilter);
+        $brands = $productLogService->getList($brandsFilter);
 
         $tableData = $this->tableData->getTableData($brands);
 

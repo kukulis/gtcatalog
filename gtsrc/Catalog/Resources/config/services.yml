@@ -303,6 +303,9 @@ services:
     Gt\Catalog\Repository\ImportPicturesJobRepository:
         tags: [ 'doctrine.repository_service' ]
 
+    Gt\Catalog\Repository\ProductLogRepository:
+        tags: [ 'doctrine.repository_service' ]
+
     Gt\Catalog\Controller\ImagesImportController:
         arguments:
             - '@gt.catalog.services.table_service'
@@ -382,8 +385,8 @@ services:
             - '@gt.catalog.table_data.product_log'
         tags:
             - "controller.service_arguments"
-#        bind:
-#            $productLogService: '@gt.catalog.product_log_service'
+        bind:
+            $productLogService: '@gt.catalog.product_log_service'
 
     gt.catalog.categories_rest_service:
         class: 'Gt\Catalog\Services\Rest\CategoriesRestService'

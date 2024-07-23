@@ -43,5 +43,5 @@ services:
 
     Gt\Catalog\EventListener\ProductChangeListener:
         tags:
-            - { name: doctrine.event_listener, event: 'product.edit' }
+            - { name: doctrine.event_listener, event: 'product.edit' }  # TODO (FF) trūksta method: 'postUpdate' ?
             - { name: doctrine.event_listener, event: 'product.remove', method: 'postRemove' }
