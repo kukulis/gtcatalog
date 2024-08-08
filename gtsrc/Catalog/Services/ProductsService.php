@@ -170,6 +170,7 @@ class ProductsService extends ProductsBaseService
                 'brand',
                 'line',
                 'parent_sku',
+                'barcode',
                 'origin_country_code',
                 'vendor',
                 'manufacturer',
@@ -214,6 +215,7 @@ class ProductsService extends ProductsBaseService
                 $pl->getProduct()->getBrand(),
                 $pl->getProduct()->getLine(),
                 $pl->getProduct()->getParentSku(),
+                $pl->getProduct()->getBarcode(),
                 $pl->getProduct()->getOriginCountryCode(),
                 $pl->getProduct()->getVendor(),
                 $pl->getProduct()->getManufacturer(),
@@ -429,6 +431,19 @@ class ProductsService extends ProductsBaseService
                     foreach ($importingFieldsProducts as $f) {
                         $setter = 'set' . PropertiesHelper::removeUnderScores($f);
                         $val = $line[$f];
+
+                        if($setter == 'setlastupdate'){
+                            $val = DateTime::createFromFormat('Y-m-d H:i:s', $line['last_update']);
+                        }
+
+                        if ($setter == 'setformale' && $val === '') {
+                            $val = 0;
+                        }
+
+                        if ($setter == 'setforfemale' && $val === '') {
+                            $val = 0;
+                        }
+
                         if ($val === '') {
                             $val = null;
                         }

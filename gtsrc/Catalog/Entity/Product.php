@@ -41,6 +41,7 @@ class Product
         'brand',
         'line',
         'parent_sku',
+        'barcode',
         'origin_country_code',
         'vendor',
         'manufacturer',
@@ -105,6 +106,12 @@ class Product
      * @ORM\Column(type="string", length=32, name="parent_sku", nullable=true)
      */
     private $parentSku;
+
+    /**
+     * @var string
+     * @ORM\Column(type="bigint", length=32, name="barcode", nullable=true)
+     */
+    private $barcode;
 
     /**
      * @var string
@@ -360,6 +367,22 @@ class Product
     public function setParentSku(string $parentSku=null): void
     {
         $this->parentSku = $parentSku;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getBarcode(): ?int
+    {
+        return $this->barcode;
+    }
+
+    /**
+     * @param int|null $barcode
+     */
+    public function setBarcode(int $barcode=null): void
+    {
+        $this->barcode = $barcode;
     }
 
     /**

@@ -52,6 +52,7 @@ class ProductFormType extends AbstractType
             ->add('p_brand', TextType::class, ['label' => 'Brand'])
             ->add('p_line', TextType::class, ['label' => 'Line'])
             ->add('p_parent_sku', TextType::class, ['required' => false, 'label' => 'Parent'])
+            ->add('p_barcode', TextType::class, ['required' => false, 'label' => 'Barcode'])
             ->add('p_info_provider', TextType::class, ['disabled' => true, 'label' => 'Info provider'])
             ->add('p_origin_country_code', TextType::class, ['required' => false, 'label' => 'Origin country code'])
             ->add('p_vendor', TextType::class, ['required' => false, 'label' => 'Vendor'])
@@ -221,6 +222,22 @@ class ProductFormType extends AbstractType
     public function setPParentSku(string $parentSku = null): void
     {
         $this->product->setParentSku($parentSku);
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getPBarcode(): ?int
+    {
+        return $this->product->getBarcode();
+    }
+
+    /**
+     * @param int|null $barcode
+     */
+    public function setPBarcode(int $barcode = null): void
+    {
+        $this->product->setBarcode($barcode);
     }
 
     /**
