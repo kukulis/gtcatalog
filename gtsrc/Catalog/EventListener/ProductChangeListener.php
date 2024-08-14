@@ -2,40 +2,45 @@
 
 namespace Gt\Catalog\EventListener;
 
-use Doctrine\Persistence\Event\LifecycleEventArgs;
-use Gt\Catalog\Entity\Product;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Exception\NotSupported;
 use Gt\Catalog\Entity\ProductLog;
+use Gt\Catalog\Event\ProductStoredEvent;
+use mysql_xdevapi\DatabaseObject;
 use Symfony\Component\Security\Core\Security;
 
 class ProductChangeListener
 {
     private $security;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(Security $security)
+
+    public function __construct(EntityManager $entityManager, Security $security)
     {
+        $this->entityManager = $entityManager;
         $this->security = $security;
     }
 
-    public function postUpdate($product, $event): void
+    /**
+     * @throws NotSupported
+     */
+    public function postUpdate(ProductStoredEvent $event): void
     {
-        $em = $event->getEntityManager();
-        $uow = $em->getUnitOfWork();
+        $productLog = new ProductLog();
+        $productLog->setLanguage($event->getProductLanguage());
+        $productLog->setProductOld($event->getOldProduct());
+        $productLog->setProductNew($event->getProduct()->getSku());
+        $productLog->setUser($this->security->getUser());
+        $productLog->setSku($event->getProduct()->getSku());
+        $productLog->setDateCreated(new \DateTime());
 
-        $changes = $uow->getEntityChangeSet($product);
-        $details = json_encode($changes);
-
-        $log = new ProductLog();
-        // TODO (FF) man rodo, kad nei vienos iš šitų funkcijų nėra.
-        $log->setAction('update');
-        $log->setTimestamp(new \DateTime());
-        $log->setDetails($details);
-        $log->setUsername($this->security->getUser()->getUsername());
-
-        $em->persist($log);
-        $em->flush();
+        $productRepository = $this->entityManager->getRepository(ProductLog::class);
+        $productRepository->save($productLog);
     }
 
     public function postRemove(): void
     {
+        die('asd');
     }
 }

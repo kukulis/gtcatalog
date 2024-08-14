@@ -4,6 +4,9 @@ namespace Gt\Catalog\Controller;
 
 use Gt\Catalog\Dao\CategoryDao;
 use Gt\Catalog\Data\SimpleCategoriesFilter;
+use Gt\Catalog\Entity\Product;
+use Gt\Catalog\Event\ProductRemoveEvent;
+use Gt\Catalog\Event\ProductStoredEvent;
 use Gt\Catalog\Exception\CatalogDetailedException;
 use Gt\Catalog\Exception\CatalogErrorException;
 use Gt\Catalog\Exception\CatalogValidateException;
@@ -24,6 +27,8 @@ use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 class ProductsController extends AbstractController
 {
@@ -37,6 +42,7 @@ class ProductsController extends AbstractController
     private $guzzleClient;
 
     private EventDispatcherInterface $eventDispatcher;
+    private Serializer $serializer;
 
     /**
      * @param TableService $tableService
@@ -47,13 +53,15 @@ class ProductsController extends AbstractController
         TableService $tableService,
         ProductsTableData $tableData,
         Client $guzzleClient,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        Serializer $serializer
     )
     {
         $this->tableService = $tableService;
         $this->tableData = $tableData;
         $this->guzzleClient = $guzzleClient;
         $this->eventDispatcher = $eventDispatcher;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -182,6 +190,11 @@ class ProductsController extends AbstractController
         try {
             $product = $productsService->getProduct($sku);
 
+            $normalizer = new ObjectNormalizer();
+            $serializer = new Serializer([$normalizer]);
+
+            $oldProduct = $serializer->normalize($product);
+
             if ($product == null) {
                 return $this->render(
                     '@Catalog/error/error.html.twig',
@@ -207,9 +220,8 @@ class ProductsController extends AbstractController
                 $saveSubmit = $form->get('save');
 
                 if ($saveSubmit->isSubmitted()) {
-                    // TODO (FF) undefined class Event, čia turėta omeny new ProductStoredEvent ?
-                    // TODO (FF) product.edit pakeisti į 'product.stored' ? ir tada services.yaml kur yra listeneris taip pat pakeisti
-                    $this->eventDispatcher->dispatch(new Event(),'product.edit');
+                    $newProduct = $serializer->normalize($product);
+                    $this->eventDispatcher->dispatch(new ProductStoredEvent($newProduct, $oldProduct, $languageCode),Pro);
 
                     $productsService->storeProduct($product);
                     $productsService->storeProductLanguage($productLanguage);
@@ -245,10 +257,13 @@ class ProductsController extends AbstractController
         );
     }
 
-    public function deleteAction()
+    /**
+     * @throws CatalogErrorException
+     */
+    public function deleteAction($sku, ProductsService $productsService): Response
     {
-        // TODO (FF) pass event data through parameters
-        $this->eventDispatcher->dispatch( 'TODO event object' ,'product.remove');
+        $product = $productsService->getProduct($sku);
+        $this->eventDispatcher->dispatch( new ProductRemoveEvent($product) ,'product.remove');
 
         return new Response('TODO delete product');
     }

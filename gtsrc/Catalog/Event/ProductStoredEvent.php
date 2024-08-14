@@ -11,13 +11,29 @@ class ProductStoredEvent extends Event
 
     private $product;
 
-    public function __construct(Product $product)
+    private $oldProduct;
+
+    private $productLanguage;
+
+    public function __construct($product, $oldProduct, $productLanguage)
     {
         $this->product = $product;
+        $this->oldProduct = $oldProduct;
+        $this->productLanguage = $productLanguage;
     }
 
     public function getProduct(): Product
     {
         return $this->product;
+    }
+
+    public function getOldProduct(): Product
+    {
+        return $this->oldProduct;
+    }
+
+    public function getProductLanguage()
+    {
+        return $this->productLanguage;
     }
 }

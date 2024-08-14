@@ -40,8 +40,3 @@ services:
         tags: [ 'doctrine.repository_service' ]
 
     Symfony\Component\Form\FormRendererInterface: '@twig.form.renderer'
-
-    Gt\Catalog\EventListener\ProductChangeListener:
-        tags:
-            - { name: doctrine.event_listener, event: 'product.edit' }  # TODO (FF) trūksta method: 'postUpdate' ?
-            - { name: doctrine.event_listener, event: 'product.remove', method: 'postRemove' }

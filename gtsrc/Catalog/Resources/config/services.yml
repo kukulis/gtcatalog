@@ -46,6 +46,8 @@ services:
             - '@gt.catalog.services.table_service'
             - '@gt.catalog.table_data.products'
             - '@gt.catalog.guzzle'
+            - '@security.event_dispatcher.main'
+            - '@serializer'
         bind:
             $logger: '@logger'
             $productsService: '@gt.catalog.products_service'
@@ -456,3 +458,11 @@ services:
 
     gt.catalog.table_data.users:
         class: 'Gt\Catalog\TableData\UsersTableData'
+
+    gt.catalog.product.update:
+        class: 'Gt\Catalog\EventListener\ProductChangeListener'
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@Symfony\Component\Security\Core\Security'
+        tags:
+            - { name: kernel.event_listener, event: 'product.stored', method: 'postUpdate' }

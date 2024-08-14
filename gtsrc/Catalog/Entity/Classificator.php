@@ -141,7 +141,7 @@ class Classificator
     /**
      * @return bool
      */
-    public function isConfirmed(): bool
+    public function isConfirmed(): ?bool
     {
         return $this->confirmed;
     }

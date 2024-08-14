@@ -34,15 +34,17 @@ class ProductLog
     private $productNew;
 
     /**
-     * @ORM\Column(type="integer")
+     * @var User
+     * @ORM\ManyToOne(targetEntity="User" )
+     * @ORM\JoinColumn(name="user", referencedColumnName="id")
      */
-    private $userId;
+    private $user;
 
     /**
      * @ORM\Column(type="integer")
+     *
      */
-    // TODO (FF) change to sku
-    private $productId;
+    private $sku;
 
     /**
      * @var DateTime
@@ -127,32 +129,27 @@ class ProductLog
     /**
      * @return mixed
      */
-    public function getProductId()
+    public function getSku()
     {
-        return $this->productId;
+        return $this->sku;
     }
 
     /**
-     * @param mixed $productId
+     * @param mixed $sku
      */
-    public function setProductId($productId): void
+    public function setSku($sku): void
     {
-        $this->productId = $productId;
+        $this->sku = $sku;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getUserId()
+
+    public function getUser()
     {
-        return $this->userId;
+        return $this->user;
     }
 
-    /**
-     * @param mixed $userId
-     */
-    public function setUserId($userId): void
+    public function setUser($user)
     {
-        $this->userId = $userId;
+        $this->user = $user;
     }
 }
