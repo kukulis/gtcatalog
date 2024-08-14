@@ -221,7 +221,7 @@ class ProductsController extends AbstractController
 
                 if ($saveSubmit->isSubmitted()) {
                     $newProduct = $serializer->normalize($product);
-                    $this->eventDispatcher->dispatch(new ProductStoredEvent($newProduct, $oldProduct, $languageCode),Pro);
+                    $this->eventDispatcher->dispatch(new ProductStoredEvent($newProduct, $oldProduct, $languageCode), ProductStoredEvent::NAME);
 
                     $productsService->storeProduct($product);
                     $productsService->storeProductLanguage($productLanguage);
