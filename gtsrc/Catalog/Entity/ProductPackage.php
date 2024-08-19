@@ -42,6 +42,12 @@ class ProductPackage
      */
     private $weight;
 
+    /**
+     * @var int
+     * @ORM\Column(type="integer", options={"default":2} )
+     */
+    private $updatePriority;
+
     public function getId(): int
     {
         return $this->id;
@@ -86,5 +92,14 @@ class ProductPackage
         return $this;
     }
 
+    public function getUpdatePriority(): int
+    {
+        return $this->updatePriority;
+    }
 
+    public function setUpdatePriority(int $updatePriority): ProductPackage
+    {
+        $this->updatePriority = $updatePriority;
+        return $this;
+    }
 }

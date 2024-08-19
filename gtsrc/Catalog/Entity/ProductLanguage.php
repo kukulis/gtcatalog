@@ -110,6 +110,13 @@ class ProductLanguage
     private $composition;
 
     /**
+     * @var int
+     * @ORM\Column(type="integer", options={"default":2} )
+     */
+    private $updatePriority;
+
+
+    /**
      * @return string
      */
     public function getSku()
@@ -328,5 +335,16 @@ class ProductLanguage
         }
 
         return array_map('trim', explode(',', $this->tags));
+    }
+
+    public function getUpdatePriority(): int
+    {
+        return $this->updatePriority;
+    }
+
+    public function setUpdatePriority(int $updatePriority): ProductLanguage
+    {
+        $this->updatePriority = $updatePriority;
+        return $this;
     }
 }

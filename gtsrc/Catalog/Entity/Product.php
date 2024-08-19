@@ -302,6 +302,12 @@ class Product
     private $packages = [];
 
     /**
+     * @var int
+     * @ORM\Column(type="integer", options={"default":2} )
+     */
+    private $updatePriority;
+
+    /**
      * @return string
      */
     public function getSku(): ?string
@@ -978,4 +984,14 @@ class Product
         return $this;
     }
 
+    public function getUpdatePriority(): int
+    {
+        return $this->updatePriority;
+    }
+
+    public function setUpdatePriority(int $updatePriority): Product
+    {
+        $this->updatePriority = $updatePriority;
+        return $this;
+    }
 }
