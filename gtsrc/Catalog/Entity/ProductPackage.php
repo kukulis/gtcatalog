@@ -19,7 +19,7 @@ class ProductPackage
      * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Id
      */
-    private $id;
+    private $id = 0;
 
     /**
      * @var Product
@@ -42,6 +42,7 @@ class ProductPackage
      */
     private $weight;
 
+    // TODO remove a it is useless
     /**
      * @var int
      * @ORM\Column(type="integer", options={"default":2} )

@@ -51,7 +51,8 @@ class CatalogDao extends BaseDao
 
         $builder = $em->createQueryBuilder();
         $builder->select('p')
-            ->from(Product::class, 'p');
+            ->from(Product::class, 'p')
+        ;
 
         $this->appendProductConditionsFromFilter($builder, $filter);
 
@@ -71,13 +72,14 @@ class CatalogDao extends BaseDao
         $builder = $em->createQueryBuilder();
 
         $builder->select('pl, p, l')
-            ->from(ProductLanguage::class, 'pl');
+            ->from(ProductLanguage::class, 'pl')
+        ;
 
         //sku
 
         $builder->join('pl.product', 'p');
         $builder->join('pl.language', 'l');
-        $builder->andWhere( 'l.code = :language');
+        $builder->andWhere('l.code = :language');
         $builder->setParameter('language', $filter->getLanguageCode());
 
         $this->appendProductConditionsFromFilter($builder, $filter);
@@ -87,8 +89,8 @@ class CatalogDao extends BaseDao
             $builder->setParameter('likeName', '%' . $filter->getLikeName() . '%');
         }
 
-        if ( $filter->getNoLabel()) {
-            $builder->andWhere( "(pl.label = '' or pl.label is null)");
+        if ($filter->getNoLabel()) {
+            $builder->andWhere("(pl.label = '' or pl.label is null)");
         }
 
         if ($filter->getLimit() > 0) {
@@ -101,16 +103,17 @@ class CatalogDao extends BaseDao
         return $productsLanguages;
     }
 
-    public function appendProductConditionsFromFilter(QueryBuilder $builder, ProductsFilter $filter) {
+    public function appendProductConditionsFromFilter(QueryBuilder $builder, ProductsFilter $filter)
+    {
         if (!empty($filter->getLikeSku())) {
             $builder->andWhere('p.sku like :likeSku');
             $builder->setParameter('likeSku', '%' . $filter->getLikeSku() . '%');
         }
 
-        if ( !empty($filter->getCategory())) {
-            $builder->join('p.productCategories', 'pc' );
-            $builder->join('pc.category', 'c' );
-            $builder->andWhere( 'c.code = :categoryCode' );
+        if (!empty($filter->getCategory())) {
+            $builder->join('p.productCategories', 'pc');
+            $builder->join('pc.category', 'c');
+            $builder->andWhere('c.code = :categoryCode');
             $builder->setParameter('categoryCode', $filter->getCategory());
         }
 
@@ -309,7 +312,9 @@ class CatalogDao extends BaseDao
 
             $loadedClassificator = $loadedMap[$c->getCode()];
             if ($loadedClassificator->getGroupCode() != $c->getGroupCode()) {
-                $messages[] = 'Group for [' . $loadedClassificator->getCode() . '] is wrong: [' . $loadedClassificator->getGroupCode() . '] should be: [' . $c->getGroupCode() . ']';
+                $messages[] = 'Group for [' . $loadedClassificator->getCode(
+                    ) . '] is wrong: [' . $loadedClassificator->getGroupCode() . '] should be: [' . $c->getGroupCode(
+                    ) . ']';
                 $relatedObjectClassificator = new RelatedObjectClassificator();
                 $relatedObjectClassificator->classificatorCode = $c->getCode();
                 $relatedObjectClassificator->correctCode = $c->getGroupCode();
@@ -413,7 +418,8 @@ class CatalogDao extends BaseDao
         $builder = $em->createQueryBuilder();
         $builder->select('c')
             ->from(Classificator::class, 'c')
-            ->join('c.classificatorGroup', 'g');
+            ->join('c.classificatorGroup', 'g')
+        ;
 
 
         if (!empty($groupCode)) {
@@ -452,7 +458,8 @@ class CatalogDao extends BaseDao
             ->from(ClassificatorLanguage::class, 'cl')
             ->join('cl.classificator', 'c')
             ->join('c.classificatorGroup', 'g')
-            ->join('cl.language', 'l');
+            ->join('cl.language', 'l')
+        ;
 
         $builder->andWhere('l.code=:languageCode');
         $builder->setParameter('languageCode', $language);
@@ -714,7 +721,6 @@ class CatalogDao extends BaseDao
      */
     public function loadProductLanguagesLazy($skus, $langCodes): array
     {
-
         if (count($langCodes) == 0) {
             return [];
         }
@@ -742,7 +748,8 @@ class CatalogDao extends BaseDao
      * @param string[] $skus
      * @return Product[]
      */
-    public function loadProductsBySkus(array $skus) : array {
+    public function loadProductsBySkus(array $skus): array
+    {
         $class = Product::class;
         $dql = /** @lang DQL */
             "SELECT  p from $class p 
@@ -786,11 +793,10 @@ class CatalogDao extends BaseDao
     /**
      * @param Product[] $products
      */
-    public function updateMultipleProducts(array $products) {
-        // should we refactor to upsert?
-
+    public function updateMultipleProducts(array $products)
+    {
         /** @var EntityManager $em */
-        $em =  $this->doctrine->getManager();
+        $em = $this->doctrine->getManager();
         foreach ($products as $product) {
             $em->persist($product);
             foreach ($product->getPackages() as $package) {
@@ -804,14 +810,15 @@ class CatalogDao extends BaseDao
     /**
      * @param Product[] $products
      */
-    public function assignPackages(array $products ) {
-        $skus = array_map ( fn($p)=>$p->getSku(), $products);
+    public function assignPackages(array $products)
+    {
+        $skus = array_map(fn($p) => $p->getSku(), $products);
         $productsPackages = $this->loadProductsPackages($skus);
         MultipleRelationAssigner::assignByRelation(
             $products,
             $productsPackages,
             fn(Product $p) => $p->getSku(),
-            fn(ProductPackage  $pp) =>$pp->getProduct()->getSku(),
+            fn(ProductPackage $pp) => $pp->getProduct()->getSku(),
             fn(Product $p, ProductPackage $pp) => $p->addProductPackage($pp)
         );
     }
@@ -820,32 +827,48 @@ class CatalogDao extends BaseDao
      * @param string[] $skus
      * @return ProductPackage[]
      */
-    public function loadProductsPackages ( array $skus) : array {
+    public function loadProductsPackages(array $skus): array
+    {
         /** @var EntityManager $em */
-        $em =  $this->doctrine->getManager();
-        $builder =  $em->createQueryBuilder();
+        $em = $this->doctrine->getManager();
+        $builder = $em->createQueryBuilder();
         $builder->select('pp')
-            ->from(ProductPackage::class, 'pp');
+            ->from(ProductPackage::class, 'pp')
+        ;
 
         //sku
 
         $builder->join('pp.product', 'p');
-        $builder->andWhere( 'p.sku in (:skus)');
-        $builder->setParameter('skus', $skus );
+        $builder->andWhere('p.sku in (:skus)');
+        $builder->setParameter('skus', $skus);
 
         return $builder->getQuery()->getResult();
     }
 
-    public function getSkus (string $fromSku, int $limit ) {
+    public function getSkus(string $fromSku, int $limit)
+    {
         /** @var EntityManager $em */
-        $em =  $this->doctrine->getManager();
-        $builder =  $em->createQueryBuilder();
+        $em = $this->doctrine->getManager();
+        $builder = $em->createQueryBuilder();
         $builder->select('p.sku')
             ->from(Product::class, 'p')
             ->andWhere('p.sku > :fromSku')
             ->setParameter('fromSku', $fromSku)
-            ->setMaxResults($limit);
+            ->setMaxResults($limit)
+        ;
 
         return $builder->getQuery()->getResult();
+    }
+
+    public function removePackagesOfProducts($skus): int
+    {
+        $productsPackages = $this->loadProductsPackages($skus);
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+        foreach ($productsPackages as $productPackage) {
+            $em->remove($productPackage);
+        }
+
+        return count($productsPackages);
     }
 }

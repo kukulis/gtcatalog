@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Tests\Gt\Catalog;
 
 use Catalog\B2b\Common\Data\Catalog\Package;
@@ -71,7 +70,7 @@ class UpdateSpecialProductsTest extends TestCase
                     ->setWeight(4.5)
                     ->setWeightBruto(4.6)
                     ->setCodeFromCustom('123456')
-                    ->setPackages(
+                    ->setProductsPackages(
                         [
                             (new ProductPackage())->setPackageType(
                                 (new PackageType())->setCode('glass')->setDescription('Stiklas')
@@ -112,7 +111,7 @@ class UpdateSpecialProductsTest extends TestCase
                     ->setWeight(4.5)
                     ->setWeightBruto(4.6)
                     ->setCodeFromCustom('123456')
-                    ->setPackages(
+                    ->setProductsPackages(
                         [
                             (new ProductPackage())->setPackageType(
                                 (new PackageType())->setCode('glass')->setDescription('Stiklas')
@@ -150,7 +149,7 @@ class UpdateSpecialProductsTest extends TestCase
                     ->setWeight(4.5)
                     ->setWeightBruto(4.6)
                     ->setCodeFromCustom('123456')
-                    ->setPackages(
+                    ->setProductsPackages(
                         [
                             (new ProductPackage())->setPackageType(
                                 (new PackageType())->setCode('glass')->setDescription('Stiklas')
@@ -192,7 +191,7 @@ class UpdateSpecialProductsTest extends TestCase
                     ->setWeight(3)
                     ->setWeightBruto(3)
                     ->setCodeFromCustom('123')
-                    ->setPackages(
+                    ->setProductsPackages(
                         [
                             (new ProductPackage())->setPackageType(
                                 (new PackageType())->setCode('glass')->setDescription('Stiklas')
@@ -205,7 +204,153 @@ class UpdateSpecialProductsTest extends TestCase
                 'expectedFields' => ['packages'],
                 'priority' => 2,
             ],
+
+            // =============== packages changes ===================
+            // let be logic like this:
+            // if there are same packages, do not touch it
+            // if different, then update only if the new priority is higher or equal ( <= )
+            'test prioritized packages' => [
+                'dto' =>
+                    (new Product())
+                        ->setSku('abc')
+                        ->setWeight(4.5)
+                        ->setWeightBruto(4.6)
+                        ->setCodeFromCustom('123456')
+                        ->setPackages(
+                            [
+                                (new Package())->setTypeCode('glass')->setWeight(0.1)
+                            ]
+                        )
+                ,
+                'product' => (new \Gt\Catalog\Entity\Product())
+                    ->setSku('abc')
+                    ->setWeight(3)
+                    ->setWeightBruto(3)
+                    ->setCodeFromCustom('123')
+                    ->setUpdatePriority(1)
+                    ->addProductPackage(
+                        (new ProductPackage())
+                            ->setPackageType(
+                                (new PackageType())->setCode('glass')
+                                    ->setDescription('Stiklas')
+                            )
+                            ->setWeight(0.3)
+
+                    )
+                ,
+                'packagesTypes' => [
+                    (new PackageType())->setCode('glass')->setDescription('Stiklas')
+                ],
+                'expectedProduct' => (new \Gt\Catalog\Entity\Product())
+                    ->setSku('abc')
+                    ->setWeight(4.5)
+                    ->setWeightBruto(4.6)
+                    ->setCodeFromCustom('123456')
+                    ->setProductsPackages(
+                        [
+                            (new ProductPackage())->setPackageType(
+                                (new PackageType())->setCode('glass')->setDescription('Stiklas')
+                            )
+                                ->setWeight(0.1)
+                        ]
+                    )
+                    ->setUpdatePriority(1)
+                ,
+                'expectedFields' => ['weight', 'weight_bruto', 'code_from_custom', 'packages'],
+                'priority' => 1,
+            ],
+
+            // ==========================================
+            'test prioritized packages lower' => [
+                'dto' =>
+                    (new Product())
+                        ->setSku('abc')
+                        ->setWeight(4.5)
+                        ->setWeightBruto(4.6)
+                        ->setCodeFromCustom('123456')
+                        ->setPackages(
+                            [
+                                (new Package())->setTypeCode('glass')->setWeight(0.1)
+                            ]
+                        )
+                ,
+                'product' => (new \Gt\Catalog\Entity\Product())
+                    ->setSku('abc')
+                    ->setWeight(3)
+                    ->setWeightBruto(3)
+                    ->setCodeFromCustom('123')
+                    ->setUpdatePriority(1)
+                    ->addProductPackage(
+                        (new ProductPackage())
+                            ->setPackageType(
+                                (new PackageType())->setCode('glass')
+                                    ->setDescription('Stiklas')
+                            )
+                            ->setWeight(0.3)
+
+                    )
+                ,
+                'packagesTypes' => [
+                    (new PackageType())->setCode('glass')->setDescription('Stiklas')
+                ],
+                'expectedProduct' => (new \Gt\Catalog\Entity\Product())
+                    ->setSku('abc')
+                    ->setWeight(3)
+                    ->setWeightBruto(3)
+                    ->setCodeFromCustom('123')
+                    ->addProductPackage(
+                        (new ProductPackage())->setPackageType(
+                            (new PackageType())->setCode('glass')->setDescription('Stiklas')
+                        )
+                            ->setWeight(0.3)
+
+                    )
+                    ->setUpdatePriority(1)
+                ,
+                'expectedFields' => [],
+                'priority' => 2,
+            ],
+            // ========================
+            'test prioritized packages lower empty' => [
+                'dto' =>
+                    (new Product())
+                        ->setSku('abc')
+                        ->setWeight(4.5)
+                        ->setWeightBruto(4.6)
+                        ->setCodeFromCustom('123456')
+                        ->setPackages(
+                            [
+                                (new Package())->setTypeCode('glass')->setWeight(0.1)
+                            ]
+                        )
+                ,
+                'product' => (new \Gt\Catalog\Entity\Product())
+                    ->setSku('abc')
+                    ->setWeight(3)
+                    ->setWeightBruto(3)
+                    ->setCodeFromCustom('123')
+                    ->setUpdatePriority(1)
+                ,
+                'packagesTypes' => [
+                    (new PackageType())->setCode('glass')->setDescription('Stiklas')
+                ],
+                'expectedProduct' => (new \Gt\Catalog\Entity\Product())
+                    ->setSku('abc')
+                    ->setWeight(3)
+                    ->setWeightBruto(3)
+                    ->setCodeFromCustom('123')
+                    ->addProductPackage(
+                        (new ProductPackage())->setPackageType(
+                            (new PackageType())->setCode('glass')->setDescription('Stiklas')
+                        )
+                            ->setWeight(0.1)
+
+                    )
+                    ->setUpdatePriority(1)
+                ,
+                'expectedFields' => ['packages'],
+                'priority' => 2,
+            ],
         ];
     }
-
 }

@@ -109,6 +109,7 @@ class ProductLanguage
      */
     private $composition;
 
+    // TODO remove as it is useless
     /**
      * @var int
      * @ORM\Column(type="integer", options={"default":2} )

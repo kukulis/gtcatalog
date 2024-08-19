@@ -371,7 +371,6 @@ class ProductsRestService
         $skus = array_map(fn($p) => $p->sku, $dtoProducts);
 
         $products = $this->catalogDao->loadProductsBySkus($skus);
-        // TODO set priorities for products
 
         $this->catalogDao->assignPackages($products);
 
@@ -391,7 +390,12 @@ class ProductsRestService
                 continue;
             }
             $dbProduct = $productsIndexed[$dtoProduct->sku];
-            $fieldsToUpdate = ProductTransformer::updateSpecialProduct($dtoProduct, $dbProduct, $packagesTypesByCode, $priority);
+            $fieldsToUpdate = ProductTransformer::updateSpecialProduct(
+                $dtoProduct,
+                $dbProduct,
+                $packagesTypesByCode,
+                $priority
+            );
             if (count($fieldsToUpdate) > 0) {
                 $this->logger->debug(
                     sprintf(
@@ -404,6 +408,15 @@ class ProductsRestService
                 $updatedProducts[] = $dbProduct;
             }
         }
+
+        // remove packages from products, who has package with id=0 ( this means they are touched )
+        $productsWithTouchedPackages = array_filter($products, fn($product) => $product->hasNewPackage());
+        $productsSkusForRemovingPackages = array_map(
+            fn(Product $product) => $product->getSku(),
+            $productsWithTouchedPackages
+        );
+
+        $this->catalogDao->removePackagesOfProducts($productsSkusForRemovingPackages);
 
         $this->catalogDao->updateMultipleProducts($updatedProducts);
 
