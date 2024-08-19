@@ -12,6 +12,8 @@ class ProductLogService
 {
     /** @var EntityManagerInterface */
     private EntityManagerInterface $entityManager;
+
+    // TODO (S) įrašyti tipą ( išdebuginti koks yra ir įrašyti interfeisą )
     private $security;
 
     /**
@@ -25,6 +27,7 @@ class ProductLogService
         $this->security = $security;
     }
 
+    // TODO (F) unused productLogFilter
     public function getList(ProductLogFilter $productLogFilter ) {
         /** @var ProductLogRepository $productLogRepository */
         $productLogRepository = $this->entityManager->getRepository(ProductLog::class );

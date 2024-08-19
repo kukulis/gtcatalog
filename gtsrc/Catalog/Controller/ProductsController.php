@@ -4,7 +4,6 @@ namespace Gt\Catalog\Controller;
 
 use Gt\Catalog\Dao\CategoryDao;
 use Gt\Catalog\Data\SimpleCategoriesFilter;
-use Gt\Catalog\Entity\Product;
 use Gt\Catalog\Event\ProductRemoveEvent;
 use Gt\Catalog\Event\ProductStoredEvent;
 use Gt\Catalog\Exception\CatalogDetailedException;
@@ -190,10 +189,15 @@ class ProductsController extends AbstractController
         try {
             $product = $productsService->getProduct($sku);
 
+            // TODO(A) veiksmai, kurie nesusiję su prekės redagavimu
+            // TODO ar galima būtų sukurti čia evento objektą, o ten kur kviečiamas ->dispatch,
+            // TODO su seteriu pridėti reikiamos info į evento objektą ir tada tą objektą paduoti į ->dispatch funkciją.
+            // TODO tokiu būdu normalizer ir serializer sukišti į evento objektą?
             $normalizer = new ObjectNormalizer();
             $serializer = new Serializer([$normalizer]);
 
             $oldProduct = $serializer->normalize($product);
+            // -- TODO iki čia
 
             if ($product == null) {
                 return $this->render(

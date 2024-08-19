@@ -9,17 +9,18 @@ class ProductStoredEvent extends Event
 {
     public const NAME = 'product.stored';
 
-    private $product;
+    private Product $product;
 
-    private $oldProduct;
+    private Product $oldProduct;
 
-    private $productLanguage;
+    private string $languageCode;
 
-    public function __construct($product, $oldProduct, $productLanguage)
+    // TODO (FF) yra dar prekės kalbos laukai saugomi atskirame objekte ProductLanguage reikia ir šito objekto istorijos.
+    public function __construct(Product $product, Product $oldProduct, string $languageCode)
     {
         $this->product = $product;
         $this->oldProduct = $oldProduct;
-        $this->productLanguage = $productLanguage;
+        $this->languageCode = $languageCode;
     }
 
     public function getProduct(): Product
@@ -32,8 +33,8 @@ class ProductStoredEvent extends Event
         return $this->oldProduct;
     }
 
-    public function getProductLanguage()
+    public function getLanguageCode(): string
     {
-        return $this->productLanguage;
+        return $this->languageCode;
     }
 }
