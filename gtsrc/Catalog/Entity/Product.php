@@ -305,7 +305,7 @@ class Product
      * @var int
      * @ORM\Column(type="integer", options={"default":2} )
      */
-    private $updatePriority;
+    private $updatePriority=2;
 
     /**
      * @return string

@@ -119,24 +119,27 @@ class ProductTransformer
     ): array {
         $updatedFields = [];
 
-        if ($dtoProduct->weight > 0 && $dbProduct->getWeight() == 0) {
+        if ($dtoProduct->weight > 0 && ($dbProduct->getWeight() == 0 || $dbProduct->getUpdatePriority() >= $priority)) {
             $dbProduct->setWeight($dtoProduct->weight);
 
             $updatedFields[] = 'weight';
         }
 
-        if ($dtoProduct->weightBruto > 0 && $dbProduct->getWeightBruto() == 0) {
+        if ($dtoProduct->weightBruto > 0 && ($dbProduct->getWeightBruto() == 0
+                || $dbProduct->getUpdatePriority() >= $priority)) {
             $dbProduct->setWeightBruto($dtoProduct->weightBruto);
 
             $updatedFields[] = 'weight_bruto';
         }
 
-        if ($dtoProduct->codeFromCustom && empty($dbProduct->getCodeFromCustom())) {
+        if ($dtoProduct->codeFromCustom && (empty($dbProduct->getCodeFromCustom())
+                || $dbProduct->getUpdatePriority() >= $priority)) {
             $dbProduct->setCodeFromCustom($dtoProduct->codeFromCustom);
 
             $updatedFields[] = 'code_from_custom';
         }
 
+        // TODO diff packages
         if ($dtoProduct->getPackages() && count($dbProduct->getPackages()) == 0) {
             $productsPackages = [];
             foreach ($dtoProduct->getPackages() as $package) {
@@ -157,6 +160,10 @@ class ProductTransformer
 
                 $updatedFields[] = 'packages';
             }
+        }
+
+        if (count($updatedFields) > 0 && $dbProduct->getUpdatePriority() >= $priority) {
+            $dbProduct->setUpdatePriority($priority);
         }
 
         return $updatedFields;
