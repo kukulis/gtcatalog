@@ -59,6 +59,7 @@ class TransformToJsonTest extends TestCase
                     'google_product_category_id' => 0,
                     'tags' => '',
                     'stock' => 0,
+                    'packages' => [],
                 ]
             ],
 
@@ -121,7 +122,8 @@ class TransformToJsonTest extends TestCase
                     'google_product_category_id' => 0,
                     'tags' => '',
                     'stock' => 0,
-                    'last_update' => '2024-06-01 12:15:00'
+                    'last_update' => '2024-06-01 12:15:00',
+                    'packages' => [],
                 ]
             ],
         ];

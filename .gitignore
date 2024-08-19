@@ -8,6 +8,7 @@
 /var/
 /vendor/
 /img/
+/jobs/
 /.idea/
 ###< symfony/framework-bundle ###
 
