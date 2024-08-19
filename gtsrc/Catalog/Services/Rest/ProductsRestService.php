@@ -282,13 +282,17 @@ class ProductsRestService
     /**
      * @return \Catalog\B2b\Common\Data\Catalog\Product[]
      */
-    public function getRestProducts(array $skus, string $language, $skipCategories = false, $skipPackages=false): array
-    {
+    public function getRestProducts(
+        array $skus,
+        string $language,
+        $skipCategories = false,
+        $skipPackages = false
+    ): array {
         $this->logger->debug(sprintf('Loading products by %s skus', count($skus)));
         // TODO get product data even if it has no translaton
         $productsByLanguage = $this->getProductsLanguages($skus, $language);
 
-        if ( !$skipPackages) {
+        if (!$skipPackages) {
             $products = array_map(fn(ProductLanguage $pl) => $pl->getProduct(), $productsByLanguage);
             $this->catalogDao->assignPackages($products);
         }
@@ -362,11 +366,12 @@ class ProductsRestService
     /**
      * @param \Catalog\B2b\Common\Data\Catalog\Product[] $dtoProducts
      */
-    public function updateSpecial(array $dtoProducts): int
+    public function updateSpecial(array $dtoProducts, int $priority = 0): int
     {
         $skus = array_map(fn($p) => $p->sku, $dtoProducts);
 
         $products = $this->catalogDao->loadProductsBySkus($skus);
+        // TODO set priorities for products
 
         $this->catalogDao->assignPackages($products);
 

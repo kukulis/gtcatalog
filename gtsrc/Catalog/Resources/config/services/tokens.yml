@@ -1,0 +1,7 @@
+services:
+    sketis.tokens_collector:
+        class: Gt\Catalog\Services\Rest\TokensCollector
+        calls:
+            - [addTokenHolder, ['%env(SECRET_TOKEN_P0)%',0]]
+            - [addTokenHolder, ['%env(SECRET_TOKEN_P1)%',1]]
+            - [addTokenHolder, ['%env(SECRET_TOKEN_P2)%',2]]

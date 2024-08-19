@@ -10,6 +10,7 @@ use Gt\Catalog\Dao\LanguageDao;
 use Gt\Catalog\Exception\CatalogErrorException;
 use Gt\Catalog\Exception\CatalogValidateException;
 use Gt\Catalog\Services\Rest\CategoriesRestService;
+use Gt\Catalog\Services\Rest\IPriorityDecider;
 use Gt\Catalog\Services\Rest\ProductsRestService;
 use JMS\Serializer\Serializer;
 use Psr\Log\LoggerInterface;
@@ -123,19 +124,26 @@ class ProductsRestController extends AbstractController
         return new JsonResponse($response);
     }
 
-    public function updateSpecial(Request $request, Serializer $serializer, string $secretToken) : Response {
+    public function updateSpecial(Request $request, Serializer $serializer, IPriorityDecider $priorityDecider) : Response {
 
         $receivedSecretToken = $request->headers->get('secret-token');
-        if ( $receivedSecretToken != $secretToken) {
+
+        $priority = $priorityDecider->decidePriority($receivedSecretToken);
+        if ( $priority < 0 ) {
             throw new AccessDeniedHttpException('Invalid secret token');
         }
+
+//        // TODO decide priority by the secret token
+//        if ( $receivedSecretToken != $secretToken) {
+//            throw new AccessDeniedHttpException('Invalid secret token');
+//        }
 
         $content = $request->getContent();
 
         /** @var Product [] $products */
         $products = $serializer->deserialize($content, sprintf('array<%s>', Product::class ), 'json');
 
-        $updatedCount = $this->productsRestService->updateSpecial($products);
+        $updatedCount = $this->productsRestService->updateSpecial($products, $priority);
 
         return new JsonResponse($updatedCount);
     }
