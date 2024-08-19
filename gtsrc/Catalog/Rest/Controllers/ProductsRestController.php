@@ -2,26 +2,29 @@
 
 namespace Gt\Catalog\Rest\Controllers;
 
-
+use Catalog\B2b\Common\Data\Catalog\Product;
 use Catalog\B2b\Common\Data\Rest\ErrorResponse;
 use Catalog\B2b\Common\Data\Rest\RestResult;
-use Doctrine\ORM\EntityManagerInterface;
+use Catalog\B2b\Common\Data\Rest\RestResultProducts;
 use Gt\Catalog\Dao\LanguageDao;
 use Gt\Catalog\Exception\CatalogErrorException;
 use Gt\Catalog\Exception\CatalogValidateException;
-use Gt\Catalog\Services\ProductsService;
 use Gt\Catalog\Services\Rest\CategoriesRestService;
 use Gt\Catalog\Services\Rest\ProductsRestService;
+use JMS\Serializer\Serializer;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class ProductsRestController extends AbstractController
 {
     private const DEFAULT_LIMIT = 500;
     private const DEFAULT_OFFSET = 0;
+
+    private const MAX_SKU_LIMIT = 10000;
 
     private ProductsRestService $productsRestService;
 
@@ -30,25 +33,21 @@ class ProductsRestController extends AbstractController
         $this->productsRestService = $productsRestService;
     }
 
-    public function getProductsAction(Request $request, string $language): JsonResponse
+    public function getProductsAction(Request $request, string $language, Serializer $serializer): Response
     {
-        $skus = json_decode($request->getContent(), true);
+        // TODO use additional parameter to decide if must load product categories or not.
 
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            return $this->json(['error' => json_last_error_msg()], JsonResponse::HTTP_BAD_REQUEST);
-        }
-
-        if (!is_array($skus)) {
-            return $this->json(['error' => 'Must provide a SKU array in the request body'],
-                JsonResponse::HTTP_BAD_REQUEST);
-        }
-
-        $restProducts = $this->productsRestService->getRestProducts($skus, $language);
-        $response = new RestResult();
+        $skipCategories = $request->query->get('skipCategories');
+        $bSkipCategories = $skipCategories == 'true' || $skipCategories == '1';
+        $skus = $serializer->deserialize($request->getContent(), 'array<string>', 'json');
+        $restProducts = $this->productsRestService->getRestProducts($skus, $language, $bSkipCategories);
+        $response = new RestResultProducts();
         $response->data = $restProducts;
+        $json = $serializer->serialize($response, 'json');
 
-        return $this->json($response);
+        return new Response($json, 200, ['Content-Type'=>'application/json']);
     }
+
 
     public function getCategoriesAction(
         Request $request,
@@ -61,6 +60,7 @@ class ProductsRestController extends AbstractController
         $response = new RestResult();
         $response->data = $restCategories;
 
+        // TODO use serializer
         return new JsonResponse($response);
     }
 
@@ -70,6 +70,7 @@ class ProductsRestController extends AbstractController
         $response = new RestResult();
         $response->data = $codes;
 
+        // TODO use serializer
         return new JsonResponse($response);
     }
 
@@ -84,6 +85,7 @@ class ProductsRestController extends AbstractController
             $response = new RestResult();
             $response->data = $categories;
 
+            // TODO use serializer
             return new JsonResponse($response);
         } catch (CatalogValidateException $e) {
             return new JsonResponse(
@@ -106,6 +108,8 @@ class ProductsRestController extends AbstractController
         $restCategory = $categoriesRestService->getCategoryLang($categoryCode, $lang);
         $response = new RestResult();
         $response->data = $restCategory;
+
+        // TODO use serializer
         return new JsonResponse($response);
     }
 
@@ -115,26 +119,38 @@ class ProductsRestController extends AbstractController
         $response = new RestResult();
         $response->data = $languages;
 
+        // TODO use serializer ?
         return new JsonResponse($response);
     }
 
-    public function store(Request $request, ProductsService $service, EntityManagerInterface $em)
-    {
-        $nomNr = $request->get('nomNr');
-        $weight = $request->get('weight');
+    public function updateSpecial(Request $request, Serializer $serializer, string $secretToken) : Response {
 
-        $product = $service->getProduct($nomNr);
-
-        if (empty($product->getWeight())) {
-            $product->setWeight((float)$weight);
+        $receivedSecretToken = $request->headers->get('secret-token');
+        if ( $receivedSecretToken != $secretToken) {
+            throw new AccessDeniedHttpException('Invalid secret token');
         }
 
-        $em->persist($product);
-        $em->flush();
+        $content = $request->getContent();
 
-        return new JsonResponse(
-            [],
-            Response::HTTP_CREATED
-        );
+        /** @var Product [] $products */
+        $products = $serializer->deserialize($content, sprintf('array<%s>', Product::class ), 'json');
+
+        $updatedCount = $this->productsRestService->updateSpecial($products);
+
+        return new JsonResponse($updatedCount);
     }
+
+    public function getSkusAction(Request $request) : Response {
+        $fromSKU = $request->query->get('fromsku', self::DEFAULT_LIMIT);
+        $limit = intval($request->query->get('limit'));
+        $limit = min( self::MAX_SKU_LIMIT, $limit );
+
+        $skus = $this->productsRestService->getSkus($fromSKU, $limit);
+
+        $response = new RestResult();
+        $response->data = $skus;
+
+        return new JsonResponse($response);
+    }
+
 }

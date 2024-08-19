@@ -16,7 +16,7 @@ class CategoryTransformer
         $category->language = $cl->getLanguageCode();
         $category->parent = $cl->getCategory()->getParentCode();
         $category->customsCode = $cl->getCategory()->getCustomsCode();
-        $category->dateCreated = $cl->getCategory()->getDateCreated();
+        $category->dateCreated =  $cl->getCategory()->getDateCreated(); // ->format('Y-m-d H:i:s')
         $category->confirmed = $cl->getCategory()->isConfirmed();
 
         return $category;

@@ -139,6 +139,10 @@
                 <div class="col-sm-8">
                     {{ form_widget(form.p_weight, { 'attr': {'class': 'form-control-sm'} }) }}
                 </div>
+                <label class="col-sm-4 col-form-label">Weight gross (bruto) </label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.p_weight_bruto, { 'attr': {'class': 'form-control-sm'} }) }}
+                </div>
                 <label class="col-sm-4 col-form-label">Dimensions</label>
                 <div class="col-sm-2">
                     <label for="{{ form.p_length.vars.id }}">Length</label>

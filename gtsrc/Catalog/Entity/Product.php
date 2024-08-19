@@ -8,11 +8,11 @@
 
 namespace Gt\Catalog\Entity;
 
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gt\Catalog\Exception\CatalogErrorException;
-use \DateTime;
 
 /**
  * @ORM\Entity(repositoryClass=Gt\Catalog\Repository\ProductsRepository::class)
@@ -20,7 +20,8 @@ use \DateTime;
  */
 class Product
 {
-    public function __construct() {
+    public function __construct()
+    {
         $this->productCategories = new ArrayCollection();
     }
 
@@ -67,7 +68,6 @@ class Product
     ];
 
 
-
     /**
      * @var string
      * @ORM\Id
@@ -86,7 +86,7 @@ class Product
      * @var int
      * @ORM\Column(type="integer", options={ "default":0})
      */
-    private $version=0;
+    private $version = 0;
 
     /**
      * @var string
@@ -156,13 +156,13 @@ class Product
      * @var bool
      * @ORM\Column(type="boolean", name="for_male", options={"default":0})
      */
-    private $forMale=false;
+    private $forMale = false;
 
     /**
      * @var bool
      * @ORM\Column(type="boolean", name="for_female", options={"default":0})
      */
-    private $forFemale=false;
+    private $forFemale = false;
 
     /**
      * @var string
@@ -186,30 +186,29 @@ class Product
      * @var float
      * @ORM\Column(type="decimal", scale=2, precision=10, options={"default":0} )
      */
-    private $weight=0;
+    private $weight = 0.0;
 
     /**
      * @var float
      * @ORM\Column(type="decimal", scale=2, precision=10, options={"default": 0})
      */
-    private $weightBruto = 0;
-    // Svoris, mato vienetas (pvz deze, palete, maiselis), barkodas
-    //
+    private $weightBruto = 0.0;
+
     /**
      * @var float
      * @ORM\Column(type="decimal", scale=2, precision=10, options={"default":0} )
      */
-    private $length=0;
+    private $length = 0.0;
     /**
      * @var float
      * @ORM\Column(type="decimal", scale=2, precision=10, options={"default":0} )
      */
-    private $height=0;
+    private $height = 0.0;
     /**
      * @var float
      * @ORM\Column(type="decimal", scale=2, precision=10, options={"default":0} )
      */
-    private $width=0;
+    private $width = 0.0;
 
     /**
      * @var string
@@ -271,13 +270,13 @@ class Product
      * @var int
      * @ORM\Column(type="integer", name="google_product_category_id", nullable=true)
      */
-    private $googleProductCategoryId=0;
+    private $googleProductCategoryId = 0;
 
     /**
      * @var ?string
      * @ORM\Column(type="text", nullable=true)
      */
-    private $ingredients="";
+    private $ingredients = "";
 
     /**
      * @var string
@@ -296,9 +295,16 @@ class Product
     private $productCategories;
 
     /**
+     * May be configured for doctrine later.
+     *
+     * @var ProductPackage[]
+     */
+    private $packages = [];
+
+    /**
      * @return string
      */
-    public function getSku(): string
+    public function getSku(): ?string
     {
         return $this->sku;
     }
@@ -324,7 +330,7 @@ class Product
     /**
      * @param \DateTime $lastUpdate
      */
-    public function setLastUpdate(DateTime $lastUpdate=null): void
+    public function setLastUpdate(DateTime $lastUpdate = null): void
     {
         $this->lastUpdate = $lastUpdate;
     }
@@ -357,7 +363,7 @@ class Product
     /**
      * @param string $parentSku
      */
-    public function setParentSku(string $parentSku=null): void
+    public function setParentSku(string $parentSku = null): void
     {
         $this->parentSku = $parentSku;
     }
@@ -373,7 +379,7 @@ class Product
     /**
      * @param string $infoProvider
      */
-    public function setInfoProvider(string $infoProvider=null): void
+    public function setInfoProvider(string $infoProvider = null): void
     {
         $this->infoProvider = $infoProvider;
     }
@@ -389,7 +395,7 @@ class Product
     /**
      * @param string $originCountryCode
      */
-    public function setOriginCountryCode(string $originCountryCode=null): void
+    public function setOriginCountryCode(string $originCountryCode = null): void
     {
         $this->originCountryCode = $originCountryCode;
     }
@@ -402,8 +408,9 @@ class Product
         return $this->type;
     }
 
-    public function getTypeCode() : ?string {
-        if ( $this->type == null ) {
+    public function getTypeCode(): ?string
+    {
+        if ($this->type == null) {
             return null;
         }
 
@@ -413,7 +420,7 @@ class Product
     /**
      * @param Classificator $type
      */
-    public function setType(Classificator $type=null): void
+    public function setType(Classificator $type = null): void
     {
         $this->type = $type;
     }
@@ -426,8 +433,9 @@ class Product
         return $this->purpose;
     }
 
-    public function getPurposeCode():?string {
-        if ( is_null($this->purpose)) {
+    public function getPurposeCode(): ?string
+    {
+        if (is_null($this->purpose)) {
             return null;
         }
 
@@ -437,7 +445,7 @@ class Product
     /**
      * @param Classificator $purpose
      */
-    public function setPurpose(Classificator $purpose=null): void
+    public function setPurpose(Classificator $purpose = null): void
     {
         $this->purpose = $purpose;
     }
@@ -450,8 +458,9 @@ class Product
         return $this->measure;
     }
 
-    public function getMeasureCode() : ?string {
-        if ( $this->measure == null ) {
+    public function getMeasureCode(): ?string
+    {
+        if ($this->measure == null) {
             return null;
         }
 
@@ -461,7 +470,7 @@ class Product
     /**
      * @param Classificator $measure
      */
-    public function setMeasure(Classificator $measure=null): void
+    public function setMeasure(Classificator $measure = null): void
     {
         $this->measure = $measure;
     }
@@ -477,7 +486,7 @@ class Product
     /**
      * @param string $color
      */
-    public function setColor(string $color=null): void
+    public function setColor(string $color = null): void
     {
         $this->color = $color;
     }
@@ -541,7 +550,7 @@ class Product
     /**
      * @param string $size
      */
-    public function setSize(string $size=null): void
+    public function setSize(string $size = null): void
     {
         $this->size = $size;
     }
@@ -557,7 +566,7 @@ class Product
     /**
      * @param string $packSize
      */
-    public function setPackSize(string $packSize=null): void
+    public function setPackSize(string $packSize = null): void
     {
         $this->packSize = $packSize;
     }
@@ -573,7 +582,7 @@ class Product
     /**
      * @param string $packAmount
      */
-    public function setPackAmount(string $packAmount=null): void
+    public function setPackAmount(string $packAmount = null): void
     {
         $this->packAmount = $packAmount;
     }
@@ -589,9 +598,22 @@ class Product
     /**
      * @param float $weight
      */
-    public function setWeight(float $weight): void
+    public function setWeight(float $weight)
     {
         $this->weight = $weight;
+
+        return $this;
+    }
+
+    public function getWeightBruto()
+    {
+        return $this->weightBruto;
+    }
+
+    public function setWeightBruto($weightBruto)
+    {
+        $this->weightBruto = $weightBruto;
+        return $this;
     }
 
     /**
@@ -605,9 +627,11 @@ class Product
     /**
      * @param float $length
      */
-    public function setLength(float $length): void
+    public function setLength(float $length): self
     {
         $this->length = $length;
+
+        return $this;
     }
 
     /**
@@ -621,9 +645,11 @@ class Product
     /**
      * @param float $height
      */
-    public function setHeight(float $height): void
+    public function setHeight(float $height): self
     {
         $this->height = $height;
+
+        return $this;
     }
 
     /**
@@ -637,9 +663,11 @@ class Product
     /**
      * @param float $width
      */
-    public function setWidth(float $width): void
+    public function setWidth(float $width): self
     {
         $this->width = $width;
+
+        return $this;
     }
 
     /**
@@ -653,32 +681,35 @@ class Product
     /**
      * @param string $deliveryTime
      */
-    public function setDeliveryTime(string $deliveryTime=null): void
+    public function setDeliveryTime(string $deliveryTime = null): self
     {
         $this->deliveryTime = $deliveryTime;
+
+        return $this;
     }
 
     /**
      * @param Classificator $classificator
      * @throws CatalogErrorException
      */
-    public function setClassificator ( Classificator $classificator ) {
+    public function setClassificator(Classificator $classificator)
+    {
         $groupCode = $classificator->getClassificatorGroup()->getCode();
-        if ( array_search( $groupCode, self::CLASSIFICATORS_GROUPS) !== false ) {
-            $setter = 'set'.$groupCode;
+        if (array_search($groupCode, self::CLASSIFICATORS_GROUPS) !== false) {
+            $setter = 'set' . $groupCode;
             $this->{$setter}($classificator);
-        }
-        else {
-            throw new CatalogErrorException('Neteisingas klasifikatoriaus grupės kodas '.$groupCode);
+        } else {
+            throw new CatalogErrorException('Neteisingas klasifikatoriaus grupės kodas ' . $groupCode);
         }
     }
 
     /**
-     * @deprecated not needed with arrow functions.
      * @param Product $p
      * @return string
+     * @deprecated not needed with arrow functions.
      */
-    public static function lambdaGetSku ( Product $p ) {
+    public static function lambdaGetSku(Product $p)
+    {
         return $p->getSku();
     }
 
@@ -709,7 +740,7 @@ class Product
     /**
      * @param string $depositCode
      */
-    public function setDepositCode(string $depositCode=null): void
+    public function setDepositCode(string $depositCode = null): void
     {
         $this->depositCode = $depositCode;
     }
@@ -725,9 +756,11 @@ class Product
     /**
      * @param string $codeFromCustom
      */
-    public function setCodeFromCustom(string $codeFromCustom=null): void
+    public function setCodeFromCustom(string $codeFromCustom = null): self
     {
         $this->codeFromCustom = $codeFromCustom;
+
+        return $this;
     }
 
     /**
@@ -741,7 +774,7 @@ class Product
     /**
      * @param string $guaranty
      */
-    public function setGuaranty(string $guaranty=null): void
+    public function setGuaranty(string $guaranty = null): void
     {
         $this->guaranty = $guaranty;
     }
@@ -757,7 +790,7 @@ class Product
     /**
      * @param string $codeFromSupplier
      */
-    public function setCodeFromSupplier(string $codeFromSupplier=null): void
+    public function setCodeFromSupplier(string $codeFromSupplier = null): void
     {
         $this->codeFromSupplier = $codeFromSupplier;
     }
@@ -773,7 +806,7 @@ class Product
     /**
      * @param string $codeFromVendor
      */
-    public function setCodeFromVendor(string $codeFromVendor=null): void
+    public function setCodeFromVendor(string $codeFromVendor = null): void
     {
         $this->codeFromVendor = $codeFromVendor;
     }
@@ -789,7 +822,7 @@ class Product
     /**
      * @param Classificator $productgroup
      */
-    public function setProductGroup(Classificator $productgroup=null): void
+    public function setProductGroup(Classificator $productgroup = null): void
     {
         $this->productgroup = $productgroup;
     }
@@ -805,7 +838,7 @@ class Product
     /**
      * @param string $priority
      */
-    public function setPriority(string $priority=null): void
+    public function setPriority(string $priority = null): void
     {
         $this->priority = $priority;
     }
@@ -837,7 +870,7 @@ class Product
     /**
      * @param string $brand
      */
-    public function setBrand(string $brand=null): void
+    public function setBrand(string $brand = null): void
     {
         $this->brand = $brand;
     }
@@ -853,7 +886,7 @@ class Product
     /**
      * @param string $line
      */
-    public function setLine(string $line=null): void
+    public function setLine(string $line = null): void
     {
         $this->line = $line;
     }
@@ -869,7 +902,7 @@ class Product
     /**
      * @param string $vendor
      */
-    public function setVendor(string $vendor=null): void
+    public function setVendor(string $vendor = null): void
     {
         $this->vendor = $vendor;
     }
@@ -885,7 +918,7 @@ class Product
     /**
      * @param string $manufacturer
      */
-    public function setManufacturer(string $manufacturer=null): void
+    public function setManufacturer(string $manufacturer = null): void
     {
         $this->manufacturer = $manufacturer;
     }
@@ -905,7 +938,7 @@ class Product
         return $this->labelMaterial;
     }
 
-    public function setLabelMaterial(string $labelMaterial=null): void
+    public function setLabelMaterial(string $labelMaterial = null): void
     {
         $this->labelMaterial = $labelMaterial;
     }
@@ -919,4 +952,30 @@ class Product
     {
         $this->productCategories = $productCategories;
     }
+
+    public function getPackages(): array
+    {
+        return $this->packages;
+    }
+
+    /**
+     * @param ProductPackage[] $packages
+     *
+     * @return $this
+     */
+    public function setPackages(array $packages): Product
+    {
+        $this->packages = $packages;
+        array_walk($this->packages, fn(ProductPackage $package) => $package->setProduct($this));
+
+        return $this;
+    }
+
+    public function addProductPackage(ProductPackage $pp): self
+    {
+        $this->packages[] = $pp;
+
+        return $this;
+    }
+
 }

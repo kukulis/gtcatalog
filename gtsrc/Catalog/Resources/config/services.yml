@@ -183,11 +183,12 @@ services:
             - '@logger'
             - '@gt.catalog.catalog_dao'
             - '@gt.catalog.category_dao'
-            - '@gt.catalog.categories_service'
+#            - '@gt.catalog.categories_service'
             - '@gt.catalog.pictures_dao'
             - '@gt.catalog.pictures_service'
             - '@gt.catalog.language_dao'
             - '@Gt\Catalog\Transformer\ProductTransformer'
+            - '@Gt\Catalog\Repository\PackageTypeRepository'
 
     Gt\Catalog\Rest\Controllers\ProductsLegacyRestController:
         tags:
@@ -204,6 +205,8 @@ services:
             $productsRestService: '@gt.catalog.products_rest_service'
             $categoriesRestService: '@gt.catalog.categories_rest_service'
             $languageDao: '@gt.catalog.language_dao'
+            $serializer: '@jms_serializer'
+            $secretToken: '%env(SECRET_TOKEN)%'
 
     Gt\Catalog\Rest\Controllers\PackagesRestController:
         tags:
@@ -466,3 +469,7 @@ services:
             - '@Symfony\Component\Security\Core\Security'
         tags:
             - { name: kernel.event_listener, event: 'product.stored', method: 'postUpdate' }
+
+    Gt\Catalog\Repository\PackageTypeRepository:
+        tags: [ 'doctrine.repository_service' ]
+

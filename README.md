@@ -92,4 +92,25 @@ When debugging with rest testing tool,add header parameter Cookie:XDEBUG_SESSION
     http://localhost:8003
 
 
-    
+#JWT
+
+excerpt from documentation:
+
+    mkdir config/jwt
+
+    openssl genrsa -out config/jwt/private.pem -aes256 4096
+
+Paprašė slaptažodžio, įvedžiau Labas123
+
+    openssl rsa -pubout -in config/jwt/private.pem -out config/jwt/public.pem
+
+Paprašė slaptažodžio, įvedžiau tą patį.
+
+
+# Migrations
+
+    bin/console doctrine:migrations:migrate
+
+rollbackas:
+
+    bin/console doctrine:migrations:migrate prev

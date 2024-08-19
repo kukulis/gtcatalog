@@ -1,1 +1,601 @@
 * initial migration
+
+https://helmi-bejaoui.medium.com/a-beginners-guide-on-jwt-authentication-symfony-5-api-based-bd6622bfe975
+
+
+Write
+
+Sign in
+A beginner’s guide on JWT authentication Symfony 5 API based
+Helmi Bejaoui
+
+Helmi Bejaoui
+·
+
+Follow
+7 min read
+·
+Mar 29, 2021
+
+    I’m sure all of us learned that the best way to deal with authentication in Symfony is by using FOS, but as far it goes we can no longer take value out of that bundle since it’s no longer supported or updated
+
+So if you found a hard way creating your own JWT authentication Api on Symfony 5, I will be covering step by step how to create your own using the JWT bundle only as an external help
+
+1-Initialize the project
+
+First, we need to create our Symfony 5 project with help of Symfony commands
+
+symfony new my_project_name
+or
+composer create-project symfony/skeleton my_project_name
+
+This will create an API Based Symfony project that the structure looks similar to this:
+
+bin: contains Symfony command console
+
+config: contains all bundle configurations and a list of bundles in the bundle.php
+
+public: provides access to the application via index.php
+
+src: contains all controllers, models, and services
+
+var: contains system logs and cache files
+
+vendor: contains all installed external packages
+
+2-Installing needed packages
+
+In this section we will install all needed packages to reach our goal:
+
+composer require symfony/orm-pack
+composer require --dev symfony/maker-bundle
+composer require symfony/security-bundle
+composer require "lexik/jwt-authentication-bundle"
+
+Now, we have to create a folder called JWT under the config folder that will contain our private and public keys
+
+    mkdir config/jwt
+
+    openssl genrsa -out config/jwt/private.pem -aes256 4096
+
+    openssl rsa -pubout -in config/jwt/private.pem -out config/jwt/public.pem
+
+3-Coding part
+
+Now the part that actually matters the most and what we can code to make what we want.
+
+The object is to create two API one to register a user and the second to send user credentials and receive our JWT token in the process so we will start by creating a User entity first
+
+<?php
+
+
+namespace App\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
+
+/**
+ * @ORM\Table(name="user")
+ * @ORM\Entity
+ */
+class User implements UserInterface
+{
+    /**
+     * @ORM\Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+    /**
+     * @ORM\Column(type="string", length=25, unique=true)
+     */
+    private $username;
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $password;
+
+    /**
+     * @ORM\Column(type="string", length=45)
+     */
+    private $email;
+
+    /**
+     * User constructor.
+     * @param $username
+     */
+    public function __construct($username)
+    {
+        $this->username = $username;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUsername(): string
+    {
+        return $this->username;
+    }
+
+    /**
+     * @param mixed $username
+     */
+    public function setUsername($username): void
+    {
+        $this->username = $username;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSalt(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    /**
+     * @param $password
+     */
+    public function setPassword($password)
+    {
+        $this->password = $password;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param mixed $email
+     */
+    public function setEmail($email): void
+    {
+        $this->email = $email;
+    }
+
+    /**
+     * @return array|string[]
+     */
+    public function getRoles(): array
+    {
+        return array('ROLE_USER');
+    }
+
+    public function eraseCredentials()
+    {
+    }
+
+
+}
+
+Make sure to add in whatever fields you need but for the sake of this guide, I am gonna keep it short by creating just the basics.
+
+For this step is up to you to add it or not but I find it a good way to up your coding level a bit by using a separate controller that handles your JSON response plus success/error code.
+
+<?php
+
+namespace App\Controller;
+
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+
+class ApiController extends AbstractController
+{
+
+    /**
+     * @var integer HTTP status code - 200 by default
+     */
+    protected $statusCode = 200;
+
+    /**
+     * Gets the value of statusCode.
+     *
+     * @return integer
+     */
+    public function getStatusCode(): int
+    {
+        return $this->statusCode;
+    }
+
+    /**
+     * Sets the value of statusCode.
+     *
+     * @param integer $statusCode the status code
+     *
+     * @return self
+     */
+    protected function setStatusCode(int $statusCode): ApiController
+    {
+        $this->statusCode = $statusCode;
+
+        return $this;
+    }
+
+    /**
+     * Returns a JSON response
+     *
+     * @param array $data
+     * @param array $headers
+     *
+     * @return JsonResponse
+     */
+    public function response(array $data, $headers = []): JsonResponse
+    {
+        return new JsonResponse($data, $this->getStatusCode(), $headers);
+    }
+
+    /**
+     * Sets an error message and returns a JSON response
+     *
+     * @param string $errors
+     * @param array $headers
+     * @return JsonResponse
+     */
+    public function respondWithErrors(string $errors, $headers = []): JsonResponse
+    {
+        $data = [
+            'status' => $this->getStatusCode(),
+            'errors' => $errors,
+        ];
+
+        return new JsonResponse($data, $this->getStatusCode(), $headers);
+    }
+
+
+    /**
+     * Sets an error message and returns a JSON response
+     *
+     * @param string $success
+     * @param array $headers
+     * @return JsonResponse
+     */
+    public function respondWithSuccess(string $success, $headers = []): JsonResponse
+    {
+        $data = [
+            'status' => $this->getStatusCode(),
+            'success' => $success,
+        ];
+
+        return new JsonResponse($data, $this->getStatusCode(), $headers);
+    }
+
+
+    /**
+     * Returns a 401 Unauthorized http response
+     *
+     * @param string $message
+     *
+     * @return JsonResponse
+     */
+    public function respondUnauthorized($message = 'Not authorized!'): JsonResponse
+    {
+        return $this->setStatusCode(401)->respondWithErrors($message);
+    }
+
+    /**
+     * Returns a 422 Unprocessable Entity
+     *
+     * @param string $message
+     *
+     * @return JsonResponse
+     */
+    public function respondValidationError($message = 'Validation errors'): JsonResponse
+    {
+        return $this->setStatusCode(422)->respondWithErrors($message);
+    }
+
+    /**
+     * Returns a 404 Not Found
+     *
+     * @param string $message
+     *
+     * @return JsonResponse
+     */
+    public function respondNotFound($message = 'Not found!'): JsonResponse
+    {
+        return $this->setStatusCode(404)->respondWithErrors($message);
+    }
+
+    /**
+     * Returns a 201 Created
+     *
+     * @param array $data
+     *
+     * @return JsonResponse
+     */
+    public function respondCreated($data = []): JsonResponse
+    {
+        return $this->setStatusCode(201)->response($data);
+    }
+
+
+    protected function transformJsonBody(Request $request): Request
+    {
+        $data = json_decode($request->getContent(), true);
+
+        if ($data === null) {
+            return $request;
+        }
+
+        $request->request->replace($data);
+
+        return $request;
+    }
+
+
+}
+
+This controller basically contains useful methods for your custom controllers that you will be creating along with your project.
+
+For the actual Controller that will be handling our register method and our login check
+
+<?php
+
+
+namespace App\Controller;
+
+
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+
+class AuthController extends ApiController
+{
+    private $em;
+
+    public function __construct(EntityManagerInterface $em)
+    {
+        $this->em = $em;
+    }
+
+    /**
+     * @Route("/api/register", name="register", methods={"POST"})
+     * @param Request $request
+     * @param UserPasswordEncoderInterface $encoder
+     * @return JsonResponse
+     */
+    public function register(Request $request, UserPasswordEncoderInterface $encoder): JsonResponse
+    {
+        $request = $this->transformJsonBody($request);
+        $username = $request->get('username');
+        $password = $request->get('password');
+        $email = $request->get('email');
+
+        if (empty($username) || empty($password) || empty($email)) {
+            return $this->respondValidationError("Invalid Username or Password or Email");
+        }
+
+
+        $user = new User($username);
+        $user->setPassword($encoder->encodePassword($user, $password));
+        $user->setEmail($email);
+        $user->setUsername($username);
+        $this->em->persist($user);
+        $this->em-> flush();
+        return $this->respondWithSuccess(sprintf('User %s successfully created', $user->getUsername()));
+    }
+
+    /**
+     * @Route("/api/login_check", name="login-check", methods={"POST"})
+     * @param UserInterface $user
+     * @param JWTTokenManagerInterface $JWTManager
+     * @return JsonResponse
+     */
+    public function getTokenUser(UserInterface $user, JWTTokenManagerInterface $JWTManager): JsonResponse
+    {
+        return new JsonResponse(['token' => $JWTManager->create($user)]);
+    }
+
+}
+
+    getTokenUSer: This is the method that will be responsible for checking and returning your JWT token if the user exists in your database and all the credentials are correct
+    register: This method will allow you to add in users by providing a username, email, and password in the JSON body of that request
+
+4-Configuration
+
+The last step before it’s all working is to fill in the configuration part in each file with the right lines
+
+First is the security file
+
+security:
+    encoders:
+        App\Entity\User:
+            algorithm: bcrypt
+
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: username
+    firewalls:
+        register:
+            pattern: ^/api/register
+            stateless: true
+            anonymous: true
+        login:
+            pattern:  ^/api/login
+            stateless: true
+            anonymous: true
+            json_login:
+                check_path:               /api/login_check
+                success_handler:          lexik_jwt_authentication.handler.authentication_success
+                failure_handler:          lexik_jwt_authentication.handler.authentication_failure
+
+        api:
+            pattern:   ^/api
+            stateless: true
+            provider: app_user_provider
+            guard:
+                authenticators:
+                    - lexik_jwt_authentication.jwt_token_authenticator
+
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            anonymous: true
+
+
+    access_control:
+        - { path: ^/api/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
+
+    providers: This will contain our provider for login mechanism, which will be our User entity + which property to use. I chose username but feel free to change to an email for example
+    firewalls: This is where will be having our two routes register and login_check make sure to keep them on top of the main or else Symfony main firewall will block their access without proving JWT token
+    access_control: is where you restrict/give access based on the user role
+
+With all of this in place, it’s good to go for testing!!
+
+    Register case test
+
+    Login successful case
+
+    Login unsuccessful case
+
+To your keyboards and happy coding for you all!
+
+You can find all of this in this link
+Symfony
+Jwt
+Authentication
+PHP
+Coding
+
+Helmi Bejaoui
+Written by Helmi Bejaoui
+16 Followers
+More from Helmi Bejaoui
+Behavior Subject and Rxjs
+Helmi Bejaoui
+
+Helmi Bejaoui
+Behavior Subject and Rxjs
+If you are wandering what is Behavior Subject and its case usage you are in the right place but first we need to explain it all in a simple…
+May 26, 2021
+How to integrate Factory design pattern in your coding effectively
+Helmi Bejaoui
+
+Helmi Bejaoui
+How to integrate Factory design pattern in your coding effectively
+This article will be a walkthrough on the most well-known design pattern. We will be covering each aspect of Factory on definition, how…
+Mar 31, 2021
+45
+2
+See all from Helmi Bejaoui
+Recommended from Medium
+Server-Side Request Forgery (SSRF)
+Raviteja Mureboina
+
+Raviteja Mureboina
+Server-Side Request Forgery (SSRF)
+In the cybersecurity domain, vulnerabilities can often be found in unexpected areas, with Server-Side Request Forgery (SSRF) being a…
+Jul 2
+1
+CodeIgniter 4 Query Builder union() and unionAll() methods
+Josh Otwell
+
+Josh Otwell
+
+in
+
+Level Up Coding
+CodeIgniter 4 Query Builder union() and unionAll() methods
+UNION and UNION ALL set operators return the combined rows from 1 or more SELECT queries. CodeIgniter 4 Query Builder now supports UNION…
+Dec 7, 2022
+488
+Lists
+Stories to Help You Grow as a Software Developer
+19 stories·1190 saves
+General Coding Knowledge
+20 stories·1371 saves
+Image by vectorjuice on FreePik
+The New Chatbots: ChatGPT, Bard, and Beyond
+12 stories·421 saves
+data science and AI
+40 stories·198 saves
+Mastering Data Transfer with DTOs in Your Laravel Projects
+Balaji Dharma
+
+Balaji Dharma
+
+in
+
+Dev Genius
+Mastering Data Transfer with DTOs in Your Laravel Projects
+How to create DTO in Laravel — Part 29
+Apr 16
+37
+1
+Understanding the Differences and Uses of Sanctum, Passport, and JWT
+Rifatul Islam
+
+Rifatul Islam
+Understanding the Differences and Uses of Sanctum, Passport, and JWT
+In modern web development with API musty need authentication and authorization. In the Laravel ecosystem, Laravel Sanctum, Laravel…
+Apr 30
+Authentication & Authorization in Laravel 11: Passport, Sanctum, Custom Guards, and JWT
+Jayprakash Jangir
+
+Jayprakash Jangir
+Authentication & Authorization in Laravel 11: Passport, Sanctum, Custom Guards, and JWT
+In Laravel 11, authentication and authorization can be achieved using various methods such as Passport, Sanctum, custom guards, and JWT…
+Jun 25
+6
+Laravel 10 REST API Authentication using Sanctum
+Vidvatek
+
+Vidvatek
+Laravel 10 REST API Authentication using Sanctum
+As a Laravel enthusiast and web developer, I understand the paramount importance of securing REST APIs in today’s interconnected digital…
+Mar 7
+2
+1
+See more recommendations
+
+Help
+
+Status
+
+About
+
+Careers
+
+Press
+
+Blog
+
+Privacy
+
+Terms
+
+Text to speech
+
+Teams
+To make Medium work, we log user data. By using Medium, you agree to our Privacy Policy, including cookie policy.
