@@ -115,7 +115,7 @@ class ProductTransformer
         Product $dbProduct,
         array $packagesTypesByCode,
         // will be used later
-        bool $prioritizeNewData = false
+        int $priority
     ): array {
         $updatedFields = [];
 

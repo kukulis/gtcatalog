@@ -391,7 +391,7 @@ class ProductsRestService
                 continue;
             }
             $dbProduct = $productsIndexed[$dtoProduct->sku];
-            $fieldsToUpdate = ProductTransformer::updateSpecialProduct($dtoProduct, $dbProduct, $packagesTypesByCode);
+            $fieldsToUpdate = ProductTransformer::updateSpecialProduct($dtoProduct, $dbProduct, $packagesTypesByCode, $priority);
             if (count($fieldsToUpdate) > 0) {
                 $this->logger->debug(
                     sprintf(

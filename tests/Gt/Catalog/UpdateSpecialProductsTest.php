@@ -25,12 +25,13 @@ class UpdateSpecialProductsTest extends TestCase
         \Gt\Catalog\Entity\Product $product,
         array $packagesTypes,
         \Gt\Catalog\Entity\Product $expectedProduct,
-        array $expectedFields
+        array $expectedFields,
+        int $priority
     ) {
         /** @var PackageType[] $packagesTypesByCode */
         $packagesTypesByCode = MapBuilder::buildMap($packagesTypes, fn(PackageType $type) => $type->getCode());
 
-        $updatedFields = ProductTransformer::updateSpecialProduct($dto, $product, $packagesTypesByCode);
+        $updatedFields = ProductTransformer::updateSpecialProduct($dto, $product, $packagesTypesByCode, $priority );
 
         $this->assertEquals($expectedFields, $updatedFields);
         $this->assertEquals($expectedProduct, $product);
@@ -44,7 +45,8 @@ class UpdateSpecialProductsTest extends TestCase
                 'product' => new \Gt\Catalog\Entity\Product(),
                 'packagesTypes' => [],
                 'expectedProduct' => new \Gt\Catalog\Entity\Product(),
-                'expectedFields' => []
+                'expectedFields' => [],
+                'priority' => 0,
             ],
             'test real' => [
                 'dto' =>
@@ -78,7 +80,8 @@ class UpdateSpecialProductsTest extends TestCase
                         ]
                     )
                 ,
-                'expectedFields' => ['weight', 'weight_bruto', 'code_from_custom', 'packages']
+                'expectedFields' => ['weight', 'weight_bruto', 'code_from_custom', 'packages'],
+                'priority' => 0,
             ],
         ];
     }
