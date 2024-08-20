@@ -3,6 +3,7 @@
 namespace Gt\Catalog\Services;
 
 use DateTime;
+// TODO tech skola nėra tokios klasės.
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
@@ -362,6 +363,8 @@ class ProductsService extends ProductsBaseService
      * @return mixed
      * @throws CatalogErrorException
      * @throws CatalogValidateException
+     *
+     * TODO tech skola:  reikia skaidyti į mažesnes, kurias galima būtų padengit unit testais.
      */
     public function importProducts($csvFile, string $delimiter = ',')
     {
