@@ -803,8 +803,6 @@ class CatalogDao extends BaseDao
                 $em->persist($package);
             }
         }
-
-        $em->flush();
     }
 
     /**

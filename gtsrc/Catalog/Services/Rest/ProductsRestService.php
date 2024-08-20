@@ -418,7 +418,11 @@ class ProductsRestService
 
         $this->catalogDao->removePackagesOfProducts($productsSkusForRemovingPackages);
 
+        $this->catalogDao->flush();
+
         $this->catalogDao->updateMultipleProducts($updatedProducts);
+
+        $this->catalogDao->flush();
 
         return count($updatedProducts);
     }

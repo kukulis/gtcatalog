@@ -109,14 +109,6 @@ class ProductLanguage
      */
     private $composition;
 
-    // TODO remove as it is useless
-    /**
-     * @var int
-     * @ORM\Column(type="integer", options={"default":2} )
-     */
-    private $updatePriority;
-
-
     /**
      * @return string
      */
@@ -338,14 +330,4 @@ class ProductLanguage
         return array_map('trim', explode(',', $this->tags));
     }
 
-    public function getUpdatePriority(): int
-    {
-        return $this->updatePriority;
-    }
-
-    public function setUpdatePriority(int $updatePriority): ProductLanguage
-    {
-        $this->updatePriority = $updatePriority;
-        return $this;
-    }
 }
