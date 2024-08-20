@@ -10,12 +10,13 @@ use Gt\Catalog\Data\ProductsFilter;
 use Gt\Catalog\Entity\Classificator;
 use Gt\Catalog\Entity\ClassificatorLanguage;
 use Gt\Catalog\Entity\Product;
-use Gt\Catalog\Entity\ProductCategory;
 use Gt\Catalog\Entity\ProductLanguage;
+use Gt\Catalog\Entity\ProductPackage;
 use Gt\Catalog\Exception\CatalogDetailedException;
 use Gt\Catalog\Exception\CatalogErrorException;
 use Gt\Catalog\Exception\RelatedObjectClassificator;
 use Gt\Catalog\Exception\WrongAssociationsException;
+use Gt\Catalog\Utils\MultipleRelationAssigner;
 use Psr\Log\LoggerInterface;
 
 class CatalogDao extends BaseDao
@@ -735,5 +736,116 @@ class CatalogDao extends BaseDao
         }
 
         return $queryBuilder->getQuery()->getResult();
+    }
+
+    /**
+     * @param string[] $skus
+     * @return Product[]
+     */
+    public function loadProductsBySkus(array $skus) : array {
+        $class = Product::class;
+        $dql = /** @lang DQL */
+            "SELECT  p from $class p 
+        where p.sku in (:skus)";
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+
+        $query = $em->createQuery($dql);
+
+        $query->setParameter('skus', $skus);
+
+        /** @var Product[] $productLanguages */
+        $productLanguages = $query->getResult();
+
+        return $productLanguages;
+    }
+
+//    /**
+//     * @param string[] $skus
+//     * @return Product[]
+//     */
+//    public function loadProductsBySkusWithPackages(array $skus) : array {
+//        $class = Product::class;
+//        $dql = /** @lang DQL */
+//            "SELECT  p, pp from $class p join p.packages pp
+//        where p.sku in (:skus)";
+//        /** @var EntityManager $em */
+//        $em = $this->doctrine->getManager();
+//
+//        $query = $em->createQuery($dql);
+//
+//        $query->setParameter('skus', $skus);
+//
+//        /** @var Product[] $productLanguages */
+//        $productLanguages = $query->getResult();
+//
+//        return $productLanguages;
+//    }
+
+
+    /**
+     * @param Product[] $products
+     */
+    public function updateMultipleProducts(array $products) {
+        // should we refactor to upsert?
+
+        /** @var EntityManager $em */
+        $em =  $this->doctrine->getManager();
+        foreach ($products as $product) {
+            $em->persist($product);
+            foreach ($product->getPackages() as $package) {
+                $em->persist($package);
+            }
+        }
+
+        $em->flush();
+    }
+
+    /**
+     * @param Product[] $products
+     */
+    public function assignPackages(array $products ) {
+        $skus = array_map ( fn($p)=>$p->getSku(), $products);
+        $productsPackages = $this->loadProductsPackages($skus);
+        MultipleRelationAssigner::assignByRelation(
+            $products,
+            $productsPackages,
+            fn(Product $p) => $p->getSku(),
+            fn(ProductPackage  $pp) =>$pp->getProduct()->getSku(),
+            fn(Product $p, ProductPackage $pp) => $p->addProductPackage($pp)
+        );
+    }
+
+    /**
+     * @param string[] $skus
+     * @return ProductPackage[]
+     */
+    public function loadProductsPackages ( array $skus) : array {
+        /** @var EntityManager $em */
+        $em =  $this->doctrine->getManager();
+        $builder =  $em->createQueryBuilder();
+        $builder->select('pp')
+            ->from(ProductPackage::class, 'pp');
+
+        //sku
+
+        $builder->join('pp.product', 'p');
+        $builder->andWhere( 'p.sku in (:skus)');
+        $builder->setParameter('skus', $skus );
+
+        return $builder->getQuery()->getResult();
+    }
+
+    public function getSkus (string $fromSku, int $limit ) {
+        /** @var EntityManager $em */
+        $em =  $this->doctrine->getManager();
+        $builder =  $em->createQueryBuilder();
+        $builder->select('p.sku')
+            ->from(Product::class, 'p')
+            ->andWhere('p.sku > :fromSku')
+            ->setParameter('fromSku', $fromSku)
+            ->setMaxResults($limit);
+
+        return $builder->getQuery()->getResult();
     }
 }

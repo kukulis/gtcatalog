@@ -10,12 +10,13 @@ use Gt\Catalog\Dao\PicturesDao;
 use Gt\Catalog\Entity\CategoryLanguage;
 use Gt\Catalog\Entity\Classificator;
 use Gt\Catalog\Entity\ClassificatorLanguage;
+use Gt\Catalog\Entity\PackageType;
 use Gt\Catalog\Entity\Product;
 use Gt\Catalog\Entity\ProductCategory;
 use Gt\Catalog\Entity\ProductLanguage;
 use Gt\Catalog\Entity\ProductPicture;
 use Gt\Catalog\Exception\CatalogValidateException;
-use Gt\Catalog\Services\CategoriesService;
+use Gt\Catalog\Repository\PackageTypeRepository;
 use Gt\Catalog\Services\PicturesService;
 use Gt\Catalog\Transformer\CategoryTransformer;
 use Gt\Catalog\Transformer\ProductTransformer;
@@ -34,11 +35,12 @@ class ProductsRestService
     private CategoryDao $categoryDao;
 
     // TODO unused service
-    private CategoriesService $categoriesService;
+//    private CategoriesService $categoriesService;
     private LanguageDao $languageDao;
     private PicturesDao $picturesDao;
     private PicturesService $picturesService;
     private ProductTransformer $productTransformer;
+    private PackageTypeRepository $packageTypeRepository;
 
     private array $languagesMap = [];
 
@@ -46,20 +48,22 @@ class ProductsRestService
         LoggerInterface $logger,
         CatalogDao $catalogDao,
         CategoryDao $categoryDao,
-        CategoriesService $categoriesService,
+//        CategoriesService $categoriesService,
         PicturesDao $picturesDao,
         PicturesService $picturesService,
         LanguageDao $languageDao,
-        ProductTransformer $productTransformer
+        ProductTransformer $productTransformer,
+        PackageTypeRepository $packageTypeRepository
     ) {
         $this->logger = $logger;
         $this->catalogDao = $catalogDao;
         $this->categoryDao = $categoryDao;
-        $this->categoriesService = $categoriesService;
+//        $this->categoriesService = $categoriesService;
         $this->languageDao = $languageDao;
         $this->picturesDao = $picturesDao;
         $this->picturesService = $picturesService;
         $this->productTransformer = $productTransformer;
+        $this->packageTypeRepository = $packageTypeRepository;
     }
 
     /**
@@ -267,7 +271,7 @@ class ProductsRestService
     {
         /** @var ProductLanguage[] $rez */
         $rez = [];
-        for ($i = 0; $i < self::STEP; $i += self::STEP) {
+        for ($i = 0; $i < count($skus); $i += self::STEP) {
             $part = array_slice($skus, $i, self::STEP);
             $pls = $this->catalogDao->getProductsLangs($part, $lang);
             $rez = array_merge($rez, $pls);
@@ -278,16 +282,26 @@ class ProductsRestService
     /**
      * @return \Catalog\B2b\Common\Data\Catalog\Product[]
      */
-    public function getRestProducts(array $skus, string $language): array
+    public function getRestProducts(array $skus, string $language, $skipCategories = false, $skipPackages=false): array
     {
+        $this->logger->debug(sprintf('Loading products by %s skus', count($skus)));
+        // TODO get product data even if it has no translaton
         $productsByLanguage = $this->getProductsLanguages($skus, $language);
+
+        if ( !$skipPackages) {
+            $products = array_map(fn(ProductLanguage $pl) => $pl->getProduct(), $productsByLanguage);
+            $this->catalogDao->assignPackages($products);
+        }
 
         $transformedProducts = array_map(
             fn($pl) => $this->productTransformer->transformToRestProduct($pl),
             $productsByLanguage
         );
 
-        $this->assignCategories($transformedProducts, $language);
+        if (!$skipCategories) {
+            // assigning categories after transforming
+            $this->assignCategories($transformedProducts, $language);
+        }
 
         return $transformedProducts;
     }
@@ -343,5 +357,58 @@ class ProductsRestService
             $cl = $categoriesLanguagesMap[$productCategory->getCategory()->getCode()];
             $restProduct->categories[] = CategoryTransformer::transformToRest($cl);
         }
+    }
+
+    /**
+     * @param \Catalog\B2b\Common\Data\Catalog\Product[] $dtoProducts
+     */
+    public function updateSpecial(array $dtoProducts): int
+    {
+        $skus = array_map(fn($p) => $p->sku, $dtoProducts);
+
+        $products = $this->catalogDao->loadProductsBySkus($skus);
+
+        $this->catalogDao->assignPackages($products);
+
+        /** @var Product[] $productsIndexed */
+        $productsIndexed = MapBuilder::buildMap($products, fn(Product $product) => $product->getSku());
+
+        $packagesTypes = $this->packageTypeRepository->findAll();
+
+        $packagesTypesByCode = MapBuilder::buildMap(
+            $packagesTypes,
+            fn(PackageType $packageType) => $packageType->getCode()
+        );
+
+        $updatedProducts = [];
+        foreach ($dtoProducts as $dtoProduct) {
+            if (!array_key_exists($dtoProduct->sku, $productsIndexed)) {
+                continue;
+            }
+            $dbProduct = $productsIndexed[$dtoProduct->sku];
+            $fieldsToUpdate = ProductTransformer::updateSpecialProduct($dtoProduct, $dbProduct, $packagesTypesByCode);
+            if (count($fieldsToUpdate) > 0) {
+                $this->logger->debug(
+                    sprintf(
+                        'For product [%s] fields will be updated : [%s]',
+                        $dbProduct->getSku(),
+                        join(',', $fieldsToUpdate)
+                    )
+                );
+
+                $updatedProducts[] = $dbProduct;
+            }
+        }
+
+        $this->catalogDao->updateMultipleProducts($updatedProducts);
+
+        return count($updatedProducts);
+    }
+
+    public function getSkus(string $fromSku, int $limit): array
+    {
+        $skusRecords = $this->catalogDao->getSkus($fromSku, $limit);
+
+        return array_map(fn(array $record) => reset($record), $skusRecords);
     }
 }

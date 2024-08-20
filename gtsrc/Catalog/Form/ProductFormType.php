@@ -67,6 +67,7 @@ class ProductFormType extends AbstractType
             ->add('p_pack_size', TextType::class, ['required' => false, 'label' => 'Pack Size'])
             ->add('p_pack_amount', TextType::class, ['required' => false, 'label' => 'Pack amount'])
             ->add('p_weight', NumberType::class, ['required' => false, 'label' => 'Weight'])
+            ->add('p_weight_bruto', NumberType::class, ['required' => false, 'label' => 'Weight gross (bruto)'])
             ->add('p_length', NumberType::class, ['required' => false, 'label' => 'Length'])
             ->add('p_height', NumberType::class, ['required' => false, 'label' => 'Height'])
             ->add('p_width', NumberType::class, ['required' => false, 'label' => 'Width'])
@@ -458,12 +459,29 @@ class ProductFormType extends AbstractType
         return $this->product->getWeight();
     }
 
+
     /**
      * @param float $weight
      */
     public function setPWeight(float $weight): void
     {
         $this->product->setWeight($weight);
+    }
+
+    /**
+     * @return float
+     */
+    public function getPWeightBruto(): float
+    {
+        return $this->product->getWeightBruto();
+    }
+
+    /**
+     * @param float $weight
+     */
+    public function setPWeightBruto(float $weight): void
+    {
+        $this->product->setWeightBruto($weight);
     }
 
     /**
