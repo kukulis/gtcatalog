@@ -1,7 +1,7 @@
 services:
     sketis.tokens_collector:
         arguments:
-            - '@logger'
+            - '@monolog.logger.katalogas_client'
         class: Gt\Catalog\Services\Rest\TokensCollector
         calls:
             - [addTokenHolder, ['%env(SECRET_TOKEN_P0)%',0]]
