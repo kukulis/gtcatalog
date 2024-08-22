@@ -32,7 +32,6 @@ final class Version20240723212401_create_product_log_table extends AbstractMigra
     product_language_old JSON         DEFAULT NULL,
     deleted BOOLEAN                   DEFAULT 0,
     date_created DATETIME     DEFAULT CURRENT_TIMESTAMP,
-    deleted TINYINT(1)  DEFAULT 0 NOT NULL,
     PRIMARY KEY (id)
 ) DEFAULT CHARACTER SET utf8mb4
   COLLATE `utf8mb4_unicode_ci`
