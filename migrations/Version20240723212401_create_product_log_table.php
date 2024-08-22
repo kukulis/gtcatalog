@@ -30,6 +30,7 @@ final class Version20240723212401_create_product_log_table extends AbstractMigra
     sku          VARCHAR(255)                NOT NULL,
     product_language_new JSON         DEFAULT NULL,
     product_language_old JSON         DEFAULT NULL,
+    deleted BOOLEAN                   DEFAULT 0,
     date_created DATETIME     DEFAULT CURRENT_TIMESTAMP,
     deleted TINYINT(1)  DEFAULT 0 NOT NULL,
     PRIMARY KEY (id)
