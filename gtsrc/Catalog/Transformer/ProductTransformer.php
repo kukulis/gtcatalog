@@ -115,50 +115,80 @@ class ProductTransformer
         Product $dbProduct,
         array $packagesTypesByCode,
         // will be used later
-        bool $prioritizeNewData = false
+        int $priority
     ): array {
         $updatedFields = [];
 
-        if ($dtoProduct->weight > 0 && $dbProduct->getWeight() == 0) {
+        if ($dtoProduct->weight > 0 && ($dbProduct->getWeight() == 0 || $dbProduct->getUpdatePriority() >= $priority)) {
             $dbProduct->setWeight($dtoProduct->weight);
 
             $updatedFields[] = 'weight';
         }
 
-        if ($dtoProduct->weightBruto > 0 && $dbProduct->getWeightBruto() == 0) {
+        if ($dtoProduct->weightBruto > 0 && ($dbProduct->getWeightBruto() == 0
+                || $dbProduct->getUpdatePriority() >= $priority)) {
             $dbProduct->setWeightBruto($dtoProduct->weightBruto);
 
             $updatedFields[] = 'weight_bruto';
         }
 
-        if ($dtoProduct->codeFromCustom && empty($dbProduct->getCodeFromCustom())) {
+        if ($dtoProduct->codeFromCustom && (empty($dbProduct->getCodeFromCustom())
+                || $dbProduct->getUpdatePriority() >= $priority)) {
             $dbProduct->setCodeFromCustom($dtoProduct->codeFromCustom);
 
             $updatedFields[] = 'code_from_custom';
         }
 
-        if ($dtoProduct->getPackages() && count($dbProduct->getPackages()) == 0) {
-            $productsPackages = [];
-            foreach ($dtoProduct->getPackages() as $package) {
-                if (!array_key_exists($package->typeCode, $packagesTypesByCode)) {
-                    continue;
+        if ($dtoProduct->getPackages() && count($dtoProduct->getPackages()) > 0 ) {
+            $dbPackages = $dbProduct->getPackagesDataMap();
+            $dtoPackages = self::transformDtoPackagesToMap($dtoProduct->getPackages());
+
+            if (count($dbProduct->getPackages()) == 0
+                || $priority <= $dbProduct->getUpdatePriority() && $dbPackages != $dtoPackages
+            ) {
+                $productsPackages = [];
+                foreach ($dtoProduct->getPackages() as $package) {
+                    if (!array_key_exists($package->typeCode, $packagesTypesByCode)) {
+                        continue;
+                    }
+                    $productPackage = new ProductPackage();
+
+                    $productPackage->setWeight($package->weight);
+                    $productPackage->setPackageType($packagesTypesByCode[$package->typeCode]);
+
+                    // using typeCode in a key to avoid duplicate records with the same package type
+                    $productsPackages[$package->typeCode] = $productPackage;
                 }
-                $productPackage = new ProductPackage();
 
-                $productPackage->setWeight($package->weight);
-                $productPackage->setPackageType($packagesTypesByCode[$package->typeCode]);
+                if (count($productsPackages) != 0) {
+                    $dbProduct->setProductsPackages(array_values($productsPackages));
 
-                // using typeCode in a key to avoid duplicate records with the same package type
-                $productsPackages[$package->typeCode] = $productPackage;
-            }
-
-            if (count($productsPackages) != 0) {
-                $dbProduct->setPackages(array_values($productsPackages));
-
-                $updatedFields[] = 'packages';
+                    $updatedFields[] = 'packages';
+                }
             }
         }
 
+        if (count($updatedFields) > 0 && $dbProduct->getUpdatePriority() >= $priority) {
+            $dbProduct->setUpdatePriority($priority);
+        }
+
         return $updatedFields;
+    }
+
+
+    /**
+     * TODO move to DTO product class later
+     * @param Package[] $dtoPackages
+     * @return float[] keys are packages types
+     */
+    public static function transformDtoPackagesToMap(array $dtoPackages): array
+    {
+        $rez = [];
+
+        foreach ($dtoPackages as $package) {
+            $rez[$package->typeCode] = $package->weight;
+        }
+
+        return $rez;
     }
 }

@@ -7,7 +7,11 @@ namespace DoctrineMigrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-final class Version20231010120452 extends AbstractMigration
+/**
+ * Auto-generated Migration: Please modify to your needs!
+ */
+
+final class Version20240808075120_added_barcode_field extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -16,11 +20,11 @@ final class Version20231010120452 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql( /** @lang MySQL */'ALTER TABLE products_languages CHANGE name name varchar(255) DEFAULT \'-\' not null');
+        $this->addSql('ALTER TABLE products ADD barcode BIGINT DEFAULT NULL');
     }
 
     public function down(Schema $schema): void
     {
+        $this->addSql('ALTER TABLE products DROP barcode');
     }
 }

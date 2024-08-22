@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Tests\Gt\Catalog;
 
 use Catalog\B2b\Common\Data\Catalog\Package;
@@ -25,12 +24,13 @@ class UpdateSpecialProductsTest extends TestCase
         \Gt\Catalog\Entity\Product $product,
         array $packagesTypes,
         \Gt\Catalog\Entity\Product $expectedProduct,
-        array $expectedFields
+        array $expectedFields,
+        int $priority
     ) {
         /** @var PackageType[] $packagesTypesByCode */
         $packagesTypesByCode = MapBuilder::buildMap($packagesTypes, fn(PackageType $type) => $type->getCode());
 
-        $updatedFields = ProductTransformer::updateSpecialProduct($dto, $product, $packagesTypesByCode);
+        $updatedFields = ProductTransformer::updateSpecialProduct($dto, $product, $packagesTypesByCode, $priority);
 
         $this->assertEquals($expectedFields, $updatedFields);
         $this->assertEquals($expectedProduct, $product);
@@ -44,7 +44,8 @@ class UpdateSpecialProductsTest extends TestCase
                 'product' => new \Gt\Catalog\Entity\Product(),
                 'packagesTypes' => [],
                 'expectedProduct' => new \Gt\Catalog\Entity\Product(),
-                'expectedFields' => []
+                'expectedFields' => [],
+                'priority' => 0,
             ],
             'test real' => [
                 'dto' =>
@@ -69,7 +70,7 @@ class UpdateSpecialProductsTest extends TestCase
                     ->setWeight(4.5)
                     ->setWeightBruto(4.6)
                     ->setCodeFromCustom('123456')
-                    ->setPackages(
+                    ->setProductsPackages(
                         [
                             (new ProductPackage())->setPackageType(
                                 (new PackageType())->setCode('glass')->setDescription('Stiklas')
@@ -77,10 +78,279 @@ class UpdateSpecialProductsTest extends TestCase
                                 ->setWeight(0.1)
                         ]
                     )
+                    ->setUpdatePriority(0)
                 ,
-                'expectedFields' => ['weight', 'weight_bruto', 'code_from_custom', 'packages']
+                'expectedFields' => ['weight', 'weight_bruto', 'code_from_custom', 'packages'],
+                'priority' => 0,
+            ],
+            'test prioritized higher, override' => [
+                'dto' =>
+                    (new Product())
+                        ->setSku('abc')
+                        ->setWeight(4.5)
+                        ->setWeightBruto(4.6)
+                        ->setCodeFromCustom('123456')
+                        ->setPackages(
+                            [
+                                (new Package())->setTypeCode('glass')->setWeight(0.1)
+                            ]
+                        )
+                ,
+                'product' => (new \Gt\Catalog\Entity\Product())
+                    ->setSku('abc')
+                    ->setWeight(3)
+                    ->setWeightBruto(3)
+                    ->setCodeFromCustom('123456')
+                    ->setUpdatePriority(2)
+                ,
+                'packagesTypes' => [
+                    (new PackageType())->setCode('glass')->setDescription('Stiklas')
+                ],
+                'expectedProduct' => (new \Gt\Catalog\Entity\Product())
+                    ->setSku('abc')
+                    ->setWeight(4.5)
+                    ->setWeightBruto(4.6)
+                    ->setCodeFromCustom('123456')
+                    ->setProductsPackages(
+                        [
+                            (new ProductPackage())->setPackageType(
+                                (new PackageType())->setCode('glass')->setDescription('Stiklas')
+                            )
+                                ->setWeight(0.1)
+                        ]
+                    )
+                    ->setUpdatePriority(0)
+                ,
+                'expectedFields' => ['weight', 'weight_bruto', 'code_from_custom', 'packages'],
+                'priority' => 0,
+            ],
+            'test prioritized lower valueless' => [
+                'dto' =>
+                    (new Product())
+                        ->setSku('abc')
+                        ->setWeight(4.5)
+                        ->setWeightBruto(4.6)
+                        ->setCodeFromCustom('123456')
+                        ->setPackages(
+                            [
+                                (new Package())->setTypeCode('glass')->setWeight(0.1)
+                            ]
+                        )
+                ,
+                'product' => (new \Gt\Catalog\Entity\Product())
+                    ->setSku('abc')
+                    ->setUpdatePriority(1)
+                ,
+                'packagesTypes' => [
+                    (new PackageType())->setCode('glass')->setDescription('Stiklas')
+                ],
+                'expectedProduct' => (new \Gt\Catalog\Entity\Product())
+                    ->setSku('abc')
+                    ->setWeight(4.5)
+                    ->setWeightBruto(4.6)
+                    ->setCodeFromCustom('123456')
+                    ->setProductsPackages(
+                        [
+                            (new ProductPackage())->setPackageType(
+                                (new PackageType())->setCode('glass')->setDescription('Stiklas')
+                            )
+                                ->setWeight(0.1)
+                        ]
+                    )
+                    ->setUpdatePriority(1)
+                ,
+                'expectedFields' => ['weight', 'weight_bruto', 'code_from_custom', 'packages'],
+                'priority' => 2,
+            ],
+            // ==============================================
+            'test prioritized lower weight full' => [
+                'dto' =>
+                    (new Product())
+                        ->setSku('abc')
+                        ->setWeight(4.5)
+                        ->setWeightBruto(4.6)
+                        ->setCodeFromCustom('123456')
+                        ->setPackages(
+                            [
+                                (new Package())->setTypeCode('glass')->setWeight(0.1)
+                            ]
+                        )
+                ,
+                'product' => (new \Gt\Catalog\Entity\Product())
+                    ->setSku('abc')
+                    ->setWeight(3)
+                    ->setWeightBruto(3)
+                    ->setCodeFromCustom('123')
+                    ->setUpdatePriority(1)
+                ,
+                'packagesTypes' => [
+                    (new PackageType())->setCode('glass')->setDescription('Stiklas')
+                ],
+                'expectedProduct' => (new \Gt\Catalog\Entity\Product())
+                    ->setSku('abc')
+                    ->setWeight(3)
+                    ->setWeightBruto(3)
+                    ->setCodeFromCustom('123')
+                    ->setProductsPackages(
+                        [
+                            (new ProductPackage())->setPackageType(
+                                (new PackageType())->setCode('glass')->setDescription('Stiklas')
+                            )
+                                ->setWeight(0.1)
+                        ]
+                    )
+                    ->setUpdatePriority(1)
+                ,
+                'expectedFields' => ['packages'],
+                'priority' => 2,
+            ],
+
+            // =============== packages changes ===================
+            // let be logic like this:
+            // if there are same packages, do not touch it
+            // if different, then update only if the new priority is higher or equal ( <= )
+            'test prioritized packages' => [
+                'dto' =>
+                    (new Product())
+                        ->setSku('abc')
+                        ->setWeight(4.5)
+                        ->setWeightBruto(4.6)
+                        ->setCodeFromCustom('123456')
+                        ->setPackages(
+                            [
+                                (new Package())->setTypeCode('glass')->setWeight(0.1)
+                            ]
+                        )
+                ,
+                'product' => (new \Gt\Catalog\Entity\Product())
+                    ->setSku('abc')
+                    ->setWeight(3)
+                    ->setWeightBruto(3)
+                    ->setCodeFromCustom('123')
+                    ->setUpdatePriority(1)
+                    ->addProductPackage(
+                        (new ProductPackage())
+                            ->setPackageType(
+                                (new PackageType())->setCode('glass')
+                                    ->setDescription('Stiklas')
+                            )
+                            ->setWeight(0.3)
+
+                    )
+                ,
+                'packagesTypes' => [
+                    (new PackageType())->setCode('glass')->setDescription('Stiklas')
+                ],
+                'expectedProduct' => (new \Gt\Catalog\Entity\Product())
+                    ->setSku('abc')
+                    ->setWeight(4.5)
+                    ->setWeightBruto(4.6)
+                    ->setCodeFromCustom('123456')
+                    ->setProductsPackages(
+                        [
+                            (new ProductPackage())->setPackageType(
+                                (new PackageType())->setCode('glass')->setDescription('Stiklas')
+                            )
+                                ->setWeight(0.1)
+                        ]
+                    )
+                    ->setUpdatePriority(1)
+                ,
+                'expectedFields' => ['weight', 'weight_bruto', 'code_from_custom', 'packages'],
+                'priority' => 1,
+            ],
+
+            // ==========================================
+            'test prioritized packages lower' => [
+                'dto' =>
+                    (new Product())
+                        ->setSku('abc')
+                        ->setWeight(4.5)
+                        ->setWeightBruto(4.6)
+                        ->setCodeFromCustom('123456')
+                        ->setPackages(
+                            [
+                                (new Package())->setTypeCode('glass')->setWeight(0.1)
+                            ]
+                        )
+                ,
+                'product' => (new \Gt\Catalog\Entity\Product())
+                    ->setSku('abc')
+                    ->setWeight(3)
+                    ->setWeightBruto(3)
+                    ->setCodeFromCustom('123')
+                    ->setUpdatePriority(1)
+                    ->addProductPackage(
+                        (new ProductPackage())
+                            ->setPackageType(
+                                (new PackageType())->setCode('glass')
+                                    ->setDescription('Stiklas')
+                            )
+                            ->setWeight(0.3)
+
+                    )
+                ,
+                'packagesTypes' => [
+                    (new PackageType())->setCode('glass')->setDescription('Stiklas')
+                ],
+                'expectedProduct' => (new \Gt\Catalog\Entity\Product())
+                    ->setSku('abc')
+                    ->setWeight(3)
+                    ->setWeightBruto(3)
+                    ->setCodeFromCustom('123')
+                    ->addProductPackage(
+                        (new ProductPackage())->setPackageType(
+                            (new PackageType())->setCode('glass')->setDescription('Stiklas')
+                        )
+                            ->setWeight(0.3)
+
+                    )
+                    ->setUpdatePriority(1)
+                ,
+                'expectedFields' => [],
+                'priority' => 2,
+            ],
+            // ========================
+            'test prioritized packages lower empty' => [
+                'dto' =>
+                    (new Product())
+                        ->setSku('abc')
+                        ->setWeight(4.5)
+                        ->setWeightBruto(4.6)
+                        ->setCodeFromCustom('123456')
+                        ->setPackages(
+                            [
+                                (new Package())->setTypeCode('glass')->setWeight(0.1)
+                            ]
+                        )
+                ,
+                'product' => (new \Gt\Catalog\Entity\Product())
+                    ->setSku('abc')
+                    ->setWeight(3)
+                    ->setWeightBruto(3)
+                    ->setCodeFromCustom('123')
+                    ->setUpdatePriority(1)
+                ,
+                'packagesTypes' => [
+                    (new PackageType())->setCode('glass')->setDescription('Stiklas')
+                ],
+                'expectedProduct' => (new \Gt\Catalog\Entity\Product())
+                    ->setSku('abc')
+                    ->setWeight(3)
+                    ->setWeightBruto(3)
+                    ->setCodeFromCustom('123')
+                    ->addProductPackage(
+                        (new ProductPackage())->setPackageType(
+                            (new PackageType())->setCode('glass')->setDescription('Stiklas')
+                        )
+                            ->setWeight(0.1)
+
+                    )
+                    ->setUpdatePriority(1)
+                ,
+                'expectedFields' => ['packages'],
+                'priority' => 2,
             ],
         ];
     }
-
 }

@@ -3,6 +3,7 @@
 namespace Gt\Catalog\Services;
 
 use DateTime;
+// TODO tech skola nėra tokios klasės.
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
@@ -170,6 +171,7 @@ class ProductsService extends ProductsBaseService
                 'brand',
                 'line',
                 'parent_sku',
+                'barcode',
                 'origin_country_code',
                 'vendor',
                 'manufacturer',
@@ -214,6 +216,7 @@ class ProductsService extends ProductsBaseService
                 $pl->getProduct()->getBrand(),
                 $pl->getProduct()->getLine(),
                 $pl->getProduct()->getParentSku(),
+                $pl->getProduct()->getBarcode(),
                 $pl->getProduct()->getOriginCountryCode(),
                 $pl->getProduct()->getVendor(),
                 $pl->getProduct()->getManufacturer(),
@@ -360,6 +363,8 @@ class ProductsService extends ProductsBaseService
      * @return mixed
      * @throws CatalogErrorException
      * @throws CatalogValidateException
+     *
+     * TODO tech skola:  reikia skaidyti į mažesnes, kurias galima būtų padengit unit testais.
      */
     public function importProducts($csvFile, string $delimiter = ',')
     {
@@ -429,6 +434,19 @@ class ProductsService extends ProductsBaseService
                     foreach ($importingFieldsProducts as $f) {
                         $setter = 'set' . PropertiesHelper::removeUnderScores($f);
                         $val = $line[$f];
+
+                        if($setter == 'setlastupdate'){
+                            $val = DateTime::createFromFormat('Y-m-d H:i:s', $line['last_update']);
+                        }
+
+                        if ($setter == 'setformale' && $val === '') {
+                            $val = 0;
+                        }
+
+                        if ($setter == 'setforfemale' && $val === '') {
+                            $val = 0;
+                        }
+
                         if ($val === '') {
                             $val = null;
                         }

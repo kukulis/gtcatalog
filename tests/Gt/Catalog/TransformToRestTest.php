@@ -33,7 +33,7 @@ class TransformToRestTest extends TestCase
             ],
             'test 2' => [
                 'productLanguage' => (new ProductLanguage())->setProduct(
-                    (new \Gt\Catalog\Entity\Product())->setPackages(
+                    (new \Gt\Catalog\Entity\Product())->setProductsPackages(
                         [
                             (new ProductPackage())
                                 ->setPackageType((new PackageType())->setCode('glass')->setDescription('Stiklas'))

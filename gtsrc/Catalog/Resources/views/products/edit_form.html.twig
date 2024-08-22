@@ -21,6 +21,13 @@
             </div>
 
             <div class="form-group row">
+                <label for="{{ form.p_barcode.vars.id }}" class="col-sm-4 col-form-label">Barcode</label>
+                <div class="col-sm-8">
+                    {{ form_widget(form.p_barcode, { 'attr': {'class': 'form-control'} }) }}
+                </div>
+            </div>
+
+            <div class="form-group row">
                 <label for="{{ form.p_brand.vars.id }}" class="col-sm-4 col-form-label">Brand</label>
                 <div class="col-sm-8">
                     {{ form_widget(form.p_brand, { 'attr': {'class': 'form-control'} }) }}
