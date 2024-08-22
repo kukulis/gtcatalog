@@ -26,12 +26,22 @@ class ProductLog
     /**
      * @ORM\Column(type="json", nullable=true)
      */
+    private $productNew;
+
+    /**
+     * @ORM\Column(type="json", nullable=true)
+     */
     private $productOld;
 
     /**
      * @ORM\Column(type="json", nullable=true)
      */
-    private $productNew;
+    private $productLanguageNew;
+
+    /**
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private $productLanguageOld;
 
     /**
      * @var User
@@ -41,7 +51,13 @@ class ProductLog
     private $user;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="boolean", default="0")
+     *
+     */
+    private $deleted;
+
+    /**
+     * @ORM\Column(type="string", length=255)
      *
      */
     private $sku;
@@ -142,6 +158,21 @@ class ProductLog
         $this->sku = $sku;
     }
 
+    /**
+     * @return bool|null
+     */
+    public function getDeleted(): ?bool
+    {
+        return $this->deleted;
+    }
+
+    /**
+     * @param bool|null $deleted
+     */
+    public function setDeleted(?bool $deleted): void
+    {
+        $this->deleted = $deleted;
+    }
 
     public function getUser()
     {
@@ -151,5 +182,88 @@ class ProductLog
     public function setUser($user)
     {
         $this->user = $user;
+    }
+
+    public function getUsername(): string
+    {
+        return $this->user->getName();
+    }
+
+    public function setProductLanguage($productLanguageNew)
+    {
+        $this->productLanguageNew = $productLanguageNew;
+    }
+
+    public function getProductLanguage()
+    {
+        return $this->productLanguageNew;
+    }
+
+    public function setProductLanguageOld($productLanguageOld)
+    {
+        $this->productLanguageOld = $productLanguageOld;
+    }
+
+    public function getProductLanguageOld()
+    {
+        return $this->productLanguageOld;
+    }
+
+    public function getProductDiff()
+    {
+        $array2 = json_decode($this->getProductNew(), true);
+        $array1 = json_decode($this->getProductOld(), true);
+
+        return $this->compareArrays($array1, $array2);
+    }
+
+    public function getLanguageDiff()
+    {
+        $array2 = json_decode($this->getProductLanguage(), true);
+        $array1 = json_decode($this->getProductLanguageOld(), true);
+
+        return $this->compareArrays($array1, $array2);
+    }
+
+    function compareArrays($array1, $array2) {
+        $differences = [];
+
+        foreach ($array1 as $key => $value) {
+            if (array_key_exists($key, $array2)) {
+                if (is_array($value) && is_array($array2[$key])) {
+                    $subDiff = $this->compareArrays($value, $array2[$key]);
+                    if (!empty($subDiff)) {
+                        $differences[$key] = $subDiff;
+                    }
+                } elseif ($value !== $array2[$key]) {
+                    if (!empty($value)) {
+                        $differences[$key] = [
+                            'old' => $value,
+                            'new' => $array2[$key]
+                        ];
+                    }
+                }
+            } else {
+                $differences[$key] = [
+                    'old' => $value,
+                    'new' => 'removed'
+                ];
+            }
+        }
+
+        foreach ($array2 as $key => $value) {
+            if (!array_key_exists($key, $array1)) {
+                $differences[$key] = [
+                    'old' => 'added',
+                    'new' => $value
+                ];
+            }
+        }
+
+        $result = array_filter($differences, function($diff) {
+            return !empty($diff);
+        });
+
+        return json_encode($result);
     }
 }

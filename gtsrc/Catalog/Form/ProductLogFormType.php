@@ -11,10 +11,10 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class ProductLogFormType extends AbstractType implements ProductLogFilter
 {
-    private $offset=0;
-    private $limit=100;
-    private $likeName='';
-    private $startsLike;
+    private int $offset = 0;
+    private int $limit = 100;
+    private $language;
+    private $sku;
 
     /**
      * @param FormBuilderInterface $builder
@@ -23,76 +23,64 @@ class ProductLogFormType extends AbstractType implements ProductLogFilter
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('likeName', TextType::class, ['required'=>false])
-            ->add('startsLike', TextType::class, ['required'=>false])
-            ->add('offset', IntegerType::class )
-            ->add('limit', IntegerType::class  )
-            ->add('search', SubmitType::class );
+            ->add('sku', TextType::class, ['required' => false])
+            ->add('language', TextType::class, ['required' => false])
+            ->add('offset', IntegerType::class)
+            ->add('limit', IntegerType::class)
+            ->add('search', SubmitType::class);
 
-        $builder->setMethod('get' );
+        $builder->setMethod('get');
     }
 
     /**
-     * @return mixed
+     * @return int
      */
-    public function getOffset()
+    public function getOffset(): int
     {
         return $this->offset;
     }
 
     /**
-     * @param mixed $offset
+     * @param int $offset
      */
-    public function setOffset($offset): void
+    public function setOffset(int $offset): void
     {
         $this->offset = $offset;
     }
 
     /**
-     * @return mixed
+     * @return int
      */
-    public function getLimit()
+    public function getLimit(): int
     {
         return $this->limit;
     }
 
     /**
-     * @param mixed $limit
+     * @param int $limit
      */
-    public function setLimit($limit): void
+    public function setLimit(int $limit): void
     {
         $this->limit = $limit;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getLikeName()
+    public function getLanguage()
     {
-        return $this->likeName;
+        return $this->language;
     }
 
-    /**
-     * @param mixed $likeName
-     */
-    public function setLikeName($likeName): void
+    public function setLanguage($language)
     {
-        $this->likeName = $likeName;
+        $this->language = $language;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getStartsLike()
+    public function setSku($sku)
     {
-        return $this->startsLike;
+        $this->sku = $sku;
     }
 
-    /**
-     * @param mixed $startsLike
-     */
-    public function setStartsLike($startsLike): void
+    public function getSku()
     {
-        $this->startsLike = $startsLike;
+        return $this->sku;
     }
 }

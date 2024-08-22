@@ -12,8 +12,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ProductLogController extends AbstractController
 {
-    private $tableService;
-    private $tableData;
+    private TableService $tableService;
+    private ProductLogTableData $tableData;
 
     public function __construct(TableService $tableService, ProductLogTableData $tableData)
     {
@@ -24,12 +24,12 @@ class ProductLogController extends AbstractController
 
     public function listAction(ProductLogService $productLogService, Request $request)
     {
-        $brandsFilter = new ProductLogFormType();
-        $form = $this->createForm(ProductLogFormType::class, $brandsFilter);
+        $productLogFilter = new ProductLogFormType();
+        $form = $this->createForm(ProductLogFormType::class, $productLogFilter);
         $form->handleRequest($request);
-        $brands = $productLogService->getList($brandsFilter);
+        $productLogs = $productLogService->getList($productLogFilter);
 
-        $tableData = $this->tableData->getTableData($brands);
+        $tableData = $this->tableData->getTableData($productLogs);
 
         $tableHtml = $this->tableService->generateTableHtml(
             $tableData->getRows(),

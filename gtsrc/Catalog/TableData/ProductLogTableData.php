@@ -2,6 +2,8 @@
 
 namespace Gt\Catalog\TableData;
 
+use phpDocumentor\Reflection\Type;
+
 class ProductLogTableData
 {
     public function getTableData(array $rows): TableData
@@ -11,36 +13,13 @@ class ProductLogTableData
 
     private function getColumns(): array
     {
-        $columns = [
-            ['name' => 'ID', 'property' => 'id'],
-            ['name' => 'Name', 'property' => 'brand'],
-        ];
-
-        $columns[] = $this->getActionsColumn();
-
-        return $columns;
-    }
-
-    private function getActionsColumn(): array
-    {
         return [
-            'name' => 'Actions',
-            'property' => 'actions',
-            'actions' => [
-                [
-                    'title' => 'Edit',
-                    'icon' => 'fas fa-edit',
-                    'route' => 'gt.catalog.brand_edit',
-                    'routeParams' => ['id' => 'id'],
-                ],
-                [
-                    'title' => 'Delete',
-                    'icon' => 'fas fa-trash-alt',
-                    'route' => 'gt.catalog.brand_delete',
-                    'routeParams' => ['id' => 'id'],
-                ],
-            ],
-            'width' => '15%',
+            ['name' => 'Sku', 'property' => 'sku'],
+            ['name' => 'Product diff', 'property' => 'getProductDiff', 'type' => 'array'],
+            ['name' => 'Language diff', 'property' => 'getLanguageDiff', 'type' => 'array'],
+            ['name' => 'Language', 'property' => 'language'],
+            ['name' => 'User', 'property' => 'username'],
+            ['name' => 'Date', 'property' => 'dateCreated', 'type' => 'datetime'],
         ];
     }
 

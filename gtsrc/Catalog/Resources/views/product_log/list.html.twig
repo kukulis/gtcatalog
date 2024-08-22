@@ -1,17 +1,16 @@
 {% extends 'admin_base.html.twig' %}
 {% block title %}
-    {% trans %}Brands list{% endtrans %}
+    {% trans %}Products Logs{% endtrans %}
 {% endblock %}
 {% block body %}
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <h1>{% trans %}Brands{% endtrans %}</h1>
+                <h1>{% trans %}Products Logs{% endtrans %}</h1>
             </div>
         </div>
 
-        {#  TODO (FF) fix this is not the brands list #}
-        {% include '@Catalog/brands/filter_form.html.twig' %}
+        {% include '@Catalog/product_log/filter_form.html.twig' %}
 
         <div class="row">
             <div class="col-md-12">

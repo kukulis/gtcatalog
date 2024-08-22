@@ -1,25 +1,22 @@
 {% extends '@Catalog/components/base_filter_form.html.twig' %}
 
-{% set formAction = path('gt.catalog.brands') %}
-{% set clearPath = path('gt.catalog.brands') %}
+{% set formAction = path('gt.catalog.product_log') %}
+{% set clearPath = path('gt.catalog.product_log') %}
 
-{% block top_left_buttons %}
-    <a class="btn btn-primary" href="{{ path('gt.catalog.brand_add') }}">Add New Brand</a>
-{% endblock %}
 
 {% block first_column_filter_fields %}
     <div class="form-group">
-        {{ form_label(filterForm.likeName, 'Like Name') }}
-        {{ form_widget(filterForm.likeName, { 'attr': {'class': 'form-control'} }) }}
+        {{ form_label(filterForm.sku, 'Sku') }}
+        {{ form_widget(filterForm.sku, { 'attr': {'class': 'form-control'} }) }}
+    </div>
+
+    <div class="form-group">
+        {{ form_label(filterForm.language, 'Language') }}
+        {{ form_widget(filterForm.language, { 'attr': {'class': 'form-control'} }) }}
     </div>
 {% endblock %}
 
-{% block second_column_filter_fields %}
-    <div class="form-group">
-        {{ form_label(filterForm.startsLike, 'Starts Like') }}
-        {{ form_widget(filterForm.startsLike, { 'attr': {'class': 'form-control'} }) }}
-    </div>
-{% endblock %}
+
 
 {% block third_column_filter_fields %}
     <div class="form-group">

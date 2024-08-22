@@ -13,24 +13,19 @@ class ProductLogService
     /** @var EntityManagerInterface */
     private EntityManagerInterface $entityManager;
 
-    // TODO (S) įrašyti tipą ( išdebuginti koks yra ir įrašyti interfeisą )
-    private $security;
-
     /**
-     * BrandsService constructor.
+     * ProductsLogService constructor.
      * @param EntityManagerInterface $entityManager
-     * @param Security $security
      */
-    public function __construct(EntityManagerInterface $entityManager, Security $security)
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-        $this->security = $security;
     }
 
-    // TODO (F) unused productLogFilter
-    public function getList(ProductLogFilter $productLogFilter ) {
+    public function getList(ProductLogFilter $productLogFilter ): array
+    {
         /** @var ProductLogRepository $productLogRepository */
         $productLogRepository = $this->entityManager->getRepository(ProductLog::class );
-        return $productLogRepository->findAll();
+        return $productLogRepository->getList($productLogFilter);
     }
 }

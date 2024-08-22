@@ -3,6 +3,7 @@
 namespace Gt\Catalog\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Gt\Catalog\Data\ProductLogFilter;
 use Gt\Catalog\Entity\ProductLog;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -25,5 +26,30 @@ class ProductLogRepository extends ServiceEntityRepository
         $entityManager = $this->getEntityManager();
         $entityManager->persist($product);
         $entityManager->flush();
+    }
+
+    public function getList(ProductLogFilter $filter) {
+        $builder = $this->createQueryBuilder('pl');
+        $builder->setMaxResults($filter->getLimit());
+
+        if ( !empty($filter->getOffset())) {
+            $builder->setFirstResult($filter->getOffset());
+        }
+
+        if ( !empty($filter->getSku())) {
+            $builder->andWhere( "pl.sku like :sku");
+            $builder->setParameter("sku", '%'.$filter->getSku().'%' );
+        }
+
+        if ( !empty($filter->getLanguage())) {
+            $builder->andWhere( "pl.language like :language");
+            $builder->setParameter("language", '%'.$filter->getLanguage().'%' );
+        }
+
+        $builder->orderBy('pl.id', 'DESC' );
+
+        /** @var ProductLog[] $productLogs */
+        $productLogs = $builder->getQuery()->getResult();
+        return $productLogs;
     }
 }

@@ -6,33 +6,39 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\NotSupported;
 use Gt\Catalog\Entity\ProductLog;
+use Gt\Catalog\Event\ProductRemoveEvent;
 use Gt\Catalog\Event\ProductStoredEvent;
 use Gt\Catalog\Repository\ProductLogRepository;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Serializer\Serializer;
 
 class ProductChangeListener
 {
-    // TODO (S) įrašyti tipą, gal interfeisą? (Galima išsiaiškinti debuginant)
-    private $security;
+    private Security $security;
     private EntityManagerInterface $entityManager;
+    private Serializer $serialize;
 
 
-    public function __construct(EntityManager $entityManager, Security $security)
+    public function __construct(EntityManager $entityManager, Security $security, Serializer $serialize)
     {
         $this->entityManager = $entityManager;
         $this->security = $security;
+        $this->serialize = $serialize;
     }
 
-    /**
-     * // TODO kas čia tas NotSupported ? Ar mums jo reikia?
-     * @throws NotSupported
-     */
     public function postUpdate(ProductStoredEvent $event): void
     {
+        $product = $this->serialize->serialize($event->getProduct(), 'json');
+        $productOld = $this->serialize->serialize($event->getOldProduct(), 'json');
+        $productLanguage = $this->serialize->serialize($event->getProductLanguage(), 'json');
+        $productLanguageOld = $this->serialize->serialize($event->getProductLanguageOld(), 'json');
+
         $productLog = new ProductLog();
         $productLog->setLanguage($event->getLanguageCode());
-        $productLog->setProductOld($event->getOldProduct());
-        $productLog->setProductNew($event->getProduct()->getSku());
+        $productLog->setProductNew($product);
+        $productLog->setProductOld($productOld);
+        $productLog->setProductLanguage($productLanguage);
+        $productLog->setProductLanguageOld($productLanguageOld);
         $productLog->setUser($this->security->getUser());
         $productLog->setSku($event->getProduct()->getSku());
         $productLog->setDateCreated(new \DateTime());
@@ -42,9 +48,16 @@ class ProductChangeListener
         $productRepository->save($productLog);
     }
 
-    public function postRemove(): void
+    public function postRemove(ProductRemoveEvent $event): void
     {
-        // TODO (FF) tokių reiktų nepalikti. Implementuoti?
-        die('asd');
+        $productLog = new ProductLog();
+        $productLog->setLanguage($event->getLanguageCode());
+        $productLog->setUser($this->security->getUser());
+        $productLog->setSku($event->getProduct()->getSku());
+        $productLog->setDateCreated(new \DateTime());
+
+        /** @var ProductLogRepository $productRepository */
+        $productRepository = $this->entityManager->getRepository(ProductLog::class);
+        $productRepository->save($productLog);
     }
 }

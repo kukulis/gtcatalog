@@ -9,15 +9,25 @@ class ProductRemoveEvent extends Event
 {
     public const NAME = 'product.remove';
 
-    private $product;
+    private Product $product;
+    private $languageCode;
 
-    public function __construct(Product $product)
+    public function __construct(Product $product, $languageCode)
     {
         $this->product = $product;
+        $this->languageCode = $languageCode;
     }
 
     public function getProduct(): Product
     {
         return $this->product;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLanguageCode()
+    {
+        return $this->languageCode;
     }
 }

@@ -467,6 +467,7 @@ services:
         arguments:
             - '@doctrine.orm.entity_manager'
             - '@Symfony\Component\Security\Core\Security'
+            - '@serializer'
         tags:
             - { name: kernel.event_listener, event: 'product.stored', method: 'postUpdate' }
 

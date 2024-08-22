@@ -17,7 +17,7 @@ interface ProductLogFilter
     /**
      * @return mixed
      */
-    public function getLikeName();
+    public function getLanguage();
 
-    public function getStartsLike();
+    public function getSku();
 }
