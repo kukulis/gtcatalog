@@ -320,4 +320,13 @@ class ProductLanguage
 
         return null;
     }
+
+    public function getTagsArray(): array
+    {
+        if ($this->tags == null) {
+            return [];
+        }
+
+        return array_map('trim', explode(',', $this->tags));
+    }
 }

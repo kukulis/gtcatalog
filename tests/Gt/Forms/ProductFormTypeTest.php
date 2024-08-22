@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: giedrius
- * Date: 20.7.24
- * Time: 00.33
- */
 
 namespace App\Tests\Gt\Forms;
-
 
 use Gt\Catalog\Entity\Product;
 use Gt\Catalog\Entity\ProductLanguage;
@@ -28,9 +21,9 @@ class ProductFormTypeTest extends TestCase
 
         $product->setSku('aaa');
 
-        $this->assertEquals( 'aaa', $pft->getP_Sku());
+        $this->assertEquals( 'aaa', $pft->getPSku());
 
-        $pft->setPL_Name('Grybas');
+        $pft->setPLName('Grybas');
 
         $this->assertEquals( 'Grybas',  $productLanguage->getName());
     }
