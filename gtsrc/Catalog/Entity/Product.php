@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: giedrius
- * Date: 20.6.24
- * Time: 11.29
- */
 
 namespace Gt\Catalog\Entity;
 
@@ -307,6 +301,12 @@ class Product
      * @var ProductPackage[]
      */
     private $packages = [];
+
+    /**
+     * @var int
+     * @ORM\Column(type="integer", options={"default":2} )
+     */
+    private $updatePriority = 2;
 
     /**
      * @return string
@@ -976,6 +976,9 @@ class Product
         $this->productCategories = $productCategories;
     }
 
+    /**
+     * @return ProductPackage[]
+     */
     public function getPackages(): array
     {
         return $this->packages;
@@ -986,7 +989,7 @@ class Product
      *
      * @return $this
      */
-    public function setPackages(array $packages): Product
+    public function setProductsPackages(array $packages): Product
     {
         $this->packages = $packages;
         array_walk($this->packages, fn(ProductPackage $package) => $package->setProduct($this));
@@ -996,9 +999,44 @@ class Product
 
     public function addProductPackage(ProductPackage $pp): self
     {
+        $pp->setProduct($this);
+
         $this->packages[] = $pp;
 
         return $this;
     }
 
+    public function getUpdatePriority(): int
+    {
+        return $this->updatePriority;
+    }
+
+    public function setUpdatePriority(int $updatePriority): Product
+    {
+        $this->updatePriority = $updatePriority;
+        return $this;
+    }
+
+    /**
+     * @return float[] - key is package type
+     */
+    public function getPackagesDataMap(): array
+    {
+        $rez = [];
+        foreach ($this->packages as $package) {
+            $rez[$package->getPackageType()->getCode()] = $package->getWeight();
+        }
+
+        return $rez;
+    }
+
+    public function hasNewPackage(): bool
+    {
+        foreach ($this->packages as $package) {
+            if ($package->getId() == 0) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

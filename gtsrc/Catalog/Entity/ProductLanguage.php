@@ -329,4 +329,5 @@ class ProductLanguage
 
         return array_map('trim', explode(',', $this->tags));
     }
+
 }

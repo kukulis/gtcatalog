@@ -11,7 +11,7 @@ final class Version20240711140326_product_package extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Creating products_packages and packages_types tables.';
     }
 
     public function up(Schema $schema): void

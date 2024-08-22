@@ -7,9 +7,6 @@ namespace DoctrineMigrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
 final class Version20231010120452 extends AbstractMigration
 {
     public function getDescription(): string
@@ -20,7 +17,7 @@ final class Version20231010120452 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE products_languages CHANGE name name varchar(255) DEFAULT \'-\' not null');
+        $this->addSql( /** @lang MySQL */'ALTER TABLE products_languages CHANGE name name varchar(255) DEFAULT \'-\' not null');
     }
 
     public function down(Schema $schema): void

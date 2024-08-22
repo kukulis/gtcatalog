@@ -19,7 +19,7 @@ class ProductPackage
      * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Id
      */
-    private $id;
+    private $id = 0;
 
     /**
      * @var Product
@@ -85,6 +85,5 @@ class ProductPackage
         $this->packageType = $packageType;
         return $this;
     }
-
 
 }
