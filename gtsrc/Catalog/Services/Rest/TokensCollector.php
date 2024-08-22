@@ -22,6 +22,14 @@ class TokensCollector implements IPriorityDecider
 
     public function decidePriority(string $token): int
     {
+
+        // TODO remove after testing
+        $this->logger->error(
+            sprintf('Total tokens: %s', count($this->tokenHolders))
+        );
+
+        // --
+
         foreach ($this->tokenHolders as $holder) {
             if ($token == $holder->getToken()) {
                 return $holder->getPriority();
@@ -29,10 +37,6 @@ class TokensCollector implements IPriorityDecider
         }
 
         // TODO remove after testing
-        $this->logger->error(
-            sprintf('Total tokens: %s', count($this->tokenHolders))
-        );
-
         foreach ($this->tokenHolders as $holder) {
             $this->logger->error(
                 sprintf('Available token: %s, priority %s', $holder->getToken(), $holder->getPriority())
