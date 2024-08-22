@@ -26,8 +26,10 @@ final class Version20240723212401_create_product_log_table extends AbstractMigra
     language     VARCHAR(255) DEFAULT NULL,
     product_old  JSON         DEFAULT NULL,
     product_new  JSON         DEFAULT NULL,
-    user_id      INT                NOT NULL,
-    product_id   INT                NOT NULL,
+    user         INT                NOT NULL,
+    sku          VARCHAR(255)                NOT NULL,
+    product_language_new JSON         DEFAULT NULL,
+    product_language_old JSON         DEFAULT NULL,
     date_created DATETIME     DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 ) DEFAULT CHARACTER SET utf8mb4
