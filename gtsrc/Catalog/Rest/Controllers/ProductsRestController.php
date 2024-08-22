@@ -46,7 +46,7 @@ class ProductsRestController extends AbstractController
         $response->data = $restProducts;
         $json = $serializer->serialize($response, 'json');
 
-        return new Response($json, 200, ['Content-Type'=>'application/json']);
+        return new Response($json, 200, ['Content-Type' => 'application/json']);
     }
 
 
@@ -124,34 +124,33 @@ class ProductsRestController extends AbstractController
         return new JsonResponse($response);
     }
 
-    public function updateSpecial(Request $request, Serializer $serializer, IPriorityDecider $priorityDecider) : Response {
-
+    public function updateSpecial(
+        Request $request,
+        Serializer $serializer,
+        IPriorityDecider $priorityDecider
+    ): Response {
         $receivedSecretToken = $request->headers->get('secret-token');
 
         $priority = $priorityDecider->decidePriority($receivedSecretToken);
-        if ( $priority < 0 ) {
+        if ($priority < 0) {
             throw new AccessDeniedHttpException('Invalid secret token');
         }
-
-//        // TODO decide priority by the secret token
-//        if ( $receivedSecretToken != $secretToken) {
-//            throw new AccessDeniedHttpException('Invalid secret token');
-//        }
 
         $content = $request->getContent();
 
         /** @var Product [] $products */
-        $products = $serializer->deserialize($content, sprintf('array<%s>', Product::class ), 'json');
+        $products = $serializer->deserialize($content, sprintf('array<%s>', Product::class), 'json');
 
         $updatedCount = $this->productsRestService->updateSpecial($products, $priority);
 
         return new JsonResponse($updatedCount);
     }
 
-    public function getSkusAction(Request $request) : Response {
+    public function getSkusAction(Request $request): Response
+    {
         $fromSKU = $request->query->get('fromsku', self::DEFAULT_LIMIT);
         $limit = intval($request->query->get('limit'));
-        $limit = min( self::MAX_SKU_LIMIT, $limit );
+        $limit = min(self::MAX_SKU_LIMIT, $limit);
 
         $skus = $this->productsRestService->getSkus($fromSKU, $limit);
 
