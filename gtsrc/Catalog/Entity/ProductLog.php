@@ -54,7 +54,7 @@ class ProductLog
      * @ORM\Column(type="boolean", options={"default":"0"})
      *
      */
-    private $deleted;
+    private $deleted=0;
 
     /**
      * @ORM\Column(type="string", length=255)
