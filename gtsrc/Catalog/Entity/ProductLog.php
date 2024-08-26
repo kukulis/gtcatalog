@@ -8,6 +8,11 @@ use Gt\Catalog\Repository\ProductLogRepository;
 
 /**
  * @ORM\Entity(repositoryClass=ProductLogRepository::class)
+ * @ORM\Table(name="product_log",
+ * indexes={
+ *     @ORM\Index(name="idx_user_id", columns={"id"})
+ *         }
+ * )
  */
 class ProductLog
 {
@@ -45,7 +50,7 @@ class ProductLog
 
     /**
      * @var User
-     * @ORM\ManyToOne(targetEntity="User" )
+     * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(name="user", referencedColumnName="id")
      */
     private $user;
