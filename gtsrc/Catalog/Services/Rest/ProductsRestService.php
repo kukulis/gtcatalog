@@ -389,6 +389,7 @@ class ProductsRestService
             if (!array_key_exists($dtoProduct->sku, $productsIndexed)) {
                 continue;
             }
+
             $dbProduct = $productsIndexed[$dtoProduct->sku];
             $fieldsToUpdate = ProductTransformer::updateSpecialProduct(
                 $dtoProduct,
@@ -396,6 +397,14 @@ class ProductsRestService
                 $packagesTypesByCode,
                 $priority
             );
+
+            // TODO remove after debuging
+            if ( $dbProduct->getSku() == '0000000000007') {
+                $this->logger->debug( 'barcode='. $dbProduct->getBarcode());
+            }
+            //
+
+
             if (count($fieldsToUpdate) > 0) {
                 $this->logger->debug(
                     sprintf(

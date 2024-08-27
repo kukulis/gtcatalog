@@ -180,7 +180,7 @@ services:
     gt.catalog.products_rest_service:
         class: 'Gt\Catalog\Services\Rest\ProductsRestService'
         arguments:
-            - '@logger'
+            - '@monolog.logger.rest_api'
             - '@gt.catalog.catalog_dao'
             - '@gt.catalog.category_dao'
 #            - '@gt.catalog.categories_service'

@@ -3,6 +3,7 @@ monolog:
         - deprecation # Deprecations are logged in the dedicated "deprecation" channel when it exists
         - 'katalogas_client'
         - 'rest_api'
+#        - 'update_special'
 
 when@dev:
     monolog:
@@ -34,8 +35,14 @@ when@dev:
             rest_api:
                 type: stream
                 level: debug
-                channels: katalogas_client
+                channels: rest_api
                 path: '%kernel.logs_dir%/rest_api.log'
+
+#            update_special:
+#                type: stream
+#                level: debug
+#                channels: update_special
+#                path: '%kernel.logs_dir%/update_special.log'
 when@test:
     monolog:
         handlers:
