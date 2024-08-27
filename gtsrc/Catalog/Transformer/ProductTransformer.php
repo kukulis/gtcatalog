@@ -51,7 +51,8 @@ class ProductTransformer
             'codeFromVendor',
             'priority',
             'googleProductCategoryId',
-            'lastUpdate'
+            'lastUpdate',
+            'barcode',
         ];
 
         foreach ($directMappings as $property) {

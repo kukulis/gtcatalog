@@ -399,12 +399,6 @@ class ProductsRestService
                 $priority
             );
 
-            // TODO remove after debuging
-            if ( $dbProduct->getSku() == '0000000000007') {
-                $this->logger->error( 'barcode='. $dbProduct->getBarcode());
-            }
-            //
-
 
             if (count($fieldsToUpdate) > 0) {
                 $this->logger->debug(
