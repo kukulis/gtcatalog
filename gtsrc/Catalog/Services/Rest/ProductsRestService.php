@@ -368,6 +368,7 @@ class ProductsRestService
      */
     public function updateSpecial(array $dtoProducts, int $priority = 0): int
     {
+        $this->logger->debug('updateSpecial called');
         $skus = array_map(fn($p) => $p->sku, $dtoProducts);
 
         $products = $this->catalogDao->loadProductsBySkus($skus);
@@ -400,7 +401,7 @@ class ProductsRestService
 
             // TODO remove after debuging
             if ( $dbProduct->getSku() == '0000000000007') {
-                $this->logger->debug( 'barcode='. $dbProduct->getBarcode());
+                $this->logger->error( 'barcode='. $dbProduct->getBarcode());
             }
             //
 
