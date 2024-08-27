@@ -19,13 +19,13 @@ final class Version20240826095807_added_index_and_fk_product_log extends Abstrac
 
     public function up(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE product_log ADD CONSTRAINT FK_user_id FOREIGN KEY (user) REFERENCES user (id)');
-        $this->addSql('CREATE INDEX IDX_user_id ON product_log (user)');
+        $this->addSql(/** @lang MySQL  */'ALTER TABLE product_log ADD CONSTRAINT FK_user_id FOREIGN KEY (user_id) REFERENCES user (id)');
+        $this->addSql(/** @lang MySQL  */ 'CREATE INDEX IDX_user_id ON product_log (user_id)');
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE product_log DROP FOREIGN KEY FK_user_id');
-        $this->addSql('DROP INDEX IDX_user_id ON product_log');
+        $this->addSql(/** @lang MySQL  */ 'ALTER TABLE product_log DROP FOREIGN KEY FK_user_id');
+        $this->addSql(/** @lang MySQL  */ 'DROP INDEX IDX_user_id ON product_log');
     }
 }
