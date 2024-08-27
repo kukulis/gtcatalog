@@ -225,18 +225,12 @@ class ProductFormType extends AbstractType
         $this->product->setParentSku($parentSku);
     }
 
-    /**
-     * @return int|null
-     */
-    public function getPBarcode(): ?int
+    public function getPBarcode(): ?string
     {
         return $this->product->getBarcode();
     }
 
-    /**
-     * @param int|null $barcode
-     */
-    public function setPBarcode(int $barcode = null): void
+    public function setPBarcode(string $barcode = null): void
     {
         $this->product->setBarcode($barcode);
     }

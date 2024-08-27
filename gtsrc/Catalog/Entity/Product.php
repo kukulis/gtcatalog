@@ -102,8 +102,8 @@ class Product
     private $parentSku;
 
     /**
-     * @var string
-     * @ORM\Column(type="bigint", length=32, name="barcode", nullable=true)
+     * @var ?string
+     * @ORM\Column(type="string", length=32, name="barcode", nullable=true)
      */
     private $barcode;
 
@@ -375,21 +375,14 @@ class Product
         $this->parentSku = $parentSku;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getBarcode(): ?int
+    public function getBarcode(): ?string
     {
         return $this->barcode;
     }
 
-    /**
-     * @param int|null $barcode
-     */
-    public function setBarcode(int $barcode=null): self
+    public function setBarcode(?string $barcode): Product
     {
         $this->barcode = $barcode;
-
         return $this;
     }
 
