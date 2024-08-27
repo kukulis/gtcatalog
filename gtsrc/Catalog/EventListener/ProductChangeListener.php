@@ -4,7 +4,6 @@ namespace Gt\Catalog\EventListener;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Exception\NotSupported;
 use Gt\Catalog\Entity\ProductLog;
 use Gt\Catalog\Event\ProductRemoveEvent;
 use Gt\Catalog\Event\ProductStoredEvent;
@@ -12,6 +11,7 @@ use Gt\Catalog\Repository\ProductLogRepository;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Serializer\Serializer;
 
+// TODO (S) rename ProductLogOnChangeListener
 class ProductChangeListener
 {
     private Security $security;

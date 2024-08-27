@@ -469,8 +469,8 @@ services:
             - '@doctrine.orm.entity_manager'
             - '@Symfony\Component\Security\Core\Security'
             - '@serializer'
-        tags:
-            - { name: kernel.event_listener, event: 'product.stored', method: 'postUpdate' }
+#        tags:
+#            - { name: kernel.event_listener, event: 'product.stored', method: 'postUpdate' }
 
     Gt\Catalog\Repository\PackageTypeRepository:
         tags: [ 'doctrine.repository_service' ]
