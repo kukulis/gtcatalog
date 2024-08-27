@@ -386,9 +386,11 @@ class Product
     /**
      * @param int|null $barcode
      */
-    public function setBarcode(int $barcode=null): void
+    public function setBarcode(int $barcode=null): self
     {
         $this->barcode = $barcode;
+
+        return $this;
     }
 
     /**

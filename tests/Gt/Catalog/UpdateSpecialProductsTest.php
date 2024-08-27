@@ -59,6 +59,7 @@ class UpdateSpecialProductsTest extends TestCase
                                 (new Package())->setTypeCode('glass')->setWeight(0.1)
                             ]
                         )
+                    ->setBarcode('1234560')
                 ,
                 'product' => (new \Gt\Catalog\Entity\Product())
                     ->setSku('abc'),
@@ -79,6 +80,7 @@ class UpdateSpecialProductsTest extends TestCase
                         ]
                     )
                     ->setUpdatePriority(0)
+                    ->setBarcode('1234560')
                 ,
                 'expectedFields' => ['weight', 'weight_bruto', 'code_from_custom', 'packages'],
                 'priority' => 0,

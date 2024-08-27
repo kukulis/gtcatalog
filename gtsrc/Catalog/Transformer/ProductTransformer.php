@@ -139,7 +139,7 @@ class ProductTransformer
             $updatedFields[] = 'code_from_custom';
         }
 
-        if ($dtoProduct->getPackages() && count($dtoProduct->getPackages()) > 0 ) {
+        if ($dtoProduct->getPackages() && count($dtoProduct->getPackages()) > 0) {
             $dbPackages = $dbProduct->getPackagesDataMap();
             $dtoPackages = self::transformDtoPackagesToMap($dtoProduct->getPackages());
 
@@ -166,6 +166,12 @@ class ProductTransformer
                     $updatedFields[] = 'packages';
                 }
             }
+        }
+
+        if ($dbProduct->getBarcode() == null
+            || ($priority <= $dbProduct->getUpdatePriority() && $dbProduct->getBarcode() != $dtoProduct->barcode)) {
+
+            $dbProduct->setBarcode($dtoProduct->barcode);
         }
 
         if (count($updatedFields) > 0 && $dbProduct->getUpdatePriority() >= $priority) {

@@ -424,6 +424,8 @@ class ProductsRestService
 
         $this->catalogDao->flush();
 
+        $this->logger->notice('Products count with removed packages: ' . count($productsSkusForRemovingPackages));
+
         return count($updatedProducts);
     }
 
