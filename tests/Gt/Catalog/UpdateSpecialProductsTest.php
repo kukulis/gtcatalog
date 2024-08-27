@@ -59,7 +59,7 @@ class UpdateSpecialProductsTest extends TestCase
                                 (new Package())->setTypeCode('glass')->setWeight(0.1)
                             ]
                         )
-                    ->setBarcode('1234560')
+                        ->setBarcode('1234560')
                 ,
                 'product' => (new \Gt\Catalog\Entity\Product())
                     ->setSku('abc'),
@@ -353,6 +353,49 @@ class UpdateSpecialProductsTest extends TestCase
                 'expectedFields' => ['packages'],
                 'priority' => 2,
             ],
+
+            'test barcode with priority' => [
+                'dto' =>
+                    (new Product())
+                        ->setSku('abc')
+                        ->setWeight(4.5)
+                        ->setWeightBruto(4.6)
+                        ->setCodeFromCustom('123456')
+                        ->setPackages(
+                            [
+                                (new Package())->setTypeCode('glass')->setWeight(0.1)
+                            ]
+                        )
+                        ->setBarcode('1234560')
+
+                ,
+                'product' => (new \Gt\Catalog\Entity\Product())
+                    ->setSku('abc')
+                    ->setUpdatePriority(10)
+                ,
+                'packagesTypes' => [
+                    (new PackageType())->setCode('glass')->setDescription('Stiklas')
+                ],
+                'expectedProduct' => (new \Gt\Catalog\Entity\Product())
+                    ->setSku('abc')
+                    ->setWeight(4.5)
+                    ->setWeightBruto(4.6)
+                    ->setCodeFromCustom('123456')
+                    ->setProductsPackages(
+                        [
+                            (new ProductPackage())->setPackageType(
+                                (new PackageType())->setCode('glass')->setDescription('Stiklas')
+                            )
+                                ->setWeight(0.1)
+                        ]
+                    )
+                    ->setUpdatePriority(1)
+                    ->setBarcode('1234560')
+                ,
+                'expectedFields' => ['weight', 'weight_bruto', 'code_from_custom', 'packages'],
+                'priority' => 1,
+            ],
+
         ];
     }
 }
