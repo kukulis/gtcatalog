@@ -16,7 +16,9 @@ use Gt\Catalog\Exception\CatalogDetailedException;
 use Gt\Catalog\Exception\CatalogErrorException;
 use Gt\Catalog\Exception\RelatedObjectClassificator;
 use Gt\Catalog\Exception\WrongAssociationsException;
+use Gt\Catalog\Utils\MapBuilder;
 use Gt\Catalog\Utils\MultipleRelationAssigner;
+use Gt\Catalog\Utils\ProductClassificatorAccessor;
 use Psr\Log\LoggerInterface;
 
 class CatalogDao extends BaseDao
@@ -868,5 +870,33 @@ class CatalogDao extends BaseDao
         }
 
         return count($productsPackages);
+    }
+
+
+    /**
+     * In accessors we have unrelated with db classificators,
+     * and we load the classificators from db and put the to accessors.
+     * @param ProductClassificatorAccessor[] $accessors
+     */
+    public function buildValidReferencesForClassificators(array $accessors)
+    {
+        $collectedClassificatorsCodes = array_unique(
+            array_map(fn($accessor) => $accessor->getClassificator()->getCode(), $accessors)
+        );
+
+        $classificators = $this->loadClassificatorsList($collectedClassificatorsCodes);
+
+        $classificatorsMap = MapBuilder::buildMap($classificators, fn(Classificator $c)=>$c->getCode());
+
+        foreach ($accessors as $accessor) {
+            $classificatorCode = $accessor->getClassificator()->getCode();
+            if ( !array_key_exists( $classificatorCode, $classificatorsMap) ) {
+                $accessor->setValid(false);
+                continue;
+            }
+
+            $accessor->setClassificator($classificatorsMap[$classificatorCode]);
+            $accessor->setValid(true);
+        }
     }
 }

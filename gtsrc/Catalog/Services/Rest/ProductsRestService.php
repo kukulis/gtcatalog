@@ -22,6 +22,8 @@ use Gt\Catalog\Transformer\CategoryTransformer;
 use Gt\Catalog\Transformer\ProductTransformer;
 use Gt\Catalog\Utils\BatchRunner;
 use Gt\Catalog\Utils\MapBuilder;
+use Gt\Catalog\Utils\ProductClassificatorAccessor;
+use Gt\Catalog\Utils\ProductClassificatorAccessorMeasure;
 use Gt\Catalog\Utils\ProductsHelper;
 use Psr\Log\LoggerInterface;
 
@@ -385,6 +387,16 @@ class ProductsRestService
             fn(PackageType $packageType) => $packageType->getCode()
         );
 
+        $measureAccessorFactory = new ProductClassificatorAccessorMeasure(null);
+
+        /** @var ProductClassificatorAccessor[] $accessors */
+        $accessors = array_map(
+            fn(Product $dbProduct) => $measureAccessorFactory->createClassificatorAccessor(
+                $dbProduct
+            )->backupClassificator(),
+            $products
+        );
+
         $updatedProducts = [];
         foreach ($dtoProducts as $dtoProduct) {
             if (!array_key_exists($dtoProduct->sku, $productsIndexed)) {
@@ -420,13 +432,33 @@ class ProductsRestService
             $productsWithTouchedPackages
         );
 
+
+        $this->catalogDao->buildValidReferencesForClassificators($accessors);
+
+        foreach ($accessors as $accessor) {
+            if ($accessor->isValid()) {
+                continue;
+            }
+            $this->logger->warning(
+                sprintf(
+                    'Classificator [%s] for product [%s] is invalid',
+                    $accessor->getClassificator()->getCode(),
+                    $accessor->getProduct()->getSku()
+                )
+            );
+            $accessor->restoreClassificator();
+        }
+
         $this->catalogDao->removePackagesOfProducts($productsSkusForRemovingPackages);
 
+        // actually all changes are written here ..
         $this->catalogDao->flush();
 
+        // TODO  DO we still need this block?
         $this->catalogDao->updateMultipleProducts($updatedProducts);
 
         $this->catalogDao->flush();
+        // -- till here
 
         $this->logger->notice('Products count with removed packages: ' . count($productsSkusForRemovingPackages));
 
