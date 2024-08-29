@@ -4,6 +4,8 @@ namespace Gt\Catalog\Transformer;
 
 use Catalog\B2b\Common\Data\Catalog\Package;
 use Catalog\B2b\Common\Data\Catalog\Product as CatalogProduct;
+use Gt\Catalog\Entity\Classificator;
+use Gt\Catalog\Entity\ClassificatorGroup;
 use Gt\Catalog\Entity\PackageType;
 use Gt\Catalog\Entity\Product;
 use Gt\Catalog\Entity\ProductLanguage;
@@ -171,8 +173,14 @@ class ProductTransformer
 
         if ($dbProduct->getBarcode() == null
             || ($priority <= $dbProduct->getUpdatePriority() && $dbProduct->getBarcode() != $dtoProduct->barcode)) {
-
             $dbProduct->setBarcode($dtoProduct->barcode);
+        }
+
+        if ($dtoProduct->measure != null) {
+            $measureClassificator = new Classificator();
+            $measureClassificator->setClassificatorGroup((new ClassificatorGroup())->setCode('measure'));
+            $measureClassificator->setCode(strtolower($dtoProduct->measure));
+            $dbProduct->setMeasure($measureClassificator);
         }
 
         if (count($updatedFields) > 0 && $dbProduct->getUpdatePriority() >= $priority) {

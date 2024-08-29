@@ -4,6 +4,8 @@ namespace App\Tests\Gt\Catalog;
 
 use Catalog\B2b\Common\Data\Catalog\Package;
 use Catalog\B2b\Common\Data\Catalog\Product;
+use Gt\Catalog\Entity\Classificator;
+use Gt\Catalog\Entity\ClassificatorGroup;
 use Gt\Catalog\Entity\PackageType;
 use Gt\Catalog\Entity\ProductPackage;
 use Gt\Catalog\Transformer\ProductTransformer;
@@ -394,6 +396,50 @@ class UpdateSpecialProductsTest extends TestCase
                 ,
                 'expectedFields' => ['weight', 'weight_bruto', 'code_from_custom', 'packages'],
                 'priority' => 1,
+            ],
+            'test measure' => [
+                'dto' =>
+                    (new Product())
+                        ->setSku('abc')
+                        ->setWeight(4.5)
+                        ->setWeightBruto(4.6)
+                        ->setCodeFromCustom('123456')
+                        ->setPackages(
+                            [
+                                (new Package())->setTypeCode('glass')->setWeight(0.1)
+                            ]
+                        )
+                        ->setBarcode('1234560')
+                        ->setMeasure('VNT')
+                ,
+                'product' => (new \Gt\Catalog\Entity\Product())
+                    ->setSku('abc'),
+                'packagesTypes' => [
+                    (new PackageType())->setCode('glass')->setDescription('Stiklas')
+                ],
+                'expectedProduct' => (new \Gt\Catalog\Entity\Product())
+                    ->setSku('abc')
+                    ->setWeight(4.5)
+                    ->setWeightBruto(4.6)
+                    ->setCodeFromCustom('123456')
+                    ->setProductsPackages(
+                        [
+                            (new ProductPackage())->setPackageType(
+                                (new PackageType())->setCode('glass')->setDescription('Stiklas')
+                            )
+                                ->setWeight(0.1)
+                        ]
+                    )
+                    ->setUpdatePriority(0)
+                    ->setBarcode('1234560')
+                    ->setMeasure(
+                        (new Classificator())
+                            ->setCode('vnt')
+                            ->setClassificatorGroup((new ClassificatorGroup())->setCode('measure'))
+                    )
+                ,
+                'expectedFields' => ['weight', 'weight_bruto', 'code_from_custom', 'packages'],
+                'priority' => 0,
             ],
 
         ];

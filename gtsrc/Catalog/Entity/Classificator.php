@@ -40,6 +40,7 @@ class Classificator
      */
     private $confirmed;
 
+    // TODO out of architecture pattern?
     /**
      * @var string
      * @ORM\Column(type="string", name="customs_code", length=16, nullable=true)
@@ -64,12 +65,11 @@ class Classificator
         return $this->classificatorGroup;
     }
 
-    /**
-     * @param ClassificatorGroup $classificator_group
-     */
-    public function setClassificatorGroup(ClassificatorGroup $classificator_group): void
+    public function setClassificatorGroup(ClassificatorGroup $classificator_group): self
     {
         $this->classificatorGroup = $classificator_group;
+
+        return $this;
     }
 
     /**
@@ -80,12 +80,11 @@ class Classificator
         return $this->code;
     }
 
-    /**
-     * @param string $code
-     */
-    public function setCode(string $code=null): void
+    public function setCode(string $code=null): self
     {
         $this->code = $code;
+
+        return $this;
     }
 
     /**

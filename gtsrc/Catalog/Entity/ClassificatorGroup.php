@@ -37,12 +37,11 @@ class ClassificatorGroup
         return $this->code;
     }
 
-    /**
-     * @param string $code
-     */
-    public function setCode(string $code): void
+    public function setCode(string $code): self
     {
         $this->code = $code;
+
+        return $this;
     }
 
     /**

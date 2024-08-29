@@ -485,12 +485,11 @@ class Product
         return $this->measure->getCode();
     }
 
-    /**
-     * @param Classificator $measure
-     */
-    public function setMeasure(Classificator $measure = null): void
+    public function setMeasure(Classificator $measure = null): self
     {
         $this->measure = $measure;
+
+        return $this;
     }
 
     /**
