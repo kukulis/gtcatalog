@@ -889,7 +889,7 @@ class CatalogDao extends BaseDao
         $classificatorsMap = MapBuilder::buildMap($classificators, fn(Classificator $c)=>$c->getCode());
 
         foreach ($accessors as $accessor) {
-            $classificatorCode = $accessor->getClassificator()->getCode();
+            $classificatorCode = $accessor->getClassificatorCode();
             if ( !array_key_exists( $classificatorCode, $classificatorsMap) ) {
                 $accessor->setValid(false);
                 continue;
