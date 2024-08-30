@@ -19,12 +19,12 @@ class ProductClassificatorAccessorMeasure implements ProductClassificatorAccesso
         $this->product = $product;
     }
 
-    public function getClassificator(): Classificator
+    public function getClassificator(): ?Classificator
     {
         return $this->product->getMeasure();
     }
 
-    public function setClassificator(Classificator $classificator)
+    public function setClassificator(?Classificator $classificator)
     {
         $this->product->setMeasure($classificator);
     }

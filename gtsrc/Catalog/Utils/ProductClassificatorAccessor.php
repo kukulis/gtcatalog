@@ -7,9 +7,9 @@ use Gt\Catalog\Entity\Product;
 
 interface ProductClassificatorAccessor
 {
-    public function getClassificator(): Classificator;
+    public function getClassificator(): ?Classificator;
 
-    public function setClassificator(Classificator $classificator);
+    public function setClassificator(?Classificator $classificator);
 
     public function createClassificatorAccessor(Product $product): ProductClassificatorAccessor;
 
