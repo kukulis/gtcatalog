@@ -442,7 +442,7 @@ class ProductsRestService
             $this->logger->warning(
                 sprintf(
                     'Classificator [%s] for product [%s] is invalid',
-                    $accessor->getClassificator()->getCode(),
+                    $accessor->getClassificatorCode(),
                     $accessor->getProduct()->getSku()
                 )
             );
