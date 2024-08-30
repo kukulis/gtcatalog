@@ -9,6 +9,8 @@ interface ProductClassificatorAccessor
 {
     public function getClassificator(): ?Classificator;
 
+    public function getClassificatorCode() : ? string;
+
     public function setClassificator(?Classificator $classificator);
 
     public function createClassificatorAccessor(Product $product): ProductClassificatorAccessor;

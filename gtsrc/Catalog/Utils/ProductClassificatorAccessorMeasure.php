@@ -62,4 +62,15 @@ class ProductClassificatorAccessorMeasure implements ProductClassificatorAccesso
     {
         return $this->product;
     }
+
+    public function getClassificatorCode(): ?string
+    {
+        if( $this->product->getMeasure() != null ) {
+            return $this->product->getMeasure()->getCode();
+        }
+
+        return null;
+    }
+
+
 }

@@ -881,7 +881,7 @@ class CatalogDao extends BaseDao
     public function buildValidReferencesForClassificators(array $accessors)
     {
         $collectedClassificatorsCodes = array_unique(
-            array_map(fn($accessor) => $accessor->getClassificator()->getCode(), $accessors)
+            array_map(fn($accessor) => $accessor->getClassificatorCode(), $accessors)
         );
 
         $classificators = $this->loadClassificatorsList($collectedClassificatorsCodes);
