@@ -15,8 +15,8 @@ class ProductLogTableData
     {
         return [
             ['name' => 'Sku', 'property' => 'sku'],
-            ['name' => 'Product diff', 'property' => 'getProductDiff', 'type' => 'array'],
-            ['name' => 'Language diff', 'property' => 'getLanguageDiff', 'type' => 'array'],
+            ['name' => 'Product diff', 'property' => 'getProductDiff'],
+            ['name' => 'Language diff', 'property' => 'getLanguageDiff'],
             ['name' => 'Language', 'property' => 'language'],
             ['name' => 'User', 'property' => 'username'],
             ['name' => 'Date', 'property' => 'dateCreated', 'type' => 'datetime'],
