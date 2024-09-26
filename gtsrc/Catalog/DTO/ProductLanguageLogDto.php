@@ -148,12 +148,12 @@ class ProductLanguageLogDto
         $this->composition = $composition;
     }
 
-    public function setLabelMaterial()
+    public function getLabelMaterial()
     {
         return $this->labelMaterial;
     }
 
-    public function getLabelMaterial($labelMaterial)
+    public function setLabelMaterial($labelMaterial)
     {
         $this->labelMaterial = $labelMaterial;
     }
