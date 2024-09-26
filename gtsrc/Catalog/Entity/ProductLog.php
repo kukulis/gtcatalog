@@ -216,59 +216,59 @@ class ProductLog
 
     public function getProductDiff()
     {
-        $array2 = json_decode($this->getProductNew(), true);
-        $array1 = json_decode($this->getProductOld(), true);
+        $product = json_decode($this->getProductNew(), true);
+        $ProductOld = json_decode($this->getProductOld(), true);
 
-        return $this->compareArrays($array1, $array2);
+        return $this->compareJsonRecursive($ProductOld, $product);
     }
 
     public function getLanguageDiff()
     {
-        $array2 = json_decode($this->getProductLanguage(), true);
-        $array1 = json_decode($this->getProductLanguageOld(), true);
+        $productLanguage = json_decode($this->getProductLanguage(), true);
+        $productLanguageOld = json_decode($this->getProductLanguageOld(), true);
 
-        return $this->compareArrays($array1, $array2);
+        return $this->compareJsonRecursive($productLanguageOld, $productLanguage);
     }
 
-    function compareArrays($array1, $array2) {
-        $differences = [];
+    function compareJsonRecursive(array $oldData, array $newData, string $path = '') {
+        $changes = [];
 
-        foreach ($array1 as $key => $value) {
-            if (array_key_exists($key, $array2)) {
-                if (is_array($value) && is_array($array2[$key])) {
-                    $subDiff = $this->compareArrays($value, $array2[$key]);
-                    if (!empty($subDiff)) {
-                        $differences[$key] = $subDiff;
-                    }
-                } elseif ($value !== $array2[$key]) {
-                    if (!empty($value)) {
-                        $differences[$key] = [
-                            'old' => $value,
-                            'new' => $array2[$key]
-                        ];
-                    }
-                }
+        foreach ($newData as $key => $newValue) {
+            $currentPath = $path ? $path . '.' . $key : $key;
+
+            if (!array_key_exists($key, $oldData)) {
+                $changes[] = [
+                    'path' => $currentPath,
+                    'added' => $newValue
+                ];
             } else {
-                $differences[$key] = [
-                    'old' => $value,
-                    'new' => 'removed'
+                $oldValue = $oldData[$key];
+
+                if (is_array($newValue) && is_array($oldValue)) {
+                    $nestedChanges = $this->compareJsonRecursive($oldValue, $newValue, $currentPath);
+                    $changes = array_merge($changes, (array)$nestedChanges);
+                }
+                elseif ($newValue !== $oldValue) {
+                    $changes[] = [
+                        'path' => $currentPath,
+                        'old' => $oldValue,
+                        'new' => $newValue
+                    ];
+                }
+            }
+        }
+
+        foreach ($oldData as $key => $oldValue) {
+            $currentPath = $path ? $path . '.' . $key : $key;
+
+            if (!array_key_exists($key, $newData)) {
+                $changes[] = [
+                    'path' => $currentPath,
+                    'removed' => $oldValue
                 ];
             }
         }
 
-        foreach ($array2 as $key => $value) {
-            if (!array_key_exists($key, $array1)) {
-                $differences[$key] = [
-                    'old' => 'added',
-                    'new' => $value
-                ];
-            }
-        }
-
-        $result = array_filter($differences, function($diff) {
-            return !empty($diff);
-        });
-
-        return json_encode($result);
+        return json_encode($changes);
     }
 }
