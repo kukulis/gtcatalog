@@ -216,28 +216,26 @@ class ProductLog
 
     public function getProductDiff()
     {
-        $array2 = json_decode($this->getProductNew(), true);
-        $array1 = json_decode($this->getProductOld(), true);
+        $product = json_decode($this->getProductNew(), true);
+        $ProductOld = json_decode($this->getProductOld(), true);
 
-        return $this->compareJsonRecursive($array1, $array2);
+        return $this->compareJsonRecursive($ProductOld, $product);
     }
 
     public function getLanguageDiff()
     {
-        $array2 = json_decode($this->getProductLanguage(), true);
-        $array1 = json_decode($this->getProductLanguageOld(), true);
+        $productLanguage = json_decode($this->getProductLanguage(), true);
+        $productLanguageOld = json_decode($this->getProductLanguageOld(), true);
 
-        return $this->compareJsonRecursive($array1, $array2);
+        return $this->compareJsonRecursive($productLanguageOld, $productLanguage);
     }
 
-    function compareJsonRecursive($oldData, $newData, $path = '') {
+    function compareJsonRecursive(array $oldData, array $newData, string $path = '') {
         $changes = [];
 
-        // Iterate over new data to check for additions or modifications
         foreach ($newData as $key => $newValue) {
-            $currentPath = $path ? $path . '.' . $key : $key; // Track the current path
+            $currentPath = $path ? $path . '.' . $key : $key;
 
-            // If the key doesn't exist in the old data, it was added
             if (!array_key_exists($key, $oldData)) {
                 $changes[] = [
                     'path' => $currentPath,
@@ -246,12 +244,10 @@ class ProductLog
             } else {
                 $oldValue = $oldData[$key];
 
-                // If both values are arrays, compare them recursively
                 if (is_array($newValue) && is_array($oldValue)) {
                     $nestedChanges = $this->compareJsonRecursive($oldValue, $newValue, $currentPath);
                     $changes = array_merge($changes, (array)$nestedChanges);
                 }
-                // Otherwise, if the values are different, track the changes
                 elseif ($newValue !== $oldValue) {
                     $changes[] = [
                         'path' => $currentPath,
@@ -262,7 +258,6 @@ class ProductLog
             }
         }
 
-        // Check for removed keys in the old data
         foreach ($oldData as $key => $oldValue) {
             $currentPath = $path ? $path . '.' . $key : $key;
 
