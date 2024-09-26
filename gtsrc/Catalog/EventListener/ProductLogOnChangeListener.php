@@ -78,7 +78,7 @@ class ProductLogOnChangeListener
         $productRepository->save($productLog);
     }
 
-    public function getData($product): string
+    public function getData(object $product): string
     {
         $data = new ProductLogDto();
 
