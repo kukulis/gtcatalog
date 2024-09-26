@@ -216,6 +216,9 @@ class ProductsController extends AbstractController
                 $saveSubmit = $form->get('save');
 
                 if ($saveSubmit->isSubmitted()) {
+                    $productsService->storeProduct($product);
+                    $productsService->storeProductLanguage($productLanguage);
+
                     $this->eventDispatcher->dispatch(
                         new ProductStoredEvent(
                             $product,
@@ -224,9 +227,6 @@ class ProductsController extends AbstractController
                             $productLanguageOld,
                             $languageCode
                         ), ProductStoredEvent::NAME);
-
-                    $productsService->storeProduct($product);
-                    $productsService->storeProductLanguage($productLanguage);
                 }
             }
         } catch (WrongAssociationsException $e) { // paveldi iš CatalogDetailedException
