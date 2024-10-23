@@ -119,3 +119,4 @@ arba ėjimas į norimą versiją:
     
      bin/console doctrine:migrations:migrate DoctrineMigrations\\Version20240712081943_product_package_data
 
+TEST
